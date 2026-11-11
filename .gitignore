@@ -1,0 +1,36 @@
+# deps and builds
+node_modules/
+dist/
+coverage/
+.vite/
+*.tsbuildinfo
+
+# env and secrets
+.env
+.env.*
+*.pem
+*.key
+
+# local-only Claude / Tech Arena files
+.claude/settings.local.json
+.tech-arena
+graphify-out/
+
+# raw terrain downloads (outputs in public/horizons/ are committed)
+data/raw/
+*.IMG
+*.img
+*.tif
+*.tiff
+*.jp2
+
+# python
+__pycache__/
+.venv/
+*.pyc
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/
+.vercel

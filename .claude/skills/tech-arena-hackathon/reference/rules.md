@@ -25,8 +25,8 @@ Condensed from the Tech Arena charter for this repo. If anything here conflicts 
 - **Time:** UTC everywhere in the UI, always labelled "UTC". Let `astronomy-engine` handle TT/UT; never hand-roll ΔT.
 - **No atmosphere:** no refraction correction, ever.
 - **Horizon:** a body is "up" when its elevation is above the **terrain horizon** at its azimuth (from `public/horizons/<siteId>.json`), or above 0° when there's no profile, and then the UI says "smooth-Moon horizon, terrain not included".
-- **Sun:** report the disk-centre elevation **and** the visible fraction of the disk (the Sun is about 0.53° across, which matters when it skims the polar horizon). Sunrise/sunset = upper limb crosses the terrain horizon, unless `plan.md` says otherwise.
-- **Earth:** about 1.9° across as seen from the Moon. Earthrise/Earthset use the disk centre unless `plan.md` says otherwise. Libration makes Earth bob near the south-pole horizon, so windows come from a time scan with root refinement, never from a closed formula.
+- **Sun:** report the disk-centre elevation **and** the visible fraction of the disk (the Sun is about 0.53° across, which matters when it skims the polar horizon). Sun up / sunrise / sunset = the upper limb crosses the terrain horizon; **power OK** = visible fraction ≥ 0.5 (= centre at or above the terrain horizon). The horizon is taken at the body centre's azimuth (`plan.md` §3).
+- **Earth:** about 1.9° across as seen from the Moon. Earthrise/Earthset = any part of the disc above the terrain horizon (`plan.md` §3, PGDA rule); **comms OK** uses the disc centre ≥ 0.5° above the terrain horizon. Libration makes Earth bob near the south-pole horizon, so windows come from a time scan with root refinement, never from a closed formula.
 - **Proof:** the astro core is not done until it matches the Horizons fixtures within `plan.md`'s tolerance. Any `SCI` mismatch is a BLOCKER.
 - **No overclaiming:** the app's "About the data" panel states the model, sources and known limits. No accuracy figure appears anywhere unless a test measured it.
 

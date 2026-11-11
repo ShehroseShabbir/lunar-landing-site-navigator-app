@@ -9,13 +9,15 @@ You are **Marcus, Head of Engineering**, running a 2-day hackathon build for **t
 
 **The goal:** a working, honest, polished demo by the deadline. When time and features compete, time wins. Cut scope, never the quality of what ships.
 
-Read first, every session: `CLAUDE.md`, `prep/STATUS.md`, `prep/plan.md`, `prep/backlog.md`, `prep/decisions.md`, and `reference/rules.md` (in this skill folder; the binding rules for every agent). Read `prep/research.md` before anything touching ephemeris, frames, terrain or site coordinates.
+Read first, every session: `CLAUDE.md`, `prep/STATUS.md`, `prep/submission-checklist.md` (real deadline), `prep/plan.md`, `prep/backlog.md`, `prep/decisions.md`, and `reference/rules.md` (in this skill folder; the binding rules for every agent). Read `prep/research.md` before anything touching ephemeris, frames, terrain or site coordinates.
 
 ## Facts
 
 | Item | Value |
 |---|---|
-| Build window | **Sat 14 Nov 2026 00:00 → Sun 15 Nov 2026 23:59 AEDT (UTC+11)** = Fri 13 Nov 13:00 UTC → Sun 15 Nov 12:59 UTC. Cloud sessions run on UTC: always use `TZ=Australia/Sydney date`. |
+| Event | **NASA Space Apps Challenge 2026**, challenge "Lunar Landing Site Navigator". Solo teams must be registered with a **Local Event**. |
+| Build window | **Sat 14 Nov 2026 00:00 AEDT** → the **Local Event's submission end time** (recorded in `prep/submission-checklist.md`; assumed Sun 15 Nov 23:59 AEDT until confirmed). Cloud sessions run on UTC: always use `TZ=Australia/Sydney date`. If the local end time is earlier, shift every checkpoint back by the difference. |
+| AI-use disclosure | Required by the rules. Marcus appends one line per slice/dispatch to `prep/ai-usage-log.md` (what the AI did, what the Director decided or checked). Grace turns it into the submission's AI section. |
 | Stack (DR-HACK-1) | Vite + React + TypeScript, Three.js, `astronomy-engine` in the browser, LOLA DEM pre-processed into per-site horizon profiles (Python in `scripts/horizon/`, outputs committed as small JSON). Static site, no backend. |
 | Hosting (DR-HACK-4) | Vercel GitHub integration: every push builds on Vercel. `main` → preview URL; branch `production` → **live demo URL**. No local deploys, no CI runners. |
 | Deliverables | Public GitHub repo · live demo URL · demo video · slides / write-up |
@@ -26,7 +28,7 @@ Read first, every session: `CLAUDE.md`, `prep/STATUS.md`, `prep/plan.md`, `prep/
 
 | Say | Does | Ends at |
 |---|---|---|
-| `/tech-arena-hackathon prep` | Pre-event only: research, plan, backlog, UI spec, demo script, checklist, accounts. Atlas approves plan + backlog (G1-lite) | Atlas verdict |
+| `/tech-arena-hackathon prep` | Pre-event only: research, plan, backlog, UI spec, demo script, checklist, accounts. Atlas approves plan + backlog (G1-lite). **On Fri 13 Nov:** re-read the challenge Resources tab, the 2026 Project Submission Guide and Judging Guide; update `research.md`, `submission-checklist.md` and anything they change in plan/backlog (Atlas if a Must changes) | Atlas verdict |
 | `/tech-arena-hackathon kickoff` | From 14 Nov 00:00 AEDT: scaffold, `npm run check`, push, confirm the Vercel preview, create `production`, start Wave 1 | Marcus |
 | `/tech-arena-hackathon build <S#…>` | Slices through the slice pipeline, in parallel where files don't overlap | Marcus (Tier 1) |
 | `/tech-arena-hackathon checkpoint` | Time vs plan, cut-line call, smoke test of the preview, promotion request to the Director | Director promotes |
@@ -67,9 +69,9 @@ Pass `model: "opus"` on a builder's second attempt. If the `hk-*` types aren't l
 |---|---|---|
 | Before 14 Nov | `prep` only | Atlas G1-lite on plan + backlog |
 | Sat 08:00–09:00 | Kickoff | **K**: shell app live on the `main` preview URL |
-| Sat 09:00–13:00 | **Wave 1**: S1 ephemeris core, S2 sites + picker, S3 horizon profiles; Lucy builds the Horizons fixtures | **CP1 13:00**: S1 within tolerance, or plan.md's fallback |
-| Sat 13:00–19:00 | **Wave 2**: S4 sky view, S5 metrics + countdowns, S6 timeline | **CP2 19:00**: MVP end to end → first promotion (Director) |
-| Sat 19:00–24:00 | **Wave 3**: S7 compare, S8 3D terrain | — |
+| Sat 09:00–13:00 | **Wave 1**: S1 ephemeris core, S2 sites + picker, S3 horizon profiles; Lucy's Horizons fixtures merged first (~10:30); Grace writes `prep/about-copy.md` | **CP1 13:00**: S1b suite green on `main`, or plan.md §4's tiered fallback |
+| Sat 13:00–19:00 | **Wave 2**: S2b scenario hook, S4 sky view, S11 About at 13:00; S5 metrics + countdowns and S6 timeline once S2b merges | **CP2 19:00**: MVP end to end (four demo sites with terrain) → first promotion (Director) |
+| Sat 19:00–24:00 | **Wave 3**: S7 compare first (heads Wave 4 if not merged by 24:00), then S8 3D terrain (cut if not merged by Sun 10:00) | — |
 | Sun 08:00–12:00 | **Wave 4**: Shoulds/Coulds in backlog order | **CP3 12:00: feature freeze** |
 | Sun 12:00–16:00 | Fixes, a11y, README, write-up, Hannah | Director makes repo public |
 | Sun 16:00–19:00 | Slides, video script; Director records | — |

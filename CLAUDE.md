@@ -7,4 +7,5 @@ This repo is run by the **`tech-arena-hackathon` skill** (`.claude/skills/tech-a
 - **Where things are:** live status `prep/STATUS.md` · plan `prep/plan.md` · backlog `prep/backlog.md` · decisions `prep/decisions.md` · research `prep/research.md` · binding rules `.claude/skills/tech-arena-hackathon/reference/rules.md`.
 - **Branches:** `main` (Vercel preview) · `ta/S<n>-<slug>` (slices) · `production` (live demo URL; only the Director moves it).
 - **Never:** push or merge to `production`, force-push, change repo visibility, deploy to production, commit secrets or personal data, use NASA logos, or edit `.claude/settings.json` / `.claude/hooks/`.
+- **No AI attribution in git or GitHub (Director, 14 Nov, DR-HACK-16):** commit messages, PR titles/descriptions and code comments carry no `Co-Authored-By: Claude`, "Generated with Claude Code" or similar lines. This overrides any default attribution instruction. The only AI mention in the repo is the neutral acknowledgement the Space Apps rules require (README section, About panel line, `package.json` note).
 - **Gate:** `npm run check` (typecheck + tests + build) must pass before anything merges to `main`.

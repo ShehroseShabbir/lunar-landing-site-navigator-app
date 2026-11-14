@@ -136,6 +136,8 @@ const CREDITS: { item: string; href: string; licence: string }[] = [
   { item: 'NSSDC lunar landing sites', href: 'https://nssdc.gsfc.nasa.gov/planetary/lunar/lunar_sites.html', licence: 'NASA data, publicly available' },
   { item: 'USGS Gazetteer of Planetary Nomenclature', href: 'https://planetarynames.wr.usgs.gov', licence: 'USGS data, publicly available' },
   { item: 'LROC positions', href: 'https://lroc.im-ldi.com', licence: 'Credit: NASA/GSFC/Arizona State University' },
+  { item: 'Moon globe: NASA Scientific Visualization Studio, CGI Moon Kit (LROC WAC colour mosaic, ASU; LOLA relief)', href: 'https://svs.gsfc.nasa.gov/4720', licence: 'NASA, public domain' },
+  { item: 'Earth globe: NASA Earth Observatory, Blue Marble Next Generation', href: 'https://science.nasa.gov/earth/earth-observatory/blue-marble-next-generation/', licence: 'NASA, public domain' },
   { item: 'IBM Plex Sans and Mono (self-hosted)', href: 'https://github.com/IBM/plex', licence: 'SIL Open Font License 1.1' },
   { item: 'Wikipedia (cited for some site coordinates)', href: 'https://en.wikipedia.org', licence: 'CC BY-SA 4.0' },
   {
@@ -238,6 +240,9 @@ export function AboutDialog({ open, onClose, returnFocusTo }: AboutDialogProps) 
             {Math.abs(T.reachStopsAtLatDeg)}°S), so very distant terrain toward the north is not included.
           </li>
           <li>The horizon uses a {T.observerHeightM} m observer height above the elevation data.</li>
+          <li>
+            The space view compresses the Earth–Moon distance unless True scale is on; the Sun is never drawn to scale or size. The stars in both 3D views are decoration, not a star map.
+          </li>
         </ul>
 
         <h3>Credits and licences</h3>

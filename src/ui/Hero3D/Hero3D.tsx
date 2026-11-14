@@ -34,6 +34,10 @@ export interface Hero3DProps {
   onCaption?(caption: string | null): void;
   /** Render the icon column inside the hero (default true). */
   showControls?: boolean;
+  /** Zooming out past the farthest surface view (S17 space view). */
+  onZoomOutBeyond?(): void;
+  /** Extra buttons at the end of the icon column. */
+  controlsExtra?: ReactNode;
 }
 
 interface Tiles {
@@ -103,6 +107,7 @@ export function Hero3D(props: Hero3DProps) {
               compass: compassRefs.current.filter((e): e is HTMLDivElement => e !== null),
             },
             onContextLost: () => setWebglFailed(true),
+            onZoomOutBeyond: () => zoomOutRef.current?.(),
           });
           setSceneReady(true);
         } catch {
@@ -146,6 +151,8 @@ export function Hero3D(props: Hero3DProps) {
   );
 
   const tRef = useRef(t);
+  const zoomOutRef = useRef(props.onZoomOutBeyond);
+  zoomOutRef.current = props.onZoomOutBeyond;
   tRef.current = t;
   const homeYaw = useCallback((): number => {
     if (!paths) return 0;
@@ -359,6 +366,7 @@ export function Hero3D(props: Hero3DProps) {
           onPanoramaChange={setPanorama}
           viewDisabled={show2d}
           panoramaLocked={fallback !== null}
+          extra={props.controlsExtra}
         />
       )}
     </div>

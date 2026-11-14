@@ -90,6 +90,8 @@ export interface HeroSceneInit {
   overlay: HTMLCanvasElement;
   labels: LabelEls;
   onContextLost(): void;
+  /** The user tried to zoom out past the farthest surface view (S17: switch to the space view). */
+  onZoomOutBeyond?(): void;
 }
 
 export interface HeroScene {
@@ -249,6 +251,22 @@ export function createHeroScene(init: HeroSceneInit): HeroScene {
     requestRender();
   }
   controls.addEventListener('change', onChange);
+  // Zooming out past the limit opens the space view, after 240 px of wheel at the limit (as Space3D),
+  // so the event that only reaches maxDistance does not switch views.
+  let wheelOutAcc = 0;
+  const onWheelOut = (e: WheelEvent) => {
+    const dy = e.deltaMode === 1 ? e.deltaY * 16 : e.deltaY;
+    if (dy <= 0 || camera.position.distanceTo(controls.target) < controls.maxDistance - 1) {
+      wheelOutAcc = 0;
+      return;
+    }
+    wheelOutAcc += dy;
+    if (wheelOutAcc >= 240) {
+      wheelOutAcc = 0;
+      init.onZoomOutBeyond?.();
+    }
+  };
+  canvas.addEventListener('wheel', onWheelOut, { passive: true });
   let pristine = true;
   controls.addEventListener('start', () => {
     pristine = false;
@@ -647,6 +665,10 @@ export function createHeroScene(init: HeroSceneInit): HeroScene {
       requestRender();
     },
     zoom(dir) {
+      if (dir < 0 && camera.position.distanceTo(controls.target) >= controls.maxDistance - 1) {
+        init.onZoomOutBeyond?.();
+        return;
+      }
       if (dir > 0) controls.dollyIn(0.8);
       else controls.dollyOut(0.8);
       controls.update();
@@ -662,6 +684,7 @@ export function createHeroScene(init: HeroSceneInit): HeroScene {
       raf = 0;
       canvas.removeEventListener('webglcontextlost', onLost);
       controls.removeEventListener('change', onChange);
+      canvas.removeEventListener('wheel', onWheelOut);
       controls.dispose();
       dropMesh(nearMesh);
       dropMesh(wideMesh);

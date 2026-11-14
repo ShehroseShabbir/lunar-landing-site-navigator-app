@@ -1,0 +1,37 @@
+{
+  "moonColor": {
+    "file": "moon_color_2k.jpg",
+    "width": 2048,
+    "height": 1024,
+    "lonAtLeftEdgeDeg": -180.0,
+    "kind": "color",
+    "credit": "NASA's Scientific Visualization Studio (CGI Moon Kit; LROC WAC mosaic ASU, LOLA)",
+    "sourceUrl": "https://svs.gsfc.nasa.gov/vis/a000000/a004700/a004720/lroc_color_2k.jpg"
+  },
+  "moonRelief": {
+    "file": "moon_height_1440.png",
+    "width": 1440,
+    "height": 720,
+    "lonAtLeftEdgeDeg": -180.0,
+    "kind": "height",
+    "credit": "NASA's Scientific Visualization Studio (CGI Moon Kit; LROC WAC mosaic ASU, LOLA)",
+    "sourceUrl": "https://svs.gsfc.nasa.gov/vis/a000000/a004700/a004720/ldem_4_uint.tif",
+    "heightMinM": -8879.0,
+    "heightMaxM": 10504.0,
+    "encoding": "8-bit grey, linear: height above the 1737.4 km sphere = heightMinM + v / 255 * (heightMaxM - heightMinM)"
+  },
+  "earthColor": {
+    "file": "earth_color_2k.jpg",
+    "width": 2048,
+    "height": 1024,
+    "lonAtLeftEdgeDeg": -180.0,
+    "kind": "color",
+    "credit": "NASA Earth Observatory (Blue Marble Next Generation)",
+    "sourceUrl": "https://assets.science.nasa.gov/content/dam/science/esd/eo/images/bmng/bmng-topography-bathymetry/august/world.topo.bathy.200408.3x5400x2700.jpg"
+  },
+  "radiiKm": {
+    "moon": 1737.4,
+    "earth": 6371.0,
+    "sun": 695700
+  }
+}

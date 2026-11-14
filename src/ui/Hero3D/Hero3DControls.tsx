@@ -14,6 +14,8 @@ export interface Hero3DControlsProps {
   /** The 2D view is the only view (no WebGL or no terrain): the toggle stays pressed and disabled. */
   panoramaLocked?: boolean;
   className?: string;
+  /** Extra buttons rendered last in the column (e.g. the space-view button). */
+  extra?: ReactNode;
 }
 
 const svg = (children: ReactNode) => (
@@ -129,6 +131,7 @@ export function Hero3DControls(p: Hero3DControlsProps) {
         disabled={p.panoramaLocked}
       />
       {fs.supported && <IconButton label={COPY.fullscreen} icon={ICONS.full} pressed={fs.on} onClick={fs.toggle} />}
+      {p.extra}
     </div>
   );
 }

@@ -14,6 +14,7 @@ import { CompareView, useCompareDrawer } from './ui/Compare';
 import { ShareControls } from './ui/Share';
 import { TourButton } from './ui/Explain/tour';
 import { EventsTab } from './ui/Events';
+import { Space3D, SpaceButton, useSpaceStage } from './ui/Space3D';
 import { useScenarioResult } from './state/useScenarioResult';
 
 function FullSky() {
@@ -29,9 +30,21 @@ function Stage({ onCaption }: { onCaption: (c: string | null) => void }) {
   const safeArea = isPhone
     ? { top: 48, bottom: snap === 'full' ? 0 : 12 }
     : { left: panelWidth, top: 48, bottom: 132 };
+  const { siteGeo, siteName, t } = useAppState();
+  const { stage, showSpace, showSurface, returnedFromSpace } = useSpaceStage();
   return (
     <div data-tour="sky" className="tour-anchor tour-anchor--stage">
-      <Hero3D safeArea={safeArea} onCaption={onCaption} renderPanorama={() => <FullSky />} />
+      {stage === 'space' ? (
+        <Space3D site={siteGeo} siteName={siteName} t={t} onZoomIn={showSurface} safeArea={safeArea} autoFocus />
+      ) : (
+        <Hero3D
+          safeArea={safeArea}
+          onCaption={onCaption}
+          renderPanorama={() => <FullSky />}
+          onZoomOutBeyond={showSpace}
+          controlsExtra={<SpaceButton onClick={showSpace} autoFocus={returnedFromSpace} />}
+        />
+      )}
     </div>
   );
 }

@@ -1,0 +1,177 @@
+/* Space view (S17). Look and sizes follow the 3D hero (visual-spec v5 section 5, v5.1 section 12);
+   leader labels, icon column and tooltips reuse the .h3d-* classes from Hero3D.css. */
+.s3d {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: #000;
+  font-family: var(--font-ui, inherit);
+}
+
+.s3d-gl,
+.s3d-ov {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.s3d-gl {
+  cursor: grab;
+  touch-action: none;
+}
+.s3d-gl:active {
+  cursor: grabbing;
+}
+.s3d-gl:focus-visible {
+  outline: none;
+}
+.s3d:has(.s3d-gl:focus-visible)::after {
+  content: '';
+  position: absolute;
+  left: calc(var(--h3d-l, 0px) + 3px);
+  right: calc(var(--h3d-r, 0px) + 3px);
+  top: calc(var(--h3d-t, 0px) + 3px);
+  bottom: calc(var(--h3d-b, 0px) + 3px);
+  border: 3px solid var(--focus, #fff);
+  pointer-events: none;
+  z-index: 5;
+}
+.s3d-ov,
+.s3d-labels {
+  pointer-events: none;
+}
+.s3d--loading .s3d-gl,
+.s3d--loading .s3d-ov,
+.s3d--loading .s3d-labels,
+.s3d--failed .s3d-gl,
+.s3d--failed .s3d-ov,
+.s3d--failed .s3d-labels {
+  visibility: hidden;
+}
+.s3d-num {
+  font-feature-settings: var(--num);
+}
+
+/* Top row inside the free area: back, zoom levels, scale state and toggle. */
+.s3d-top {
+  position: absolute;
+  top: calc(var(--h3d-t) + 8px);
+  left: calc(var(--h3d-l) + 12px);
+  right: calc(var(--h3d-r) + 12px);
+  z-index: 4;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  pointer-events: none;
+}
+.s3d-top > * {
+  pointer-events: auto;
+}
+.s3d-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 32px;
+  padding: 0 10px;
+  border: 1px solid var(--control, #7a818e);
+  border-radius: 4px;
+  background: var(--field, #1a1c21);
+  color: var(--text, #eceef2);
+  font: inherit;
+  font-size: var(--fs-label);
+  font-weight: var(--fw-medium, 500);
+  line-height: var(--lh-ui);
+  letter-spacing: var(--ls-small);
+  cursor: pointer;
+}
+.s3d-btn:hover:not(:disabled) {
+  background: var(--hover, #22252b);
+}
+.s3d-btn:disabled {
+  cursor: default;
+  opacity: 0.45;
+}
+.s3d-btn[aria-pressed='true'] {
+  background: var(--text, #eceef2);
+  border-color: var(--text, #eceef2);
+  color: var(--on-fill, #101114);
+}
+.s3d-btn:focus-visible {
+  outline: 3px solid var(--focus, #fff);
+  outline-offset: 2px;
+}
+.s3d-seg {
+  display: inline-flex;
+}
+.s3d-seg .s3d-btn {
+  border-radius: 0;
+}
+.s3d-seg .s3d-btn + .s3d-btn {
+  margin-left: -1px;
+}
+.s3d-seg .s3d-btn:first-child {
+  border-radius: 4px 0 0 4px;
+}
+.s3d-seg .s3d-btn:last-child {
+  border-radius: 0 4px 4px 0;
+}
+.s3d-seg .s3d-btn:focus-visible {
+  position: relative;
+  z-index: 1;
+}
+/* Scale state: plain meta text, so it never reads as a button next to "True scale". */
+.s3d-chip {
+  color: var(--text-2, #a6acb6);
+  font-size: var(--fs-meta);
+  font-weight: var(--fw-regular, 400);
+  line-height: var(--lh-meta);
+  letter-spacing: var(--ls-small);
+}
+
+.s3d-status {
+  position: absolute;
+  left: calc(var(--h3d-l) + (100% - var(--h3d-l) - var(--h3d-r)) / 2);
+  top: 45%;
+  transform: translateX(-50%);
+  margin: 0;
+  color: var(--text-2, #a6acb6);
+  font-size: var(--fs-label);
+}
+
+.s3d-credits {
+  position: absolute;
+  left: calc(var(--h3d-l) + 12px);
+  bottom: calc(var(--h3d-b) + 10px);
+  max-width: calc(100% - var(--h3d-l) - var(--h3d-r) - 90px);
+  margin: 0;
+  color: var(--text-3, #8a909b);
+  font-size: var(--fs-meta);
+  line-height: var(--lh-meta);
+  letter-spacing: var(--ls-small);
+  text-wrap: pretty;
+}
+.s3d-credits a {
+  color: var(--text-2, #a6acb6);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.s3d-credits a:focus-visible {
+  outline: 3px solid var(--focus, #fff);
+  outline-offset: 2px;
+}
+
+@media (max-width: 639px) {
+  .s3d-btn {
+    min-height: 44px;
+  }
+  /* The True scale toggle (aria-pressed) and the canvas text alternative carry the scale state. */
+  .s3d-chip {
+    display: none;
+  }
+  .s3d-credits {
+    bottom: calc(var(--h3d-b) + 60px);
+    max-width: calc(100% - 24px);
+  }
+}

@@ -34,3 +34,6 @@ __pycache__/
 .vscode/
 .idea/
 .vercel
+
+# agent worktrees
+.claude/worktrees/

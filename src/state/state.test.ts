@@ -140,10 +140,12 @@ describe('site catalogue', () => {
     const ref = groupSites().find((g) => g.key === 'reference');
     expect(ref?.sites.map((s) => s.id).sort()).toEqual(['a3_cabeusb', 'a3_haworth', 'a3_slater', 'griffin1']);
     const names = ref!.sites.map((s) => s.name).join('|');
-    expect(names).toMatch(/Haworth DEM tile centre/);
-    expect(names).toMatch(/Cabeus B crater centre/);
-    expect(names).toMatch(/Slater crater centre/);
-    expect(names).toMatch(/Nobile crater centre/);
+    expect(names).toMatch(/Near Haworth \(Artemis III region\)/);
+    expect(names).toMatch(/Cabeus B crater \(near Artemis III region\)/);
+    expect(names).toMatch(/Slater crater \(near Artemis III region\)/);
+    expect(names).toMatch(/Nobile crater \(near Griffin-1 target\)/);
+    // DR-HACK-28: short names must still say "near" so they never read as landing points.
+    for (const s of ref!.sites) expect(s.name.toLowerCase()).toContain('near');
   });
   it('puts every site in exactly one group', () => {
     const n = groupSites().reduce((a, g) => a + g.sites.length, 0);

@@ -55,5 +55,106 @@
     }
   ],
   "fixturesFetchedAt": "2026-11-14T00:06:14.681Z",
-  "generatedAt": "2026-11-14T00:19:12.853Z"
+  "generatedAt": "2026-11-14T00:19:12.853Z",
+  "timing": {
+    "source": "JPL Horizons API, 10-minute table, airless, site height 0",
+    "sites": [
+      "connecting_ridge",
+      "chandrayaan3"
+    ],
+    "span": {
+      "start": "2027-03-01 00:00",
+      "stop": "2027-03-31 00:00",
+      "step": "10 m"
+    },
+    "smoothMoonHorizon": true,
+    "definition": "Rise/set = linear interpolation of the Horizons margin between 10-min samples. Sun: upper limb above 0 deg (angular diameter from Horizons) and centre above 0 deg. Earth: upper limb above 0 deg and centre at 0.5 deg (the app comms margin). Compared with scanWindows/nextCrossing (1-minute refinement).",
+    "boundRule": "|dt| <= 0.01 deg / |rate| + 1.5 min per event",
+    "maxAbsErrMin": {
+      "connecting_ridge": {
+        "sun": 22.631583740234376,
+        "earth": 1.440206494140625
+      },
+      "chandrayaan3": {
+        "sun": 0.9936077392578125,
+        "earth": 0
+      }
+    },
+    "perState": [
+      {
+        "site": "connecting_ridge",
+        "body": "sun",
+        "state": "sunUp",
+        "events": 1,
+        "maxAbsErrMin": 22.631583740234376,
+        "worstRateDegPerHr": 0.004004499999999855,
+        "worstBoundMin": 151.3314396304212
+      },
+      {
+        "site": "connecting_ridge",
+        "body": "sun",
+        "state": "powerOk",
+        "events": 0,
+        "maxAbsErrMin": 0,
+        "worstRateDegPerHr": 0,
+        "worstBoundMin": 0
+      },
+      {
+        "site": "connecting_ridge",
+        "body": "earth",
+        "state": "earthVisible",
+        "events": 2,
+        "maxAbsErrMin": 1.2181602986653646,
+        "worstRateDegPerHr": 0.06016466666666686,
+        "worstBoundMin": 11.472630669163486
+      },
+      {
+        "site": "connecting_ridge",
+        "body": "earth",
+        "state": "commsOk",
+        "events": 2,
+        "maxAbsErrMin": 1.440206494140625,
+        "worstRateDegPerHr": 0.05985600000000024,
+        "worstBoundMin": 11.524057738572534
+      },
+      {
+        "site": "chandrayaan3",
+        "body": "sun",
+        "state": "sunUp",
+        "events": 2,
+        "maxAbsErrMin": 0.9901892618815105,
+        "worstRateDegPerHr": 0.17910433333333342,
+        "worstBoundMin": 4.850002698613283
+      },
+      {
+        "site": "chandrayaan3",
+        "body": "sun",
+        "state": "powerOk",
+        "events": 2,
+        "maxAbsErrMin": 0.9936077392578125,
+        "worstRateDegPerHr": 0.17898599999999998,
+        "worstBoundMin": 4.8522174918708725
+      },
+      {
+        "site": "chandrayaan3",
+        "body": "earth",
+        "state": "earthVisible",
+        "events": 0,
+        "maxAbsErrMin": 0,
+        "worstRateDegPerHr": 0,
+        "worstBoundMin": 0
+      },
+      {
+        "site": "chandrayaan3",
+        "body": "earth",
+        "state": "commsOk",
+        "events": 0,
+        "maxAbsErrMin": 0,
+        "worstRateDegPerHr": 0,
+        "worstBoundMin": 0
+      }
+    ],
+    "fixturesFetchedAt": "2026-11-14T03:27:29.065Z",
+    "generatedAt": "2026-11-14T03:28:34.160Z"
+  }
 }

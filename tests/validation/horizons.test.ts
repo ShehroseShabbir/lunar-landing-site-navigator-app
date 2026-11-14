@@ -71,6 +71,14 @@ describe('astro vs JPL Horizons (Sun and Earth, airless, site height 0)', () => 
       fixturesFetchedAt: load(SITE_IDS[0]).fetchedAt,
       generatedAt: new Date().toISOString(),
     };
-    writeFileSync(new URL('../../src/data/validation.json', import.meta.url), JSON.stringify(out, null, 2) + '\n');
+    // Merge into the existing file so blocks written by other suites (timing, illumination) are kept.
+    const file = new URL('../../src/data/validation.json', import.meta.url);
+    let prev: Record<string, unknown> = {};
+    try {
+      prev = JSON.parse(readFileSync(file, 'utf8')) as Record<string, unknown>;
+    } catch {
+      prev = {};
+    }
+    writeFileSync(file, JSON.stringify({ ...prev, ...out }, null, 2) + '\n');
   });
 });

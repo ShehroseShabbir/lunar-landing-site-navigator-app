@@ -2,6 +2,7 @@ import './ui/tokens.css';
 import { AppStateProvider } from './state/AppState';
 import { SitePicker } from './ui/SitePicker/SitePicker';
 import { TimeControl } from './ui/TimeControl/TimeControl';
+import { AboutButton } from './ui/About/About';
 
 export default function App() {
   return (
@@ -11,6 +12,7 @@ export default function App() {
         <p>Sun and Earth against the real horizon at a lunar landing site.</p>
         <SitePicker />
         <TimeControl />
+        <AboutButton />
       </main>
     </AppStateProvider>
   );

@@ -95,7 +95,8 @@ const CREDITS: { item: string; href: string; licence: string }[] = [
   },
   { item: 'NSSDC lunar landing sites', href: 'https://nssdc.gsfc.nasa.gov/planetary/lunar/lunar_sites.html', licence: 'NASA data, publicly available' },
   { item: 'USGS Gazetteer of Planetary Nomenclature', href: 'https://planetarynames.wr.usgs.gov', licence: 'USGS data, publicly available' },
-  { item: 'LROC images', href: 'https://lroc.im-ldi.com', licence: 'Publicly available' },
+  { item: 'LROC images', href: 'https://lroc.im-ldi.com', licence: 'Credit: NASA/GSFC/Arizona State University' },
+  { item: 'Wikipedia (cited for some site coordinates)', href: 'https://en.wikipedia.org', licence: 'CC BY-SA 4.0' },
   {
     item: 'Gläser et al. 2018 (illumination at the south pole)',
     href: 'https://ntrs.nasa.gov/api/citations/20170007365/downloads/20170007365.pdf',

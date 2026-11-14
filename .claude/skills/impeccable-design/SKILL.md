@@ -5,7 +5,7 @@ description: "Visual design guidance from Impeccable (impeccable.style, Paul Bak
 
 # Impeccable design guidance (reference-only install)
 
-This folder vendors the **markdown guidance** from https://github.com/pbakaus/impeccable at commit `acb4cfe14470b1fdf51e855431af618d936b7db8` (Apache-2.0, see `LICENSE`). Installed 14 Nov 2026 on the Director's request (DR-HACK-21).
+This folder vendors the **markdown guidance** from https://github.com/pbakaus/impeccable at commit `acb4cfe14470b1fdf51e855431af618d936b7db8` (Apache-2.0, see `LICENSE` and `NOTICE.md`; `reference/ios.md` and `reference/android.md` derive from ehmo/platform-design-skills, MIT). Vendored files are unmodified except that the upstream `SKILL.md` was renamed `UPSTREAM-SKILL.md`. Installed 14 Nov 2026 on the Director's request (DR-HACK-21).
 
 **The Impeccable CLI, scripts, binary, hooks and live-browser helper are NOT installed and must never be downloaded or run** (rules.md §1.6 as amended). Wherever the upstream docs say to run `.agent/skills/impeccable/scripts/impeccable …`, `npx impeccable …` or to enable hooks, skip that step and do the equivalent by hand: read the files, look at real screenshots, and reason from the guidance. `UPSTREAM-SKILL.md` is the original skill file, kept for its principles and command descriptions only.
 

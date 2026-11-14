@@ -76,7 +76,8 @@ To regenerate the horizon profiles and 3D tiles, follow [`scripts/horizon/README
 | JPL Horizons (validation only; the app does not call it) | https://ssd.jpl.nasa.gov/horizons/ | Public NASA/JPL service. Terms wording not independently checked. |
 | NSSDC lunar landing sites | https://nssdc.gsfc.nasa.gov/planetary/lunar/lunar_sites.html | NASA data. Terms wording not independently checked. |
 | USGS Gazetteer of Planetary Nomenclature | https://planetarynames.wr.usgs.gov | USGS data. Terms wording not independently checked. |
-| LROC (Lunar Reconnaissance Orbiter Camera) positions | https://lroc.im-ldi.com | Terms wording not independently checked. |
+| LROC (Lunar Reconnaissance Orbiter Camera) positions | https://lroc.im-ldi.com | Credit: NASA/GSFC/Arizona State University |
+| Wikipedia, list of artificial objects on the Moon (some site coordinates) | https://en.wikipedia.org/wiki/List_of_artificial_objects_on_the_Moon | CC BY-SA 4.0 |
 | Gläser et al. 2018, illumination at the south pole | https://ntrs.nasa.gov/api/citations/20170007365/downloads/20170007365.pdf | Cited paper, not redistributed |
 | Barker et al. 2021, Planetary and Space Science 203, 105119 | https://doi.org/10.1016/j.pss.2020.105119 | Cited paper, not redistributed |
 | Mazarico et al. 2011, Icarus 211, 1066 | https://doi.org/10.1016/j.icarus.2010.10.030 | Cited paper, not redistributed |

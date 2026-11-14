@@ -165,6 +165,76 @@ export function verdict(rows: VerdictRow[]): string {
   const leaders = counts.flatMap((c, i) => (c === top ? [i] : []));
   if (top === 0 || leaders.length !== 1) return 'No clear winner; see below.';
   const w = rows[leaders[0]];
-  const first = top === 3 ? `${w.name} (${w.site}) is best on all three.` : `${w.name} is best on ${top} of 3.`;
-  return percentRank(w.sunPct) === 100 ? `${first} It has sunlight for the whole 30 days.` : first;
+  const first = top === 3 ? `${w.site} (${w.name}) is best on all three.` : `${w.name} is best on ${top} of 3.`;
+  return percentRank(w.sunPct) === 100 ? `${first} It has sunlight for all 30 days.` : first;
 }
+
+// ---- Verdict helpers (compare drawer) ----
+
+const plural = (n: number, unit: string): string => `${n} ${unit}${n === 1 ? '' : 's'}`;
+
+/** Spelled-out duration, largest two units: "1 day 7 hours", "47 minutes", "less than a minute". */
+export function formatDurationLong(ms: number): string {
+  const total = Math.floor(Math.max(0, ms) / MIN_MS);
+  if (total < 1) return 'less than a minute';
+  const d = Math.floor(total / 1440);
+  const h = Math.floor((total % 1440) / 60);
+  const m = total % 60;
+  const parts: string[] = [];
+  if (d) parts.push(plural(d, 'day'));
+  if (h) parts.push(plural(h, 'hour'));
+  if (m) parts.push(plural(m, 'minute'));
+  return parts.slice(0, 2).join(' ');
+}
+
+/** First scenario (after the first) at the same site as the first but starting later, with the delay in whole days. */
+export function delayedPair(scenarios: Scenario[]): { index: number; days: number } | null {
+  if (scenarios.length < 2) return null;
+  const base = scenarios[0];
+  const baseSite = JSON.stringify(base.site);
+  for (let i = 1; i < scenarios.length; i++) {
+    if (JSON.stringify(scenarios[i].site) !== baseSite) continue;
+    const days = Math.round((effectiveStart(scenarios[i]).getTime() - effectiveStart(base).getTime()) / DAY_MS);
+    if (days > 0) return { index: i, days };
+  }
+  return null;
+}
+
+/**
+ * "At {site}, a N-day delay makes the longest dark period {delta} longer/shorter." Empty when the two periods are
+ * equal or either is clipped by a range edge (no honest difference can be stated).
+ */
+export function delayNote(base: VerdictRow, delayed: VerdictRow, days: number): string {
+  if (days <= 0 || base.darkClipped || delayed.darkClipped) return '';
+  const diffMin = Math.round((delayed.darkHours - base.darkHours) * 60);
+  if (diffMin === 0) return '';
+  return `At ${base.site}, a ${days}-day delay makes the longest dark period ${formatDurationLong(Math.abs(diffMin) * MIN_MS)} ${diffMin > 0 ? 'longer' : 'shorter'}.`;
+}
+
+/** Splits a verdict into its first sentence (shown bold) and the rest. */
+export function splitVerdict(text: string): [string, string] {
+  const i = text.indexOf('. ');
+  return i < 0 ? [text, ''] : [text.slice(0, i + 1), text.slice(i + 2)];
+}
+
+/** Bar width in percent, clamped to 0-100. */
+export function barPercent(value: number, max: number): number {
+  if (!Number.isFinite(value) || max <= 0) return 0;
+  return Math.max(0, Math.min(100, (value / max) * 100));
+}
+
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+/** "14 Nov 2026" in UTC. */
+export function formatDay(d: Date): string {
+  return `${d.getUTCDate()} ${MONTHS[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
+}
+
+/** Whole-day shift of a scenario's effective start against the base, as "(+14 days)"; '' when equal. */
+export function shiftLabel(scenario: Scenario, base: Scenario): string {
+  const days = Math.round((effectiveStart(scenario).getTime() - effectiveStart(base).getTime()) / DAY_MS);
+  if (days === 0) return '';
+  return `(${days > 0 ? '+' : '−'}${plural(Math.abs(days), 'day')})`;
+}
+
+/** Longest-dark bars are drawn against the 30-day range. */
+export const DARK_BAR_MAX_HOURS = 30 * 24;

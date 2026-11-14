@@ -1,0 +1,31 @@
+// User-facing strings for the time dock lanes (visual-spec v5 sections 6 and 8).
+export const TL = {
+  title: '30-day timeline',
+  heading: (start: string) => `30 days starting ${start}`,
+  lanes: { sun: 'Sunlight', earth: 'Earth in view', both: 'Both at once' },
+  laneSr: { sun: 'Sunlight lane', earth: 'Earth in view lane', both: 'Both at once lane' },
+  layers: {
+    sunPartly: 'Sunlight, borderline (Sun partly visible)',
+    sunOk: 'Sunlight (Power OK)',
+    earthPartly: 'Earth in view, borderline (below the comms margin)',
+    earthOk: 'Earth in view (Comms OK)',
+    both: 'Both at once (Power OK and Comms OK)',
+  },
+  slider: 'Playhead, time within the 30-day window',
+  sliderValue: (utc: string, day: number, total: number) => `${utc}, day ${day} of ${total}`,
+  legend: 'Filled = yes · Striped = borderline · Drag or click to pick a time',
+  keys: 'With the playhead focused: Left/Right = 1 h, Shift+Left/Right or Page Up/Down = 1 d, Home/End = range ends.',
+  continues: ' (continues beyond range)',
+  none: 'None in range.',
+  summaryTitle: 'Timeline text summary',
+  calculating: 'Calculating the next 30 days…',
+  updating: 'Updating…',
+  error: 'We couldn’t calculate this site. Try another time or site.',
+  retry: 'Try again',
+  utc: 'UTC',
+  summary: (p: number, c: number, b: number) =>
+    `${p} Power OK windows, ${c} Comms OK windows, ${b} with both.`,
+  tickStart: (dayMonth: string) => dayMonth,
+  tick: (n: number) => `+${n} d`,
+  dayOf: (day: number, total: number, from: string) => `Day ${day} of ${total} · from ${from}`,
+} as const;

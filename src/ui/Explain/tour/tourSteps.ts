@@ -21,7 +21,7 @@ export const TOUR_STEPS: readonly TourStep[] = [
     startIso: TOUR_START_ISO,
     tIso: '2027-03-17T00:00:00Z',
     title: 'Apollo 11: the Sun climbs high',
-    body: "Apollo 11 is near the Moon's equator. On 17 Mar 2027 at 00:00 UTC the Sun is 43.1° above the horizon. Over the 30 days from 14 Mar, Power OK is 51%, with one dark spell of 14 d 16 h.",
+    body: "Apollo 11 is near the Moon's equator. On 17 Mar 2027 at 00:00 UTC the Sun is 43.1° above the horizon. Over the 30 days from 14 Mar, Power OK is 51%, with one dark period of 14 d 16 h.",
     targets: ['sky-sun', 'sky'],
   },
   {
@@ -37,7 +37,7 @@ export const TOUR_STEPS: readonly TourStep[] = [
     startIso: TOUR_START_ISO,
     tIso: '2027-03-14T00:00:00Z',
     title: 'What this means for power and comms',
-    body: 'Over these 30 days this ridge has Power OK 66%, Comms OK 55% and Both OK 32%. Its longest dark spell is 3 d 4 h. Apollo 11 had Comms OK 100%, but Power OK only 51%.',
+    body: 'Over these 30 days this ridge has Power OK 66%, Comms OK 55% and Both OK 32%. Its longest dark period is 3 d 4 h. Apollo 11 had Comms OK 100%, but Power OK only 51%.',
     targets: ['metrics-window', 'metrics'],
   },
 ];

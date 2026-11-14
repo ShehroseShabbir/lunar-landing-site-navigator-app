@@ -2,88 +2,85 @@ import { useState } from 'react';
 import './ui/tokens.css';
 import './App.css';
 import { AppStateProvider, useAppState } from './state/AppState';
-import { useScenarioResult } from './state/useScenarioResult';
-import { SitePicker } from './ui/SitePicker/SitePicker';
-import { TimeControl } from './ui/TimeControl/TimeControl';
-import { AboutButton } from './ui/About/About';
+import { Shell, Breadcrumb, TopActions, Drawer, useShell } from './ui/Shell';
+import { Hero3D } from './ui/Hero3D';
+import { SitePanel, PanelTabs, AnswerStrip } from './ui/Panel';
+import { PlannerDetails, usePanelTab } from './ui/Details';
+import { PlannerRows } from './ui/Metrics';
+import { TimeSteps } from './ui/TimeControl';
+import { TimeDock } from './ui/Timeline';
 import { SkyView } from './ui/SkyView/SkyView';
-import { MetricsPanel } from './ui/Metrics/MetricsPanel';
-import { Timeline } from './ui/Timeline/Timeline';
-import { PlaybackControls } from './ui/Playback';
+import { CompareView, useCompareDrawer } from './ui/Compare';
 import { ShareControls } from './ui/Share';
-import { CompareView, CompareButton, useHashRoute } from './ui/Compare';
-import { Scene3DToggle, Scene3DPanel } from './ui/Scene3D/Scene3DPanel';
 import { TourButton } from './ui/Explain/tour';
+import { useScenarioResult } from './state/useScenarioResult';
 
-function Sky() {
+function FullSky() {
   const { siteGeo, siteName, t } = useAppState();
   const { profile } = useScenarioResult();
-  return <SkyView site={siteGeo} siteName={siteName} profile={profile} t={t} />;
+  return <SkyView site={siteGeo} siteName={siteName} profile={profile} t={t} mode="full" />;
 }
 
-function Picker() {
-  const { terrain } = useScenarioResult();
-  return <SitePicker hasTerrain={terrain === 'loaded'} />;
+function Stage({ onCaption }: { onCaption: (c: string | null) => void }) {
+  const { isPhone, panelWidth, snap } = useShell();
+  // Phone: the stage already ends at the sheet's top edge (the sheet publishes its real height as
+  // --sheet-h for peek, half and full), so only a small margin is needed whatever the snap.
+  const safeArea = isPhone
+    ? { top: 48, bottom: snap === 'full' ? 0 : 12 }
+    : { left: panelWidth, top: 48, bottom: 132 };
+  return <Hero3D safeArea={safeArea} onCaption={onCaption} renderPanorama={() => <FullSky />} />;
 }
 
-function Shell() {
-  const route = useHashRoute();
-  const [show3d, setShow3d] = useState(false);
+function Panel({ caption, onCompare }: { caption: string | null; onCompare: () => void }) {
+  const [tab, setTab] = usePanelTab();
+  const { isPhone, setCollapsed } = useShell();
   return (
-    <div className="app">
-      <header className="app-header">
-        <div>
-          <h1>Lunar Landing Site Navigator</h1>
-          <p>Sun and Earth against the real horizon at a lunar landing site.</p>
-        </div>
-        <nav aria-label="Views">
-          <CompareButton />
-          {route === 'main' && <Scene3DToggle open={show3d} onToggle={() => setShow3d((v) => !v)} />}
-          <AboutButton />
-          {route === 'main' && <TourButton />}
-        </nav>
-      </header>
-      {route === 'compare' ? (
-        <main className="app-main app-compare">
+    <PanelTabs
+      tab={tab === 'planner' ? 'details' : 'site'}
+      onTabChange={(next) => setTab(next === 'details' ? 'planner' : 'site')}
+      onCollapse={isPhone ? undefined : () => setCollapsed(true)}
+      site={<SitePanel caption={caption ?? undefined} onCompare={onCompare} />}
+      details={<PlannerDetails plannerRows={<PlannerRows />} timeSteps={<TimeSteps />} />}
+    />
+  );
+}
+
+function DockWithAnswers() {
+  const { isPhone, snap } = useShell();
+  return (
+    <>
+      {isPhone && snap !== 'full' && <AnswerStrip />}
+      <TimeDock />
+    </>
+  );
+}
+
+function Layout() {
+  const { siteName } = useAppState();
+  const [tab] = usePanelTab();
+  const [caption, setCaption] = useState<string | null>(null);
+  const compare = useCompareDrawer();
+  return (
+    <Shell
+      wide={tab === 'planner'}
+      stage={<Stage onCaption={setCaption} />}
+      breadcrumb={<Breadcrumb siteName={siteName} />}
+      actions={<TopActions tour={<TourButton />} share={<ShareControls />} />}
+      panel={<Panel caption={caption} onCompare={() => compare.setOpen(true)} />}
+      dock={<DockWithAnswers />}
+      drawers={
+        <Drawer open={compare.open} onClose={() => compare.setOpen(false)} title="Compare dates or sites" width={600}>
           <CompareView />
-        </main>
-      ) : (
-        <main className="app-main">
-          <section className="app-controls" aria-label="Site and time">
-            <Picker />
-            <TimeControl />
-            <div className="app-toolbar">
-              <PlaybackControls />
-              <ShareControls />
-            </div>
-          </section>
-          <section className="app-sky" data-tour="sky" aria-label="Sky">
-            <Sky />
-          </section>
-          {show3d && (
-            <section className="app-sky" aria-label="3D terrain">
-              <Scene3DPanel />
-            </section>
-          )}
-          <section className="app-metrics" data-tour="metrics" aria-label="Now at this site">
-            <MetricsPanel />
-          </section>
-          <section className="app-timeline" aria-label="Next 30 days">
-            <Timeline />
-          </section>
-        </main>
-      )}
-      <footer className="app-footer">
-        <p>Times are UTC. Not affiliated with or endorsed by NASA. Data credits and limits: About the data.</p>
-      </footer>
-    </div>
+        </Drawer>
+      }
+    />
   );
 }
 
 export default function App() {
   return (
     <AppStateProvider>
-      <Shell />
+      <Layout />
     </AppStateProvider>
   );
 }

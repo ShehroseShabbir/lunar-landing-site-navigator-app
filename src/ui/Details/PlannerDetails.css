@@ -1,0 +1,81 @@
+
+/* Planner details tab (frame A2): one dense column inside the 440 px panel. */
+.pd {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+  min-width: 0;
+  color: var(--text);
+  font-size: var(--fs-sm);
+  line-height: var(--lh-ui);
+}
+.pd-block {
+  min-width: 0;
+}
+.pd-block > h3 {
+  margin: 0 0 var(--sp-2);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  line-height: var(--lh-ui);
+}
+.pd-small {
+  margin: 0;
+  font-size: var(--fs-xs);
+  line-height: var(--lh-meta);
+  color: var(--text-3);
+}
+.pd-notes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+.pd-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+  margin-bottom: var(--sp-3);
+}
+.pd-field label {
+  font-size: var(--fs-xs);
+  line-height: var(--lh-meta);
+  font-weight: 500;
+  color: var(--text-2);
+}
+.pd input,
+.pd-steps button {
+  min-height: var(--target);
+  background: var(--field);
+  color: var(--text);
+  border: 1px solid var(--control);
+  border-radius: 4px;
+  font: inherit;
+  font-size: var(--fs-xs);
+  padding: 0 var(--sp-2);
+  box-sizing: border-box;
+}
+.pd-field input {
+  align-self: flex-start;
+  max-width: 100%;
+}
+.pd-steps {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-3);
+}
+.pd-steps button {
+  min-width: 44px;
+  cursor: pointer;
+}
+.pd-steps button:hover {
+  border-color: var(--text-2);
+}
+.pd-playback {
+  margin-bottom: var(--sp-3);
+}
+.pd-share .share {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+}

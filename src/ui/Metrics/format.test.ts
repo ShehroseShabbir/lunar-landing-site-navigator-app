@@ -44,7 +44,7 @@ describe('longest dark', () => {
     expect(formatLongestDark(122, false)).toBe('5 d 2 h');
     expect(formatLongestDark(122, true)).toBe('≥ 5 d 2 h');
     expect(formatLongestDark(720, true)).toBe('≥ 30 d');
-    expect(formatLongestDark(0, false)).toBe('None in range');
+    expect(formatLongestDark(0, false)).toBe('No dark period');
   });
 });
 describe('formatUtc', () => {

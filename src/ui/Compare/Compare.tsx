@@ -8,23 +8,34 @@ import { formatUtc } from '../Metrics/format';
 import { subtractWindows, timeToX, windowRect, type Axis } from '../Timeline/geometry';
 import type { VisWindow } from '../../astro/types';
 import {
+  DARK_BAR_MAX_HOURS,
   MAX_SCENARIOS,
   MAX_SLIP_DAYS,
   ROW_LABELS,
   ROW_ORDER,
   SCENARIO_LABELS,
   addScenario,
+  barPercent,
   bestIndices,
   buildColumn,
   clampSlip,
+  delayNote,
+  delayedPair,
   effectiveStart,
+  formatDay,
   formatSlip,
   removeScenario,
+  scenarioName,
+  shiftLabel,
   shiftSlip,
+  splitVerdict,
+  verdict,
   withBaseStart,
   withSlip,
   type Cell,
+  type VerdictRow,
 } from './logic';
+import { COMPARE_COPY as C } from './copy';
 import './Compare.css';
 
 const DAY_MS = 86_400_000;
@@ -34,7 +45,8 @@ function scenarioGeo(sc: Scenario) {
     ? { geo: toGeo(getSite(sc.site) ?? { lat: 0, lon: 0 }), id: sc.site }
     : { geo: { latDeg: sc.site.latDeg, lonDeg: sc.site.lonDeg }, id: null };
 }
-function scenarioName(sc: Scenario): string {
+/** Display name of the scenario's site (not the card name). */
+function siteLabel(sc: Scenario): string {
   return typeof sc.site === 'string' ? (getSite(sc.site)?.name ?? sc.site) : `Custom ${sc.site.latDeg}, ${sc.site.lonDeg}`;
 }
 
@@ -95,85 +107,231 @@ function Stepper({ label, value, onChange }: { label: string; value: number; onC
 function ScenarioCard({
   index,
   sc,
+  base,
   canRemove,
   onChange,
   onRemove,
 }: {
   index: number;
   sc: Scenario;
+  base: Scenario;
   canRemove: boolean;
   onChange: (s: Scenario) => void;
   onRemove: () => void;
 }) {
   const label = SCENARIO_LABELS[index];
+  const name = scenarioName(sc, base);
+  const full = `${label}, ${name}`;
   const [open, setOpen] = useState(false);
   const uid = useId();
   const start = effectiveStart(sc);
+  const shift = shiftLabel(sc, base);
   const groups = useMemo(() => groupSites(), []);
   const siteValue = typeof sc.site === 'string' ? sc.site : '__custom';
   return (
     <li className="cmp-card" data-open={open}>
-      <div className="cmp-card-head">
-        <h3>
-          <span className="cmp-badge" aria-hidden="true">
-            {label}
-          </span>
-          <span className="sr-only">Scenario </span>
-          <span className="sr-only">{label}, </span>
-          {scenarioName(sc)}
-        </h3>
-        <button type="button" className="cmp-edit" aria-expanded={open} aria-label={`${open ? 'Done editing' : 'Edit'} scenario ${label}`} aria-controls={`${uid}-body`} onClick={() => setOpen((o) => !o)}>
-          {open ? 'Done' : 'Edit'}
-        </button>
-      </div>
-      <p className="cmp-oneline">
-        {label} · {scenarioName(sc)} · {start.toISOString().slice(0, 10)} · slip {formatSlip(sc.slipDays)}
+      <h3 className="cmp-card-h">
+        <span className="cmp-badge" aria-hidden="true">
+          {label}
+        </span>
+        <span className="sr-only">Scenario {label}, </span>
+        {name}
+      </h3>
+      <p className="cmp-sub">
+        {siteLabel(sc)} · {formatDay(start)}
+        {shift && ` ${shift}`}
       </p>
-      <div id={`${uid}-body`} className="cmp-card-body">
-        <label className="cmp-field">
-          <span>Site</span>
-          <select
-            value={siteValue}
-            onChange={(e) => {
-              if (e.target.value !== '__custom') onChange({ ...sc, site: e.target.value });
-            }}
-          >
-            {typeof sc.site !== 'string' && <option value="__custom">{scenarioName(sc)}</option>}
-            {groups.map((g) => (
-              <optgroup key={g.key} label={g.label}>
-                {g.sites.map((s) => (
-                  <option key={s.id} value={s.id}>
-                    {s.name}
-                  </option>
-                ))}
-              </optgroup>
-            ))}
-          </select>
-        </label>
-        <label className="cmp-field">
-          <span>Base start (UTC)</span>
-          <input
-            type="datetime-local"
-            value={sc.startISO.slice(0, 16)}
-            onChange={(e) => {
-              const d = new Date(`${e.target.value}:00Z`);
-              if (e.target.value && !Number.isNaN(d.getTime())) onChange(withBaseStart(sc, d));
-            }}
-          />
-        </label>
-        <Stepper label={`Scenario ${label}`} value={sc.slipDays} onChange={(n) => onChange(withSlip(sc, n))} />
-        <p className="cmp-start">
-          Start {formatUtc(start)} (slip {formatSlip(sc.slipDays)})
-        </p>
-        <button type="button" className="cmp-remove" aria-label={`Remove scenario ${label}`} disabled={!canRemove} onClick={onRemove}>
-          Remove
+      <div className="cmp-card-actions">
+        <button type="button" aria-label={C.minus1Label(full)} onClick={() => onChange(shiftSlip(sc, -1))} disabled={sc.slipDays <= -MAX_SLIP_DAYS}>
+          {C.minus1}
+        </button>
+        <button type="button" aria-label={C.plus1Label(full)} onClick={() => onChange(shiftSlip(sc, 1))} disabled={sc.slipDays >= MAX_SLIP_DAYS}>
+          {C.plus1}
+        </button>
+        <button type="button" className="cmp-change" aria-expanded={open} aria-controls={`${uid}-body`} aria-label={C.changeLabel(full, open)} onClick={() => setOpen((o) => !o)}>
+          {open ? C.done : C.change}
         </button>
       </div>
+      {open && (
+        <div id={`${uid}-body`} className="cmp-card-body">
+          <label className="cmp-field">
+            <span>Site</span>
+            <select
+              value={siteValue}
+              onChange={(e) => {
+                if (e.target.value !== '__custom') onChange({ ...sc, site: e.target.value });
+              }}
+            >
+              {typeof sc.site !== 'string' && <option value="__custom">{siteLabel(sc)}</option>}
+              {groups.map((g) => (
+                <optgroup key={g.key} label={g.label}>
+                  {g.sites.map((s) => (
+                    <option key={s.id} value={s.id}>
+                      {s.name}
+                    </option>
+                  ))}
+                </optgroup>
+              ))}
+            </select>
+          </label>
+          <label className="cmp-field">
+            <span>Base start (UTC)</span>
+            <input
+              type="datetime-local"
+              value={sc.startISO.slice(0, 16)}
+              onChange={(e) => {
+                const d = new Date(`${e.target.value}:00Z`);
+                if (e.target.value && !Number.isNaN(d.getTime())) onChange(withBaseStart(sc, d));
+              }}
+            />
+          </label>
+          <Stepper label={`Scenario ${full}`} value={sc.slipDays} onChange={(n) => onChange(withSlip(sc, n))} />
+          <p className="cmp-start">
+            Start {formatUtc(start)} (slip {formatSlip(sc.slipDays)})
+          </p>
+          <button type="button" className="cmp-remove" aria-label={C.removeLabel(full)} disabled={!canRemove} onClick={onRemove}>
+            {C.remove}
+          </button>
+        </div>
+      )}
     </li>
   );
 }
 
-function TableView({ scenarios, results }: { scenarios: Scenario[]; results: Record<number, ScenarioResult | undefined> }) {
+type Results = Record<number, ScenarioResult | undefined>;
+
+function SunGlyph({ size = 14 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 14 14" aria-hidden="true">
+      <circle cx="7" cy="7" r="3" fill="currentColor" />
+      {[0, 45, 90, 135, 180, 225, 270, 315].map((a) => (
+        <line key={a} x1="7" y1="0.8" x2="7" y2="2.6" stroke="currentColor" strokeWidth="1.4" transform={`rotate(${a} 7 7)`} />
+      ))}
+    </svg>
+  );
+}
+function EarthGlyph({ size = 14 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 14 14" aria-hidden="true">
+      <circle cx="7" cy="7" r="5.5" fill="none" stroke="currentColor" strokeWidth="1.5" />
+      <path d="M3.1 10.9 A5.5 5.5 0 0 1 3.1 3.1 A4 4 0 0 0 3.1 10.9 Z" fill="currentColor" />
+    </svg>
+  );
+}
+
+interface BarSpec {
+  key: 'power' | 'comms' | 'dark';
+  copy: { title: string; hint: string };
+  glyph: 'sun' | 'earth' | null;
+  color: string;
+  value: (m: NonNullable<ScenarioResult['metrics']>) => number;
+  max: number;
+}
+const BAR_ROWS: BarSpec[] = [
+  { key: 'power', copy: C.rows.sun, glyph: 'sun', color: 'var(--sun)', value: (m) => m.pctPowerOk, max: 100 },
+  { key: 'comms', copy: C.rows.earth, glyph: 'earth', color: 'var(--earth)', value: (m) => m.pctCommsOk, max: 100 },
+  { key: 'dark', copy: C.rows.dark, glyph: null, color: 'var(--text-2)', value: (m) => m.longestDarkHours, max: DARK_BAR_MAX_HOURS },
+];
+
+/** The three plain rows: a bar per scenario, the value as text, and a Best tag (ties all tagged). */
+function BarRows({ scenarios, results }: { scenarios: Scenario[]; results: Results }) {
+  const base = scenarios[0];
+  const columns = scenarios.map((sc, i) => {
+    const r = results[i];
+    return r && r.status === 'ready' && r.metrics ? { cols: buildColumn(r.metrics, effectiveStart(sc)), m: r.metrics } : null;
+  });
+  const failed = scenarios.some((_, i) => results[i]?.status === 'error');
+  if (columns.some((c) => c === null)) {
+    return failed ? (
+      <p className="cmp-note" role="alert">
+        {C.failed}{' '}
+        {scenarios.map((_, i) =>
+          results[i]?.status === 'error' ? (
+            <button type="button" key={i} onClick={() => results[i]?.retry()}>
+              {C.retry} {SCENARIO_LABELS[i]}
+            </button>
+          ) : null,
+        )}
+      </p>
+    ) : (
+      <p className="cmp-note" role="status">
+        {C.calculating}
+      </p>
+    );
+  }
+  const ready = columns as NonNullable<(typeof columns)[number]>[];
+  return (
+    <>
+      {BAR_ROWS.map((row) => {
+        const cells: Cell[] = ready.map((c) => c.cols[row.key]);
+        const best = bestIndices(cells);
+        return (
+          <section className="cmp-row" key={row.key} aria-labelledby={`cmp-row-${row.key}`}>
+            <h3 id={`cmp-row-${row.key}`}>
+              {row.glyph === 'sun' && (
+                <span style={{ color: 'var(--sun)' }}>
+                  <SunGlyph />
+                </span>
+              )}
+              {row.glyph === 'earth' && (
+                <span style={{ color: 'var(--earth)' }}>
+                  <EarthGlyph />
+                </span>
+              )}
+              {row.copy.title} <span className="cmp-muted">{row.copy.hint}</span>
+            </h3>
+            <ul className="cmp-bars">
+              {scenarios.map((sc, i) => {
+                const isBest = best.has(i);
+                const w = barPercent(row.value(ready[i].m), row.max);
+                return (
+                  <li key={i} className="cmp-bar">
+                    <span className={isBest ? 'cmp-bar-name cmp-bar-name--best' : 'cmp-bar-name'}>
+                      {SCENARIO_LABELS[i]} · {scenarioName(sc, base)}
+                    </span>
+                    <span className="cmp-track" aria-hidden="true">
+                      <i style={{ width: `${w}%`, background: row.color }} />
+                    </span>
+                    <span className="cmp-bar-val">
+                      {cells[i].text}
+                      {isBest && <span className="cmp-tag">{C.best}</span>}
+                    </span>
+                  </li>
+                );
+              })}
+            </ul>
+          </section>
+        );
+      })}
+    </>
+  );
+}
+
+/** One plain sentence (first part bold) plus the optional delay note. Empty until every scenario is ready. */
+function useVerdict(scenarios: Scenario[], results: Results): [string, string] | null {
+  return useMemo(() => {
+    if (scenarios.length < 2) return null;
+    const rows: VerdictRow[] = [];
+    for (let i = 0; i < scenarios.length; i++) {
+      const r = results[i];
+      if (!r || r.status !== 'ready' || !r.metrics) return null;
+      rows.push({
+        name: scenarioName(scenarios[i], scenarios[0]),
+        site: siteLabel(scenarios[i]),
+        sunPct: r.metrics.pctPowerOk,
+        earthPct: r.metrics.pctCommsOk,
+        darkHours: r.metrics.longestDarkHours,
+        darkClipped: r.metrics.longestDarkClipped,
+      });
+    }
+    const [first, rest] = splitVerdict(verdict(rows));
+    const pair = delayedPair(scenarios);
+    const note = pair ? delayNote(rows[0], rows[pair.index], pair.days) : '';
+    return [first, [rest, note].filter(Boolean).join(' ')];
+  }, [scenarios, results]);
+}
+
+function TableView({ scenarios, results }: { scenarios: Scenario[]; results: Results }) {
   const heading = useId();
   const ready = scenarios.map((sc, i) => {
     const r = results[i];
@@ -182,8 +340,8 @@ function TableView({ scenarios, results }: { scenarios: Scenario[]; results: Rec
   const allReady = ready.every((c) => c !== null);
   return (
     <section className="cmp-section" aria-labelledby={heading}>
-      <h2 id={heading}>Metrics side by side</h2>
-      {scenarios.length < 2 && <p className="cmp-note">Add a second scenario to compare.</p>}
+      <h3 id={heading}>{C.tableHeading}</h3>
+      {scenarios.length < 2 && <p className="cmp-note">Add a second option to compare.</p>}
       <div className="cmp-scroll" role="group" aria-labelledby={heading} tabIndex={0}>
         <table className="cmp-table">
           <caption className="sr-only">
@@ -197,8 +355,8 @@ function TableView({ scenarios, results }: { scenarios: Scenario[]; results: Rec
                   <span className="cmp-badge" aria-hidden="true">
                     {SCENARIO_LABELS[i]}
                   </span>
-                  <span className="sr-only">Scenario {SCENARIO_LABELS[i]}, </span> {scenarioName(sc)}
-                  <span className="cmp-colstart">{formatIsoDay(effectiveStart(sc))}</span>
+                  <span className="sr-only">Scenario {SCENARIO_LABELS[i]}, </span> {scenarioName(sc, scenarios[0])}
+                  <span className="cmp-colstart">{formatDay(effectiveStart(sc))}</span>
                   {results[i]?.status === 'error' && (
                     <span className="cmp-colerr" role="alert">
                       Calculation failed. Use Retry in the rows below.
@@ -225,11 +383,11 @@ function TableView({ scenarios, results }: { scenarios: Scenario[]; results: Rec
                             <>
                               <span>Could not calculate. </span>
                               <button type="button" onClick={() => r.retry()}>
-                                Retry
+                                {C.retry}
                               </button>
                             </>
                           ) : (
-                            'Calculating…'
+                            C.calculating
                           )}
                         </td>
                       );
@@ -238,7 +396,7 @@ function TableView({ scenarios, results }: { scenarios: Scenario[]; results: Rec
                     return (
                       <td key={i} className={isBest ? 'cmp-best' : undefined}>
                         <span className={isBest ? 'cmp-val cmp-val-best' : 'cmp-val'}>{c.text}</span>
-                        {isBest && <span className="cmp-tag">Best</span>}
+                        {isBest && <span className="cmp-tag">{C.best}</span>}
                       </td>
                     );
                   })}
@@ -252,33 +410,10 @@ function TableView({ scenarios, results }: { scenarios: Scenario[]; results: Rec
   );
 }
 
-function formatIsoDay(d: Date): string {
-  return d.toISOString().slice(0, 10);
-}
-
-function SunGlyph() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
-      <circle cx="7" cy="7" r="3" fill="currentColor" />
-      {[0, 45, 90, 135, 180, 225, 270, 315].map((a) => (
-        <line key={a} x1="7" y1="0.8" x2="7" y2="2.6" stroke="currentColor" strokeWidth="1.4" transform={`rotate(${a} 7 7)`} />
-      ))}
-    </svg>
-  );
-}
-function EarthGlyph() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
-      <circle cx="7" cy="7" r="5.5" fill="none" stroke="currentColor" strokeWidth="1.5" />
-      <path d="M3.1 10.9 A5.5 5.5 0 0 1 3.1 3.1 A4 4 0 0 0 3.1 10.9 Z" fill="currentColor" />
-    </svg>
-  );
-}
-
 const AXIS_W = 1000;
 const TICKS = [0, 5, 10, 15, 20, 25, 30];
 
-function MiniTimeline({ index, sc, r, uid }: { index: number; sc: Scenario; r: ScenarioResult | undefined; uid: string }) {
+function MiniTimeline({ index, sc, base, r, uid }: { index: number; sc: Scenario; base: Scenario; r: ScenarioResult | undefined; uid: string }) {
   const start = effectiveStart(sc);
   const axis: Axis = { startMs: start.getTime(), spanMs: RANGE_DAYS * DAY_MS, x0: 0, x1: AXIS_W };
   const scan = r?.scan ?? null;
@@ -292,7 +427,7 @@ function MiniTimeline({ index, sc, r, uid }: { index: number; sc: Scenario; r: S
       ]
     : [];
   const summary = m
-    ? `Scenario ${SCENARIO_LABELS[index]}, ${scenarioName(sc)}, from ${formatUtc(start)}: Power OK ${Math.round(m.pctPowerOk)} percent, Comms OK ${Math.round(m.pctCommsOk)} percent, both ${Math.round(m.pctBoth)} percent of the 30 days.`
+    ? `Scenario ${SCENARIO_LABELS[index]}, ${scenarioName(sc, base)}, from ${formatUtc(start)}: Power OK ${Math.round(m.pctPowerOk)} percent, Comms OK ${Math.round(m.pctCommsOk)} percent, both ${Math.round(m.pctBoth)} percent of the 30 days.`
     : `Scenario ${SCENARIO_LABELS[index]}: calculating.`;
   return (
     <li className="cmp-tl-row" aria-busy={r?.status === 'loading'}>
@@ -319,8 +454,8 @@ function MiniTimeline({ index, sc, r, uid }: { index: number; sc: Scenario; r: S
             <rect width="2.5" height="6" fill="var(--earth)" />
           </pattern>
         </defs>
-        <rect x={0} y={4} width={AXIS_W} height={12} fill="var(--surface-2)" />
-        <rect x={0} y={24} width={AXIS_W} height={12} fill="var(--surface-2)" />
+        <rect x={0} y={4} width={AXIS_W} height={12} fill="var(--track)" />
+        <rect x={0} y={24} width={AXIS_W} height={12} fill="var(--track)" />
         {layers.map((l, li) =>
           l.windows.map((w, wi) => {
             const rect = windowRect(w, axis, 2);
@@ -329,7 +464,7 @@ function MiniTimeline({ index, sc, r, uid }: { index: number; sc: Scenario; r: S
           }),
         )}
         {TICKS.map((d) => (
-          <line key={d} x1={timeToX(axis.startMs + d * DAY_MS, axis)} x2={timeToX(axis.startMs + d * DAY_MS, axis)} y1={0} y2={44} stroke="var(--border)" strokeWidth={1} vectorEffect="non-scaling-stroke" opacity={0.5} />
+          <line key={d} x1={timeToX(axis.startMs + d * DAY_MS, axis)} x2={timeToX(axis.startMs + d * DAY_MS, axis)} y1={0} y2={44} stroke="var(--control)" strokeWidth={1} vectorEffect="non-scaling-stroke" opacity={0.5} />
         ))}
       </svg>
       <p className="sr-only">{summary}</p>
@@ -337,16 +472,16 @@ function MiniTimeline({ index, sc, r, uid }: { index: number; sc: Scenario; r: S
   );
 }
 
-function Timelines({ scenarios, results }: { scenarios: Scenario[]; results: Record<number, ScenarioResult | undefined> }) {
+function Timelines({ scenarios, results }: { scenarios: Scenario[]; results: Results }) {
   const heading = useId();
   const uid = useId().replace(/:/g, '');
   return (
     <section className="cmp-section" aria-labelledby={heading}>
-      <h2 id={heading}>Stacked mini-timelines</h2>
+      <h3 id={heading}>{C.lanesHeading}</h3>
       <p className="cmp-note">Shared axis: days from each scenario&rsquo;s own start (UTC). Sun lane on top, Earth lane below.</p>
       <ul className="cmp-tl" aria-label="Mini-timelines, one per scenario">
         {scenarios.map((sc, i) => (
-          <MiniTimeline key={i} index={i} sc={sc} r={results[i]} uid={uid} />
+          <MiniTimeline key={i} index={i} sc={sc} base={scenarios[0]} r={results[i]} uid={uid} />
         ))}
         <li className="cmp-tl-row cmp-tl-axis" aria-hidden="true">
           <span className="cmp-tl-label" />
@@ -374,12 +509,17 @@ function Timelines({ scenarios, results }: { scenarios: Scenario[]; results: Rec
   );
 }
 
-export function CompareView() {
+/**
+ * Compare content for the drawer (visual-spec frame C). The Drawer (B1) supplies the title, close button, focus trap and Esc;
+ * pass `showTitle` when rendering it without a drawer.
+ */
+export function CompareView({ showTitle = false }: { showTitle?: boolean } = {}) {
   const app = useAppState();
   const { scenarios, setScenarios, t, isCustom, site, siteGeo } = app;
-  const [results, setResults] = useState<Record<number, ScenarioResult | undefined>>({});
+  const [results, setResults] = useState<Results>({});
   const [copied, setCopied] = useState('');
-  const headingRef = useRef<HTMLHeadingElement>(null);
+  const [tableOpen, setTableOpen] = useState(false);
+  const tableId = useId();
 
   const fromMain = useCallback(
     (): Scenario => ({
@@ -396,10 +536,6 @@ export function CompareView() {
   }, [scenarios.length, setScenarios, fromMain]);
 
   useEffect(() => {
-    headingRef.current?.focus();
-  }, []);
-
-  useEffect(() => {
     if (!copied) return;
     const id = window.setTimeout(() => setCopied(''), 2000);
     return () => window.clearTimeout(id);
@@ -407,13 +543,14 @@ export function CompareView() {
 
   const report = useCallback((i: number, r: ScenarioResult) => setResults((prev) => ({ ...prev, [i]: r })), []);
   const edit = (i: number, s: Scenario) => setScenarios(scenarios.map((x, j) => (j === i ? s : x)));
+  const sentence = useVerdict(scenarios, results);
 
   const copyLink = async () => {
     try {
       await navigator.clipboard.writeText(window.location.href);
-      setCopied('Link copied');
+      setCopied(C.linkCopied);
     } catch {
-      setCopied('Could not copy. Copy the address from the browser bar.');
+      setCopied(C.linkFailed);
     }
   };
 
@@ -423,46 +560,62 @@ export function CompareView() {
       {scenarios.map((sc, i) => (
         <Runner key={i} index={i} sc={sc} report={report} />
       ))}
-      <header className="cmp-head">
-        <a href="#/" className="cmp-back">
-          <span aria-hidden="true">‹ </span>Back to site view
-        </a>
-        <h1 ref={headingRef} tabIndex={-1}>
-          Compare scenarios ({scenarios.length} of {MAX_SCENARIOS})
-        </h1>
-        <button type="button" className="cmp-copy" onClick={copyLink}>
-          Copy link
-        </button>
-        <span className="cmp-live" role="status" aria-live="polite">
-          {copied}
-        </span>
-      </header>
-      <main>
-        <section aria-label="Scenarios">
-          <ul className="cmp-cards">
-            {scenarios.map((sc, i) => (
-              <ScenarioCard
-                key={i}
-                index={i}
-                sc={sc}
-                canRemove={scenarios.length > 1}
-                onChange={(s) => edit(i, s)}
-                onRemove={() => setScenarios(removeScenario(scenarios, i))}
-              />
-            ))}
-            <li className="cmp-add">
-              <button type="button" disabled={atMax} aria-describedby={atMax ? 'cmp-max' : undefined} onClick={() => setScenarios(addScenario(scenarios, fromMain()))}>
-                <span aria-hidden="true">+ </span>Add scenario
-              </button>
-              {atMax && <p id="cmp-max">Maximum {MAX_SCENARIOS} scenarios</p>}
-              {!atMax && <p>Copies the site and time from the main view.</p>}
-            </li>
-          </ul>
-        </section>
-        <TableView scenarios={scenarios} results={results} />
-        <Timelines scenarios={scenarios} results={results} />
-        <p className="cmp-foot">Times are UTC. Planning aid, not flight software. &ldquo;What if we slip&rdquo;: use Slip (days) on a scenario.</p>
-      </main>
+      {showTitle && <h2 className="cmp-title">{C.title}</h2>}
+      {scenarios.length > 0 && (
+        <>
+          <section aria-label={C.cardsLabel}>
+            <ul className="cmp-cards">
+              {scenarios.map((sc, i) => (
+                <ScenarioCard
+                  key={i}
+                  index={i}
+                  sc={sc}
+                  base={scenarios[0]}
+                  canRemove={scenarios.length > 1}
+                  onChange={(s) => edit(i, s)}
+                  onRemove={() => setScenarios(removeScenario(scenarios, i))}
+                />
+              ))}
+            </ul>
+          </section>
+          <div aria-live="polite">
+            {sentence ? (
+              <p className="cmp-verdict">
+                <b>{sentence[0]}</b>
+                {sentence[1] && ` ${sentence[1]}`}
+              </p>
+            ) : scenarios.length < 2 ? (
+              <p className="cmp-note">{C.needTwo}</p>
+            ) : null}
+          </div>
+          <BarRows scenarios={scenarios} results={results} />
+          <div className="cmp-actions">
+            <button type="button" disabled={atMax} aria-describedby={atMax ? 'cmp-max' : undefined} onClick={() => setScenarios(addScenario(scenarios, fromMain()))}>
+              {C.addAnother}
+            </button>
+            <button type="button" onClick={copyLink}>
+              {C.copyLink}
+            </button>
+            <span className="cmp-live" role="status" aria-live="polite">
+              {copied}
+            </span>
+            <button type="button" className="cmp-disclose" aria-expanded={tableOpen} aria-controls={tableId} onClick={() => setTableOpen((o) => !o)}>
+              {C.fullTable}
+              <svg className="cmp-chev" width="14" height="14" viewBox="0 0 14 14" aria-hidden="true" focusable="false">
+                <path d="M3 5l4 4 4-4" fill="none" stroke="currentColor" strokeWidth="1.6" />
+              </svg>
+            </button>
+          </div>
+          {atMax ? <p id="cmp-max" className="cmp-note">{C.addMax(MAX_SCENARIOS)}</p> : <p className="cmp-note">{C.addHint}</p>}
+          {tableOpen && (
+            <div id={tableId} className="cmp-full">
+              <TableView scenarios={scenarios} results={results} />
+              <Timelines scenarios={scenarios} results={results} />
+            </div>
+          )}
+          <p className="cmp-note">{C.foot}</p>
+        </>
+      )}
     </div>
   );
 }

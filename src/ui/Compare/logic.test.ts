@@ -117,10 +117,10 @@ describe('scenarioName and verdict (plain)', () => {
   });
   const row = (name: string, sunPct: number, earthPct: number, darkHours: number, darkClipped = false): VerdictRow => ({ name, site: 'IM-2', sunPct, earthPct, darkHours, darkClipped });
   it('best on all three', () => {
-    expect(verdict([row('Original date', 50, 30, 100), row('Delayed 3 days', 60, 40, 50)])).toBe('Delayed 3 days (IM-2) is best on all three.');
+    expect(verdict([row('Original date', 50, 30, 100), row('Delayed 3 days', 60, 40, 50)])).toBe('IM-2 (Delayed 3 days) is best on all three.');
   });
   it('best on k of 3, with the full-sunlight sentence', () => {
-    expect(verdict([row('Original date', 100, 30, 100), row('Delayed 3 days', 60, 30, 100)])).toBe('Original date is best on 1 of 3. It has sunlight for the whole 30 days.');
+    expect(verdict([row('Original date', 100, 30, 100), row('Delayed 3 days', 60, 30, 100)])).toBe('Original date is best on 1 of 3. It has sunlight for all 30 days.');
     expect(verdict([row('A', 50, 30, 10), row('B', 60, 40, 50), row('C', 40, 30, 50)])).toBe('B is best on 2 of 3.');
   });
   it('ties and no winner', () => {
@@ -128,5 +128,47 @@ describe('scenarioName and verdict (plain)', () => {
     expect(verdict([row('A', 50, 30, 10), row('B', 50, 30, 10)])).toBe('No clear winner; see below.');
     expect(verdict([row('A', 50, 30, 10, true), row('B', 50, 30, 10, true)])).toBe('No clear winner; see below.');
     expect(verdict([row('A', 50, 30, 10)])).toBe('');
+  });
+});
+
+import { barPercent, delayNote, delayedPair, formatDay, formatDurationLong, shiftLabel, splitVerdict } from './logic';
+
+describe('verdict helpers', () => {
+  const sc = (site: string, startISO: string, slipDays = 0): Scenario => ({ site, startISO, slipDays });
+  const row = (darkHours: number, darkClipped = false) => ({ name: 'x', site: 'Malapert Massif', sunPct: 50, earthPct: 50, darkHours, darkClipped });
+
+  it('spells durations out', () => {
+    expect(formatDurationLong(31 * 3_600_000)).toBe('1 day 7 hours');
+    expect(formatDurationLong(47 * 60_000)).toBe('47 minutes');
+    expect(formatDurationLong(10_000)).toBe('less than a minute');
+  });
+  it('finds the delayed pair at the same site', () => {
+    const list = [sc('a', '2026-11-14T00:00Z'), sc('b', '2026-11-28T00:00Z'), sc('a', '2026-11-14T00:00Z', 14)];
+    expect(delayedPair(list)).toEqual({ index: 2, days: 14 });
+    expect(delayedPair([list[0]])).toBeNull();
+    expect(delayedPair([list[0], sc('a', '2026-11-10T00:00Z')])).toBeNull();
+  });
+  it('words the delay note', () => {
+    expect(delayNote(row(155), row(161), 14)).toBe('At Malapert Massif, a 14-day delay makes the longest dark period 6 hours longer.');
+    expect(delayNote(row(161), row(155), 1)).toContain('a 1-day delay');
+    expect(delayNote(row(161), row(155), 1)).toContain('shorter');
+    expect(delayNote(row(5), row(5), 3)).toBe('');
+    expect(delayNote(row(5, true), row(9), 3)).toBe('');
+  });
+  it('splits the verdict after the first sentence', () => {
+    expect(splitVerdict('A is best on 2 of 3. It has sunlight for all 30 days.')).toEqual(['A is best on 2 of 3.', 'It has sunlight for all 30 days.']);
+    expect(splitVerdict('No clear winner; see below.')).toEqual(['No clear winner; see below.', '']);
+  });
+  it('clamps bar widths', () => {
+    expect(barPercent(155, 720)).toBeCloseTo(21.53, 1);
+    expect(barPercent(900, 720)).toBe(100);
+    expect(barPercent(-1, 720)).toBe(0);
+  });
+  it('formats days and shifts', () => {
+    expect(formatDay(new Date('2026-11-14T05:00:00Z'))).toBe('14 Nov 2026');
+    const a = sc('a', '2026-11-14T00:00Z');
+    expect(shiftLabel(sc('a', '2026-11-14T00:00Z', 14), a)).toBe('(+14 days)');
+    expect(shiftLabel(sc('a', '2026-11-14T00:00Z', -1), a)).toBe('(−1 day)');
+    expect(shiftLabel(a, a)).toBe('');
   });
 });

@@ -76,7 +76,7 @@ function Rows({ rows, extra }: { rows: Row[]; extra?: Record<string, ReactNode> 
   );
 }
 
-export function MetricsPanel() {
+export function PlannerRows() {
   const { t, rangeStart } = useAppState();
   const res = useScenarioResult();
   const shown = res.metrics ? { metrics: res.metrics, scan: res.scan, t } : null;
@@ -178,3 +178,6 @@ export function MetricsPanel() {
     </section>
   );
 }
+
+/** Kept for the old page layout; B4 embeds PlannerRows. */
+export const MetricsPanel = PlannerRows;

@@ -30,7 +30,7 @@ export function countdown(t: Date, to: Date | null): string | null {
 
 /** Longest dark period, from hours; "≥ " prefix when clipped by a range edge. */
 export function formatLongestDark(hours: number, clipped: boolean): string {
-  if (hours <= 0) return 'None in range';
+  if (hours <= 0) return 'No dark period';
   const text = formatDuration(hours * HOUR_MS);
   return clipped && !text.startsWith('≥') ? `≥ ${text}` : text;
 }

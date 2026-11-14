@@ -24,7 +24,7 @@ export function spellDuration(ms: number): string {
 }
 
 export interface Answer {
-  word: 'Yes' | 'Not yet' | 'Not now' | 'No';
+  word: 'Yes' | 'Not yet' | 'No';
   sentence: string;
   /** Small line in the ui-spec format ("1 d 7 h"). */
   precise: string;
@@ -42,7 +42,7 @@ export interface AnswerCtx {
 interface Spec {
   state: 'powerOk' | 'commsOk';
   kind: 'Power' | 'Comms';
-  laterWord: 'Not yet' | 'Not now';
+  laterWord: 'Not yet';
   laterPhrase: string;
 }
 
@@ -52,12 +52,12 @@ function answer(spec: Spec, ok: boolean, t: Date, ends: Date | null, windows: Wi
   if (ok) {
     const left = ends ? ends.getTime() - tMs : null;
     if (left === null || left >= RANGE_LIMIT_DAYS * DAY_MS) {
-      return { word: 'Yes', sentence: `For the whole next ${RANGE_LIMIT_DAYS} days`, precise: `${kind} OK` };
+      return { word: 'Yes', sentence: `For all of the next ${RANGE_LIMIT_DAYS} days`, precise: `${kind} OK` };
     }
     return {
       word: 'Yes',
       sentence: `For another ${spellDuration(left)}`,
-      precise: `${kind} OK · for another ${countdown(t, ends)}`,
+      precise: `${kind} OK · ends in ${countdown(t, ends)}`,
     };
   }
   let nextStartMs: number | null = windows?.find((w) => w.start.getTime() > tMs - REFINE_MS)?.start.getTime() ?? null;
@@ -73,7 +73,7 @@ function answer(spec: Spec, ok: boolean, t: Date, ends: Date | null, windows: Wi
     return {
       word: spec.laterWord,
       sentence: `${spec.laterPhrase} ${spellDuration(wait)}`,
-      precise: `${kind} not OK · ${kind} OK in ${formatDuration(wait)}`,
+      precise: `${kind} not OK · OK in ${formatDuration(wait)}`,
     };
   }
   return { word: 'No', sentence: `Not in the next ${RANGE_LIMIT_DAYS} days`, precise: `${kind} not OK in range` };
@@ -81,12 +81,12 @@ function answer(spec: Spec, ok: boolean, t: Date, ends: Date | null, windows: Wi
 
 /** "Sunlight for power?" */
 export function answerPower(m: SiteMetrics, t: Date, scan: ScanResult | null, ctx?: AnswerCtx): Answer {
-  return answer({ state: 'powerOk', kind: 'Power', laterWord: 'Not yet', laterPhrase: 'Back in' }, m.sun.powerOk, t, m.sun.powerOkEnds, scan?.powerOk ?? null, ctx);
+  return answer({ state: 'powerOk', kind: 'Power', laterWord: 'Not yet', laterPhrase: 'Starts in' }, m.sun.powerOk, t, m.sun.powerOkEnds, scan?.powerOk ?? null, ctx);
 }
 
 /** "Earth in view for radio?" */
 export function answerComms(m: SiteMetrics, t: Date, scan: ScanResult | null, ctx?: AnswerCtx): Answer {
-  return answer({ state: 'commsOk', kind: 'Comms', laterWord: 'Not now', laterPhrase: 'In view again in' }, m.earth.commsOk, t, m.earth.commsOkEnds, scan?.commsOk ?? null, ctx);
+  return answer({ state: 'commsOk', kind: 'Comms', laterWord: 'Not yet', laterPhrase: 'Starts in' }, m.earth.commsOk, t, m.earth.commsOkEnds, scan?.commsOk ?? null, ctx);
 }
 
 function featureOf(name: string): string {
@@ -101,10 +101,10 @@ export function contextSentence(siteName: string, hasTerrain: boolean, latDeg: n
   if (!hasTerrain) return null;
   const feature = featureOf(siteName);
   const pole = latDeg >= 0 ? 'north' : 'south';
-  return `${siteName} is a ${feature} near the Moon's ${pole} pole. The Sun stays low here, so ridges can hide it for days at a time.`;
+  return `${siteName} is a ${feature} near the Moon's ${pole} pole. The Sun stays low here, so ridges can hide it for days.`;
 }
 
-export const FAR_SIDE_LINE = 'Far-side site: Earth is never in view; missions use a relay satellite.';
+export const FAR_SIDE_LINE = 'Earth is never in view from the far side. Missions here use a relay satellite.';
 
 /**
  * Far-side rule (no existing helper in format.ts or ui-spec): Earth is never visible in the range

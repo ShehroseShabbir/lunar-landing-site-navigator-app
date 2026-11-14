@@ -52,7 +52,7 @@ describe('compassPoint', () => {
 describe('describeNow', () => {
   it('Sun above the terrain', () => {
     expect(describeNow({ sun: SUN_UP, earth: EARTH_N })).toBe(
-      'The Sun is above the terrain. Earth is in the north and in view. Lines show where they move over the next 30 days.',
+      'The Sun is above the terrain. Earth is in the north, in view.',
     );
   });
 
@@ -62,7 +62,7 @@ describe('describeNow', () => {
 
   it('Sun above 0 deg but below the terrain', () => {
     expect(describeNow({ sun: body(54, 3.9, 5, false), earth: EARTH_N })).toMatch(
-      /^The Sun is up but hidden behind a ridge\. /,
+      /^The Sun is up but behind a ridge\. /,
     );
   });
 
@@ -74,17 +74,17 @@ describe('describeNow', () => {
 
   it('Earth low only below 10 deg', () => {
     expect(describeNow({ sun: SUN_UP, earth: body(90, LOW_EL_DEG - 0.01, 0, true) })).toContain(
-      'Earth is low in the east and in view.',
+      'Earth is low in the east, in view.',
     );
-    expect(describeNow({ sun: SUN_UP, earth: body(90, LOW_EL_DEG, 0, true) })).toContain('Earth is in the east and in view.');
+    expect(describeNow({ sun: SUN_UP, earth: body(90, LOW_EL_DEG, 0, true) })).toContain('Earth is in the east, in view.');
   });
 
-  it('Earth above 0 deg but hidden behind the terrain', () => {
+  it('Earth above 0 deg XX', () => {
     expect(describeNow({ sun: SUN_UP, earth: body(181, 2, 4, false) })).toContain(
-      'Earth is low in the south but hidden behind the terrain.',
+      'Earth is low in the south, behind the terrain.',
     );
     expect(describeNow({ sun: SUN_UP, earth: body(300, 12, 15, false) })).toContain(
-      'Earth is in the north-west but hidden behind the terrain.',
+      'Earth is in the north-west, behind the terrain.',
     );
   });
 
@@ -92,10 +92,11 @@ describe('describeNow', () => {
     expect(describeNow({ sun: SUN_UP, earth: body(10, -3, 0, false) })).toContain('Earth is below the horizon.');
   });
 
-  it('always ends with the paths sentence', () => {
+  it('canvas label always ends with the paths sentence; the caption does not carry it', () => {
     for (const sun of [SUN_UP, body(54, 3.9, 5, false), body(200, -2, 0, false)]) {
       for (const earth of [EARTH_N, body(181, 2, 4, false), body(10, -3, 0, false)]) {
-        expect(describeNow({ sun, earth }).endsWith(` ${PATHS_SENTENCE}`)).toBe(true);
+        expect(canvasLabel('X', { sun, earth }).endsWith(` ${PATHS_SENTENCE}`)).toBe(true);
+        expect(describeNow({ sun, earth })).not.toContain(PATHS_SENTENCE);
       }
     }
   });
@@ -104,16 +105,16 @@ describe('describeNow', () => {
 describe('canvasLabel', () => {
   it('names the site and gives the Sun direction when it is up', () => {
     expect(canvasLabel('Malapert Massif', { sun: body(54, 3.9, 5, false), earth: body(353, 7.1, 4.4, true) })).toBe(
-      '3D view of the terrain around Malapert Massif. The Sun is up but hidden behind a ridge to the north-east. ' +
-        'Earth is low in the north and in view. Lines show where they move over the next 30 days.',
+      '3D view of the terrain around Malapert Massif. The Sun is up but behind a ridge to the north-east. ' +
+        'Earth is low in the north, in view. Thin lines show where each moves over the next 30 days.',
     );
     expect(canvasLabel('Apollo 11', { sun: body(95, 40, 0, true), earth: EARTH_N })).toBe(
       '3D view of the terrain around Apollo 11. The Sun is above the terrain in the east. ' +
-        'Earth is in the north and in view. Lines show where they move over the next 30 days.',
+        'Earth is in the north, in view. Thin lines show where each moves over the next 30 days.',
     );
     expect(canvasLabel('X', { sun: body(200, -2, 0, false), earth: body(10, -3, 0, false) })).toBe(
       '3D view of the terrain around X. The Sun is below the horizon. Earth is below the horizon. ' +
-        'Lines show where they move over the next 30 days.',
+        'Thin lines show where each moves over the next 30 days.',
     );
   });
 });
@@ -144,8 +145,7 @@ describe('Malapert Massif, 2026-11-20 00:00 UTC (mockup example, measured)', () 
 
   it('gives the rule-built caption', () => {
     expect(describeNow({ sun, earth })).toBe(
-      'The Sun is up but hidden behind a ridge. Earth is low in the north and in view. ' +
-        'Lines show where they move over the next 30 days.',
+      'The Sun is up but behind a ridge. Earth is low in the north, in view.',
     );
   });
 });

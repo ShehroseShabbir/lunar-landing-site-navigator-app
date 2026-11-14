@@ -1,0 +1,23 @@
+/** Every user-facing string the Shell adds. Chloe's copy table lands here. */
+export const SHELL_COPY = {
+  appName: 'Lunar Landing Site Navigator',
+  skipToPanel: 'Skip to the answers panel',
+  mainLabel: 'Lunar landing site navigator',
+  stageLabel: '3D view of the landing site',
+  panelLabel: 'Site and answers',
+  collapsePanel: 'Hide panel',
+  expandPanel: 'Show panel',
+  timeDockLabel: 'Time',
+  actionsLabel: 'Actions',
+  menu: 'Menu',
+  menuTitle: 'Menu',
+  share: 'Share',
+  aboutButton: 'About the data',
+  aboutTitle: 'About the data',
+  closeDrawer: (title: string) => `Close ${title}`,
+  sheetLabel: 'Site and answers',
+  sheetResize: 'Panel size. Use the up and down arrow keys.',
+  sheetShowMore: 'Show more',
+  sheetShowLess: 'Show less',
+  sheetSnapText: { peek: 'Time bar only', half: 'Half open', full: 'Fully open' },
+} as const;

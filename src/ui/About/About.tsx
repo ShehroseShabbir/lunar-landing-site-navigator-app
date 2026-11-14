@@ -1,5 +1,7 @@
-import { useEffect, useId, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { getSite } from '../../data/sites';
+import { Drawer } from '../Shell/Drawer';
+import { SHELL_COPY } from '../Shell/copy';
 import './About.css';
 
 /**
@@ -66,6 +68,8 @@ export function validationTokens(v: ValidationFile | undefined = validation) {
     generatedAt,
     maxElErrDeg: `${v.maxElErrDeg.toFixed(3)}°`,
     maxAzCosElErrDeg: `${v.maxAzCosElErrDeg.toFixed(3)}°`,
+    maxErrDeg: `${Math.max(v.maxElErrDeg, v.maxAzCosElErrDeg).toFixed(3)}°`,
+    checks: String(isNum(v.pointCount) ? v.pointCount : pointsPerBody * 2),
   };
 }
 
@@ -117,54 +121,19 @@ export interface AboutDialogProps {
 }
 
 export function AboutDialog({ open, onClose, returnFocusTo }: AboutDialogProps) {
-  const ref = useRef<HTMLDialogElement>(null);
-  const opener = useRef<HTMLElement | null>(null);
-  const titleId = useId();
   const T = ABOUT_TERRAIN;
   const tokens = validationTokens();
 
-  useEffect(() => {
-    const dlg = ref.current;
-    if (!dlg) return;
-    if (open && !dlg.open) {
-      opener.current = document.activeElement as HTMLElement | null;
-      dlg.showModal();
-    } else if (!open && dlg.open) {
-      dlg.close();
-    }
-  }, [open]);
-
-  const handleClose = () => {
-    const el = returnFocusTo ?? opener.current;
-    if (el && el.isConnected) el.focus();
-    onClose();
-  };
-
   return (
-    <dialog
-      ref={ref}
-      className="about-dialog"
-      aria-labelledby={titleId}
-      aria-modal="true"
-      onClose={handleClose}
-      onClick={(e) => {
-        if (e.target === ref.current) ref.current?.close();
-      }}
-    >
-      <div className="about-head">
-        <h2 id={titleId}>About the data</h2>
-        <button type="button" className="about-close" onClick={() => ref.current?.close()}>
-          Close
-        </button>
-      </div>
-      <div className="about-body" tabIndex={0} role="region" aria-labelledby={titleId}>
+    <Drawer open={open} onClose={onClose} title={SHELL_COPY.aboutTitle} width={440} returnFocusTo={returnFocusTo} className="about-drawer">
+      <div className="about-body">
         <h3>What this is</h3>
         <p>
           A planning aid for where the Sun and Earth sit at a lunar site. Not flight software. Built for the NASA Space
           Apps Challenge 2026. Uses NASA data.
         </p>
 
-        <h3>What it computes</h3>
+        <h3>What it calculates</h3>
         <p>Geometry, not watts or link budgets.</p>
         <ul>
           <li><strong>Sun up:</strong> any of the Sun&apos;s disk is above the horizon.</li>
@@ -178,7 +147,7 @@ export function AboutDialog({ open, onClose, returnFocusTo }: AboutDialogProps) 
           Times are UTC.
         </p>
 
-        <h3>Positions and accuracy</h3>
+        <h3>How accurate it is</h3>
         {tokens ? (
           <p>
             Computed in your browser with astronomy-engine, no refraction. Positions use the Moon&apos;s mean-Earth (ME)
@@ -194,7 +163,7 @@ export function AboutDialog({ open, onClose, returnFocusTo }: AboutDialogProps) 
           time by an hour or more.
         </p>
 
-        <h3>Terrain</h3>
+        <h3>Terrain data</h3>
         <p>
           LOLA elevation data gives the horizon: a {T.pgdaTileM} m PGDA tile near the site where one exists, else the{' '}
           {T.gridNearM} m grid, then {T.gridNearM} m and {T.gridFarM} m polar grids farther out. Each site shows its
@@ -206,13 +175,13 @@ export function AboutDialog({ open, onClose, returnFocusTo }: AboutDialogProps) 
           poles terrain decides sunrise and sunset; this is a smooth-sphere estimate only.
         </p>
 
-        <h3>Site coordinates</h3>
+        <h3>Where site positions come from</h3>
         <p>
           Sources: NSSDC, USGS Gazetteer, LROC, PGDA, Gläser et al. 2018. A &quot;reference point&quot; is a crater or
           tile centre near a named region, not the region itself.
         </p>
 
-        <h3>Known limits</h3>
+        <h3>Limits</h3>
         <ul>
           <li>Power OK and Comms OK are visibility rules, not engineering margins.</li>
           <li>Terrain exists only for the sites stated above.</li>
@@ -248,7 +217,7 @@ export function AboutDialog({ open, onClose, returnFocusTo }: AboutDialogProps) 
           </table>
         </details>
       </div>
-    </dialog>
+    </Drawer>
   );
 }
 
@@ -265,7 +234,7 @@ export function AboutButton() {
         aria-haspopup="dialog"
         onClick={() => setOpen(true)}
       >
-        About the data
+        {SHELL_COPY.aboutButton}
       </button>
       <AboutDialog open={open} onClose={() => setOpen(false)} returnFocusTo={btn.current} />
     </>

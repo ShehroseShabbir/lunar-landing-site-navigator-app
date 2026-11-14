@@ -1,0 +1,296 @@
+/* Full-bleed shell (visual-spec 4). Layers, back to front:
+   stage (fixed, whole viewport) < dock, sheet, panel, icons < top bar < drawers (top layer). */
+.shell {
+  --pw: var(--panel-w);
+  --sheet-h: 46dvh;
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: var(--sky);
+  color: var(--text);
+}
+.shell[data-wide='true'] {
+  --pw: var(--panel-w-wide);
+}
+.shell[data-collapsed='true'] {
+  --pw: var(--panel-w-rail);
+}
+
+/* Stage: B2 renders <Hero3D/> into #stage. */
+.shell-main {
+  position: absolute;
+  inset: 0;
+}
+.shell-stage {
+  position: absolute;
+  inset: 0;
+  background: var(--sky);
+}
+.shell-stage > * {
+  max-width: 100%;
+}
+
+/* Top bar: transparent with a top-down black fade. */
+.shell-top {
+  position: absolute;
+  inset: 0 0 auto 0;
+  z-index: 5;
+  height: var(--topbar-h);
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: 0 var(--sp-3) 0 var(--sp-4);
+  background: linear-gradient(rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0));
+  pointer-events: none;
+}
+.shell-top > * {
+  pointer-events: auto;
+}
+.shell-top__actions {
+  margin-left: auto;
+}
+.crumb {
+  margin: 0;
+  min-width: 0;
+  font-size: var(--fs-ui);
+  line-height: var(--lh-ui);
+  font-weight: var(--fw-regular);
+  color: var(--text-2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+  padding: 2px var(--sp-2);
+  background: var(--label-bg);
+  border-radius: var(--radius);
+}
+.crumb__site {
+  font-weight: var(--fw-semibold);
+  color: var(--text);
+}
+.crumb__sep {
+  margin: 0 6px;
+  color: var(--text-3);
+}
+
+.top-actions,
+.top-menu {
+  display: flex;
+  gap: 2px;
+  align-items: center;
+}
+.top-btn,
+.top-actions .about-btn,
+.top-actions .tour__btn {
+  height: var(--target);
+  min-height: var(--target);
+  min-width: 0;
+  padding: 0 var(--sp-3);
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: none;
+  border: 0;
+  border-radius: var(--radius);
+  color: var(--text);
+  font-size: var(--fs-ui);
+  line-height: var(--lh-ui);
+  font-weight: var(--fw-medium);
+  cursor: pointer;
+  background: var(--label-bg);
+}
+.top-btn:hover,
+.top-actions .about-btn:hover,
+.top-actions .tour__btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+.top-btn[aria-expanded='true'] {
+  background: var(--hover);
+}
+.top-menu {
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--sp-2);
+}
+.top-menu .about-btn,
+.top-menu .tour__btn,
+.top-menu .share button {
+  width: 100%;
+  justify-content: flex-start;
+  min-height: var(--target);
+  background: var(--field);
+  border: 1px solid var(--control);
+  border-radius: var(--radius);
+  color: var(--text);
+  padding: 0 var(--sp-3);
+}
+.top-pop {
+  position: relative;
+}
+.top-pop__panel {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 6px);
+  z-index: 7;
+  min-width: 260px;
+  padding: var(--sp-3);
+  background: var(--chrome-solid);
+  border: 1px solid var(--hair-2);
+  border-radius: var(--radius);
+}
+
+/* Left panel: flat, square, 1 px right hairline. */
+.shell-panel {
+  position: absolute;
+  left: 0;
+  top: var(--topbar-h);
+  bottom: 0;
+  z-index: 4;
+  width: var(--pw);
+  display: flex;
+  flex-direction: column;
+  background: var(--chrome);
+  -webkit-backdrop-filter: var(--blur);
+  backdrop-filter: var(--blur);
+  border-right: 1px solid var(--hair);
+  overflow: hidden;
+  transition: width 160ms ease-out;
+}
+.shell-panel[hidden] {
+  display: none;
+}
+.shell-panel:focus-visible {
+  outline-offset: -3px;
+}
+.shell-rail {
+  position: absolute;
+  left: 0;
+  top: var(--topbar-h);
+  bottom: 0;
+  z-index: 4;
+  width: var(--panel-w-rail);
+  display: flex;
+  justify-content: center;
+  padding-top: var(--sp-1);
+  background: var(--chrome);
+  -webkit-backdrop-filter: var(--blur);
+  backdrop-filter: var(--blur);
+  border-right: 1px solid var(--hair);
+}
+.shell-collapse {
+  width: var(--target);
+  height: var(--target);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: 0;
+  border-radius: var(--radius);
+  color: var(--text-2);
+  cursor: pointer;
+}
+.shell-collapse:hover {
+  background: var(--hover);
+  color: var(--text);
+}
+
+/* Bottom time dock: from the panel edge to the right edge. */
+.shell-dock {
+  position: absolute;
+  left: var(--pw);
+  right: 0;
+  bottom: 0;
+  z-index: 3;
+  height: var(--dock-h);
+  display: flex;
+  align-items: center;
+  gap: var(--sp-5);
+  padding: 0 20px;
+  background: var(--chrome);
+  -webkit-backdrop-filter: var(--blur);
+  backdrop-filter: var(--blur);
+  border-top: 1px solid var(--hair);
+  transition: left 160ms ease-out;
+}
+
+/* Bottom-right icon column slot (B2 owns what is inside). */
+.shell-icons {
+  position: absolute;
+  right: var(--icons-gap);
+  bottom: calc(var(--dock-h) + var(--icons-gap));
+  z-index: 4;
+}
+
+.shell-skip {
+  position: absolute;
+  left: var(--sp-3);
+  top: var(--sp-3);
+  z-index: 20;
+  padding: var(--sp-2) var(--sp-3);
+  background: var(--text);
+  color: var(--on-fill);
+  font-size: var(--fs-ui);
+  font-weight: var(--fw-semibold);
+  border-radius: var(--radius);
+  transform: translateY(-200%);
+}
+.shell-skip:focus {
+  transform: none;
+}
+
+.shell-ic {
+  flex: none;
+}
+
+/* Phone: stage on top (~55 %), bottom sheet below. */
+@media (max-width: 640px) {
+  .shell {
+    --sheet-h: 46dvh;
+  }
+  .shell-stage {
+    inset: 0 0 var(--sheet-h) 0;
+  }
+  .shell-top {
+    padding: 0 var(--sp-1) 0 var(--sp-3);
+  }
+  .crumb__root,
+  .crumb__sep {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .shell-icons {
+    bottom: calc(var(--sheet-h) + var(--sp-3));
+    right: var(--sp-3);
+  }
+  .shell[data-snap='full'] .shell-icons {
+    display: none;
+  }
+  .top-btn--menu {
+    min-width: var(--target);
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .shell-panel,
+  .shell-rail,
+  .shell-dock {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+/* Narrow desktop with the wide Planner panel: dock takes full width under the panel so lanes stay usable. */
+@media (min-width: 640px) and (max-width: 1279px) {
+  .shell[data-wide="true"] .shell-dock {
+    left: 0;
+  }
+  .shell[data-wide="true"] .shell-panel,
+  .shell[data-wide="true"] .shell-rail {
+    bottom: var(--dock-h);
+  }
+}

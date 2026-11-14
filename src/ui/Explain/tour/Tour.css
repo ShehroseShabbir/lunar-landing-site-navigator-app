@@ -1,11 +1,12 @@
+
 .tour__btn {
   min-height: var(--target);
   min-width: 44px;
   padding: 0 var(--sp-3);
-  background: none;
-  color: var(--accent);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-control);
+  background: var(--field);
+  color: var(--text);
+  border: 1px solid var(--control);
+  border-radius: 4px;
   font: inherit;
   font-size: var(--fs-sm);
   cursor: pointer;
@@ -34,12 +35,12 @@
   max-height: calc(100vh - 32px);
   overflow-y: auto;
   padding: var(--sp-4);
-  background: var(--surface-2);
+  background: var(--field);
   color: var(--text);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-card);
+  border: 1px solid var(--hair-2);
+  border-radius: 4px;
   font-size: var(--fs-sm);
-  line-height: 20px;
+  line-height: var(--lh-ui);
   animation: tour-in 150ms ease-out;
 }
 .tour__dialog > p,
@@ -47,7 +48,7 @@
   margin: 0;
 }
 .tour__step {
-  color: var(--text-muted);
+  color: var(--text-3);
   font-size: var(--fs-xs);
 }
 .tour__dialog > .tour__title {
@@ -66,27 +67,27 @@
   min-height: var(--target);
   min-width: 44px;
   padding: 0 var(--sp-4);
-  background: var(--surface);
+  background: var(--track);
   color: var(--text);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-control);
+  border: 1px solid var(--control);
+  border-radius: 4px;
   font: inherit;
   cursor: pointer;
 }
 .tour__action:disabled {
-  color: var(--text-muted);
+  color: var(--text-3);
   cursor: not-allowed;
 }
 .tour__action--primary {
-  background: var(--accent);
-  color: var(--on-accent);
-  border-color: var(--accent);
+  background: var(--text);
+  color: #101114;
+  border-color: var(--text);
 }
 .tour__action--text {
   margin-left: auto;
   background: none;
   border-color: transparent;
-  color: var(--accent);
+  color: var(--text-2);
   text-decoration: underline;
 }
 @keyframes tour-in {

@@ -165,6 +165,20 @@ export function useScenarioResult(input?: ScenarioInput): ScenarioResult {
   const profileReady = profileState !== null && profileState.siteId === siteId;
   const profile = profileReady ? profileState.profile : null;
   const tMs = t.getTime();
+  // "Slow" flag: set when the current request has been pending for over 100 ms.
+  const [slow, setSlow] = useState(false);
+  const waitingFor = `${key}|${scanState?.key ?? ""}`;
+  useEffect(() => {
+    const sameScan = scanState?.key === key && metricsState?.key === key;
+    if (sameScan && metricsState?.tMs === tMs) {
+      setSlow(false);
+      return;
+    }
+    if (sameScan) return; // t-only change: never flag as slow
+    const id = window.setTimeout(() => setSlow(true), 100);
+    return () => window.clearTimeout(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [waitingFor, tMs, metricsState]);
 
   useEffect(() => {
     if (!profileReady) return;
@@ -220,9 +234,13 @@ export function useScenarioResult(input?: ScenarioInput): ScenarioResult {
     scanState?.key === key &&
     metricsState?.key === key &&
     metricsState.tMs === tMs;
+  // A t-only change (playhead, playback) keeps the same scan: never show "Updating" for it.
+  // Anything else shows "loading" only after a request has been pending for over 100 ms.
+  const hasResult = scanState !== null && metricsState !== null;
+  const pendingSlow = !fresh && slow;
   return {
     ...base,
-    status: fresh ? "ready" : "loading",
+    status: fresh ? "ready" : !hasResult || pendingSlow ? "loading" : "ready",
     scan: scanState?.scan ?? null,
     metrics: metricsState?.metrics ?? null,
   };

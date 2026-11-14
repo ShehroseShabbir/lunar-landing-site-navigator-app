@@ -1,84 +1,13 @@
-/* Page layout (ui-spec §1.1 desktop, §1.2 phone). Components own their internals. */
-.app {
-  max-width: 1360px;
-  margin: 0 auto;
-  padding: 0 40px 24px;
-  display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
-  gap: 24px;
-}
-.app > * {
-  min-width: 0;
-}
+/* The layout lives in src/ui/Shell/Shell.css (full-bleed stage, docked panel, dock, drawers).
+   This file only keeps the legacy page classes that the pre-v5 components may still reference
+   until B3 and B4 restyle them: inside the panel and drawers they stack vertically. */
 .app-main {
   display: contents;
-}
-.app-compare > * {
-  grid-column: 1 / -1;
-}
-.app-header {
-  grid-column: 1 / -1;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  min-height: 56px;
-  flex-wrap: wrap;
-}
-.app-header h1 {
-  margin: 0;
-  font-size: 1.5rem;
-}
-.app-header p {
-  margin: 0;
-  color: var(--text-muted, inherit);
-}
-.app-header nav {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-.app-controls,
-.app-sky,
-.app-footer {
-  grid-column: 1 / -1;
-}
-.app-metrics {
-  grid-column: span 5;
-}
-.app-timeline {
-  grid-column: span 7;
 }
 .app-toolbar {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px 24px;
+  gap: var(--sp-3) var(--sp-5);
   align-items: center;
-  margin-top: 12px;
-}
-.app-footer {
-  font-size: 0.875rem;
-  color: var(--text-muted, inherit);
-  border-top: 1px solid var(--border, currentColor);
-  padding-top: 12px;
-}
-.app-footer p {
-  margin: 0;
-}
-
-@media (max-width: 1023px) {
-  .app-metrics,
-  .app-timeline {
-    grid-column: 1 / -1;
-  }
-}
-
-@media (max-width: 640px) {
-  .app {
-    padding: 0 16px 16px;
-    gap: 16px;
-  }
-  .app-header h1 {
-    font-size: 1.25rem;
-  }
+  margin-top: var(--sp-3);
 }

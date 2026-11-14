@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import { bodyAltAz, horizonElevAt, visibleFraction } from '../../astro';
 import type { AltAz, Body, HorizonProfile, SiteGeo } from '../../astro';
 import {
@@ -19,18 +19,29 @@ import {
   verticalScale,
   type PlotBox,
 } from './geometry';
+import { SKY_COPY } from './copy';
 import './SkyView.css';
 
-const VB_W = 960;
-const VB_H = 300;
-const BOX: PlotBox = { left: 60, top: 14, width: 884, height: 236 };
-const BOTTOM_Y = BOX.top + BOX.height;
+interface Layout {
+  vbW: number;
+  vbH: number;
+  box: PlotBox;
+}
+/** `panel` is drawn for a 440 px side panel (about 1:1 text); `full` is the wide 2D view. */
+const LAYOUTS: Record<'panel' | 'full', Layout> = {
+  panel: { vbW: 400, vbH: 250, box: { left: 44, top: 10, width: 346, height: 186 } },
+  full: { vbW: 960, vbH: 300, box: { left: 60, top: 14, width: 884, height: 236 } },
+};
 
 export interface SkyViewProps {
   site: SiteGeo;
   siteName: string;
   profile: HorizonProfile | null;
   t: Date;
+  /** `panel` (default): scaled to its container, close-ups at 120 px. `full`: the full-view 2D mode (3D fallback or 2D toggle). */
+  mode?: 'panel' | 'full';
+  /** Heading level of the "Sky panorama" title (default 2; Planner details uses 3). */
+  headingLevel?: 2 | 3;
 }
 
 interface BodyState {
@@ -128,6 +139,7 @@ function Marker({
   active,
   onActive,
   layer,
+  box: BOX,
 }: {
   b: BodyState;
   topDeg: number;
@@ -136,6 +148,7 @@ function Marker({
   active: boolean;
   onActive: (body: Body | null) => void;
   layer: 'disc' | 'top';
+  box: PlotBox;
 }) {
   const pin = pinBody(b.el);
   const x = azToX(b.az, BOX) + xOffset;
@@ -214,7 +227,8 @@ function Marker({
 }
 
 function Inset({ b, profile }: { b: BodyState; profile: HorizonProfile | null }) {
-  const id = `skyview-clip-${b.body}`;
+  const uid = useId().replace(/:/g, '');
+  const id = `skyview-clip-${b.body}-${uid}`;
   const s = insetScale();
   const cx = INSET.widthPx / 2;
   const cy = INSET.heightPx / 2;
@@ -243,7 +257,7 @@ function Inset({ b, profile }: { b: BodyState; profile: HorizonProfile | null })
             <path d={sky} />
           </clipPath>
         </defs>
-        <rect width={INSET.widthPx} height={INSET.heightPx} fill="var(--bg)" />
+        <rect width={INSET.widthPx} height={INSET.heightPx} fill="var(--sky)" />
         <g clipPath={`url(#${id})`}>
           {isSun ? (
             <circle cx={cx} cy={cy} r={r} fill="var(--sun)" />
@@ -259,11 +273,6 @@ function Inset({ b, profile }: { b: BodyState; profile: HorizonProfile | null })
           strokeWidth="2"
         />
         <path d={circlePath(cx, cy, r)} fill="none" stroke={colour} strokeWidth="1.5" strokeDasharray="4 3" />
-        {farOff && (
-          <text x={cx} y={20} textAnchor="middle" className="skyview-label" fill="var(--text)">
-            {hz}
-          </text>
-        )}
       </svg>
       <figcaption>
         <strong>{b.body} close-up</strong>
@@ -271,12 +280,17 @@ function Inset({ b, profile }: { b: BodyState; profile: HorizonProfile | null })
           {' '}
           · ±3° · {pct(b.fraction)} visible
         </span>
+        {farOff && <span className="skyview-inset-far">{hz}</span>}
       </figcaption>
     </figure>
   );
 }
 
-export function SkyView({ site, siteName, profile, t }: SkyViewProps) {
+export function SkyView({ site, siteName, profile, t, mode = 'panel', headingLevel = 2 }: SkyViewProps) {
+  const { vbW: VB_W, vbH: VB_H, box: BOX } = LAYOUTS[mode];
+  const BOTTOM_Y = BOX.top + BOX.height;
+  const plotId = `skyview-plot-${useId().replace(/:/g, '')}`;
+  const Heading = `h${headingLevel}` as 'h2' | 'h3';
   const hasProfile = profile !== null;
   const tMs = t.getTime();
   const { latDeg, lonDeg } = site;
@@ -363,9 +377,9 @@ export function SkyView({ site, siteName, profile, t }: SkyViewProps) {
   const tipY = tipYBody > BOX.top + BOX.height / 2 ? BOX.top + 6 : BOX.top + BOX.height - 34;
 
   return (
-    <section className="skyview" aria-labelledby="skyview-title">
+    <section className={`skyview skyview--${mode}`} aria-labelledby="skyview-title">
       <div className="skyview-head">
-        <h2 id="skyview-title">Sky panorama</h2>
+        <Heading id="skyview-title">{SKY_COPY.title}</Heading>
         <span className="skyview-site">{siteName}</span>
         {!hasProfile && (
           <span className="skyview-badge">
@@ -397,7 +411,7 @@ export function SkyView({ site, siteName, profile, t }: SkyViewProps) {
           role="group"
           aria-label={`Sky panorama for ${siteName}`}
         >
-          <rect x={BOX.left} y={BOX.top} width={BOX.width} height={BOX.height} fill="var(--bg)" stroke="var(--border)" />
+          <rect x={BOX.left} y={BOX.top} width={BOX.width} height={BOX.height} fill="var(--sky)" stroke="var(--control)" />
           {/* elevation grid and labels */}
           {ticks.map((e) => (
             <g key={e}>
@@ -406,7 +420,7 @@ export function SkyView({ site, siteName, profile, t }: SkyViewProps) {
                 x2={BOX.left + BOX.width}
                 y1={elToY(e, topDeg, BOX)}
                 y2={elToY(e, topDeg, BOX)}
-                stroke="var(--border)"
+                stroke="var(--control)"
                 strokeOpacity={e === 0 ? 0 : 0.35}
               />
               <text x={BOX.left - 6} y={elToY(e, topDeg, BOX) + 4} textAnchor="end" className="skyview-axis">
@@ -422,7 +436,7 @@ export function SkyView({ site, siteName, profile, t }: SkyViewProps) {
               x2={azToX(az, BOX)}
               y1={BOTTOM_Y}
               y2={BOTTOM_Y + (az % 90 === 0 ? 8 : 4)}
-              stroke="var(--text-muted)"
+              stroke="var(--text-2)"
             />
           ))}
           {([['N', 0], ['E', 90], ['S', 180], ['W', 270], ['N', 360]] as const).map(([l, az]) => (
@@ -440,7 +454,7 @@ export function SkyView({ site, siteName, profile, t }: SkyViewProps) {
             Azimuth (° from north)
           </text>
           <text
-            transform={`translate(12 ${BOX.top + BOX.height / 2}) rotate(-90)`}
+            transform={`translate(11 ${BOX.top + BOX.height / 2}) rotate(-90)`}
             textAnchor="middle"
             className="skyview-axis"
           >
@@ -448,21 +462,21 @@ export function SkyView({ site, siteName, profile, t }: SkyViewProps) {
           </text>
 
           <defs>
-            <clipPath id="skyview-plot">
+            <clipPath id={plotId}>
               <rect x={BOX.left} y={BOX.top} width={BOX.width} height={BOX.height} />
             </clipPath>
           </defs>
           {/* pass 1: filled discs, under the terrain */}
-          <g clipPath="url(#skyview-plot)" aria-hidden="true">
+          <g clipPath={`url(#${plotId})`} aria-hidden="true">
             {bodies.map((b) =>
               seamOffsets(b).map((off) => (
-                <Marker key={`${b.body}${off}`} b={b} topDeg={topDeg} xOffset={off} hasProfile={hasProfile} active={false} onActive={setActive} layer="disc" />
+                <Marker key={`${b.body}${off}`} b={b} topDeg={topDeg} xOffset={off} hasProfile={hasProfile} active={false} onActive={setActive} layer="disc" box={BOX} />
               )),
             )}
           </g>
 
           {terrain && (
-            <g pointerEvents="none" clipPath="url(#skyview-plot)">
+            <g pointerEvents="none" clipPath={`url(#${plotId})`}>
               <path d={terrain.fill} fill="var(--terrain)" fillOpacity="0.96" />
               <path d={terrain.edge} fill="none" stroke="var(--terrain-edge)" strokeWidth="2" />
             </g>
@@ -484,13 +498,13 @@ export function SkyView({ site, siteName, profile, t }: SkyViewProps) {
           {/* pass 2: outlines, labels and pinned markers, over the terrain */}
           {bodies.map((b) =>
             seamOffsets(b).map((off) => (
-              <Marker key={`top${b.body}${off}`} b={b} topDeg={topDeg} xOffset={off} hasProfile={hasProfile} active={active === b.body} onActive={setActive} layer="top" />
+              <Marker key={`top${b.body}${off}`} b={b} topDeg={topDeg} xOffset={off} hasProfile={hasProfile} active={active === b.body} onActive={setActive} layer="top" box={BOX} />
             )),
           )}
 
           {tip && (
             <g pointerEvents="none">
-              <rect x={tipX} y={tipY} width={tipW} height={28} rx="6" fill="var(--surface-2)" stroke="var(--text)" />
+              <rect x={tipX} y={tipY} width={tipW} height={28} rx="6" fill="var(--field)" stroke="var(--text)" />
               <text x={tipX + 8} y={tipY + 19} className="skyview-tip" fill="var(--text)">
                 {tipText}
               </text>
@@ -507,7 +521,7 @@ export function SkyView({ site, siteName, profile, t }: SkyViewProps) {
           </li>
         ))}
         <li className="skyview-note">
-          Markers are drawn at least 12 px wide; close-ups below show the true size. Terrain is drawn at ×{vScaleText} vertical scale.
+          {SKY_COPY.note(vScaleText)}
         </li>
       </ul>
 
@@ -517,7 +531,7 @@ export function SkyView({ site, siteName, profile, t }: SkyViewProps) {
         ))}
       </div>
 
-      <p className="sr-only" aria-live="polite" role="status">
+      <p className="sr-only">
         {textAlt}
       </p>
     </section>

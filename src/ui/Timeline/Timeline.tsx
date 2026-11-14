@@ -2,20 +2,20 @@ import { useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from 're
 import type { PointerEvent as ReactPointerEvent, KeyboardEvent as ReactKeyboardEvent } from 'react';
 import type { VisWindow } from '../../astro/types';
 import { useAppState } from '../../state/AppState';
-import { DAY_MS, HOUR_MS, RANGE_DAYS, formatUtc, toTimeInput } from '../../state/time';
+import { DAY_MS, HOUR_MS, RANGE_DAYS, toTimeInput } from '../../state/time';
 import { useScenarioResult } from '../../state/useScenarioResult';
 import { formatDuration, subtractWindows, timeToX, windowAtX, windowRect, xToTime, type Axis } from './geometry';
+import { TL } from './copy';
+import { dayMonth, dayOfRange, longUtc } from './dock';
 import './Timeline.css';
 
-const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-const dayMonth = (d: Date) => `${d.getUTCDate()} ${MONTHS[d.getUTCMonth()]}`;
 const dayMonthTime = (d: Date) => `${dayMonth(d)} ${toTimeInput(d)}`;
 
-const LABEL_W = 64;
-const LANE_H = 20;
-const LANE_Y = [18, 50, 82];
-const AXIS_Y = 116;
-const SVG_H = 154;
+const LABEL_W = 108;
+const LANE_H = 10;
+const LANE_Y = [8, 26, 44];
+const AXIS_Y = 74;
+const SVG_H = 84;
 
 type LaneId = 'sun' | 'earth' | 'both';
 interface Layer {
@@ -27,7 +27,7 @@ interface Layer {
 
 /** Rounded bar; a clipped end is flat (the window continues beyond the range). */
 function barPath(x: number, y: number, w: number, h: number, clipL: boolean, clipR: boolean): string {
-  const r = Math.min(4, w / 2);
+  const r = Math.min(3, w / 2);
   const rl = clipL ? 0 : r;
   const rr = clipR ? 0 : r;
   return [
@@ -47,25 +47,25 @@ function barPath(x: number, y: number, w: number, h: number, clipL: boolean, cli
 }
 
 function describe(layer: Layer, w: VisWindow): string {
-  const cont = w.clippedStart || w.clippedEnd ? ' (continues beyond range)' : '';
-  return `${layer.label} · ${dayMonthTime(w.start)} to ${dayMonthTime(w.end)} UTC · ${formatDuration(
+  const cont = w.clippedStart || w.clippedEnd ? TL.continues : '';
+  return `${layer.label} · ${dayMonthTime(w.start)} – ${dayMonthTime(w.end)} UTC · ${formatDuration(
     w.end.getTime() - w.start.getTime(),
   )}${cont}`;
 }
 
 function SunGlyph({ x, y }: { x: number; y: number }) {
-  return <circle cx={x} cy={y} r={5} fill="var(--sun)" aria-hidden="true" />;
+  return <circle cx={x} cy={y} r={4} fill="var(--sun)" aria-hidden="true" />;
 }
 function EarthGlyph({ x, y }: { x: number; y: number }) {
   return (
     <g aria-hidden="true">
-      <circle cx={x} cy={y} r={5} fill="none" stroke="var(--earth)" strokeWidth={2} />
-      <line x1={x - 5} y1={y} x2={x + 5} y2={y} stroke="var(--earth)" strokeWidth={1.5} />
+      <circle cx={x} cy={y} r={4} fill="none" stroke="var(--earth)" strokeWidth={1.75} />
+      <line x1={x - 4} y1={y} x2={x + 4} y2={y} stroke="var(--earth)" strokeWidth={1.25} />
     </g>
   );
 }
 function BothGlyph({ x, y }: { x: number; y: number }) {
-  return <path d={`M${x} ${y - 6} L${x + 6} ${y} L${x} ${y + 6} L${x - 6} ${y} Z`} fill="var(--accent)" aria-hidden="true" />;
+  return <path d={`M${x} ${y - 5} L${x + 5} ${y} L${x} ${y + 5} L${x - 5} ${y} Z`} fill="var(--both, var(--accent))" aria-hidden="true" />;
 }
 
 export function Timeline() {
@@ -81,7 +81,7 @@ export function Timeline() {
   useLayoutEffect(() => {
     const el = wrapRef.current;
     if (!el) return;
-    const measure = () => setWidth(Math.max(280, Math.floor(el.clientWidth)));
+    const measure = () => setWidth(Math.max(260, Math.floor(el.clientWidth)));
     measure();
     if (typeof ResizeObserver === 'undefined') return;
     const ro = new ResizeObserver(measure);
@@ -101,11 +101,11 @@ export function Timeline() {
     () =>
       scan
         ? [
-            { lane: 'sun', kind: 'hatched', label: 'Sun partly visible', windows: subtractWindows(scan.sunUp, scan.powerOk) },
-            { lane: 'sun', kind: 'solid', label: 'Power OK', windows: scan.powerOk },
-            { lane: 'earth', kind: 'hatched', label: 'Earth visible, below comms margin', windows: subtractWindows(scan.earthVisible, scan.commsOk) },
-            { lane: 'earth', kind: 'solid', label: 'Comms OK', windows: scan.commsOk },
-            { lane: 'both', kind: 'solid', label: 'Power OK and Comms OK', windows: scan.both },
+            { lane: 'sun', kind: 'hatched', label: TL.layers.sunPartly, windows: subtractWindows(scan.sunUp, scan.powerOk) },
+            { lane: 'sun', kind: 'solid', label: TL.layers.sunOk, windows: scan.powerOk },
+            { lane: 'earth', kind: 'hatched', label: TL.layers.earthPartly, windows: subtractWindows(scan.earthVisible, scan.commsOk) },
+            { lane: 'earth', kind: 'solid', label: TL.layers.earthOk, windows: scan.commsOk },
+            { lane: 'both', kind: 'solid', label: TL.layers.both, windows: scan.both },
           ]
         : [],
     [scan],
@@ -191,12 +191,13 @@ export function Timeline() {
     return () => window.removeEventListener('keydown', h);
   }, [tip]);
 
-  const heading = `30-day window from ${formatUtc(rangeStart)}`;
+  const heading = TL.heading(dayMonth(rangeStart) + ' ' + rangeStart.getUTCFullYear());
   const tX = timeToX(t.getTime(), axis);
   const tickDays = [0, 7, 14, 21, 28];
+  const keysId = `${uid}keys`;
 
   const summary = scan
-    ? `${scan.powerOk.length} Power OK windows, ${scan.commsOk.length} Comms OK windows, ${scan.both.length} with both.`
+    ? TL.summary(scan.powerOk.length, scan.commsOk.length, scan.both.length)
     : '';
 
   return (
@@ -205,43 +206,35 @@ export function Timeline() {
       aria-labelledby={`${uid}h`}
       aria-busy={status === 'loading'}
     >
-      <h2 id={`${uid}h`} className="timeline__title">
-        30-day timeline
+      <h2 id={`${uid}h`} className="sr-only">
+        {TL.title}: {heading}
       </h2>
-      <p className="timeline__sub">{heading}</p>
 
       {status === 'error' && (
         <p role="alert" className="timeline__error">
-          {error ?? 'The timeline could not be calculated.'}
+          {error ?? TL.error}
         </p>
       )}
       {status !== 'error' && !scan && (
         <div className="timeline__skeleton" role="status">
-          Calculating{'…'}
+          {TL.calculating}
         </div>
       )}
 
       {scan && (
         <>
-          {status === 'loading' && (
-            <p role="status" className="timeline__updating">
-              Updating{'\u2026'}
-            </p>
-          )}
-          <p className="timeline__playhead-label">
-            Playhead: <strong>{formatUtc(t)}</strong>
-          </p>
           <div
             ref={wrapRef}
             className={status === 'loading' ? 'timeline__chart timeline__chart--stale' : 'timeline__chart'}
             role="slider"
             tabIndex={0}
-            aria-label="Playhead, time within the 30-day window"
+            aria-label={TL.slider}
+            aria-describedby={keysId}
             aria-orientation="horizontal"
             aria-valuemin={0}
             aria-valuemax={RANGE_DAYS * 24}
             aria-valuenow={Math.round((t.getTime() - startMs) / HOUR_MS)}
-            aria-valuetext={formatUtc(t)}
+            aria-valuetext={TL.sliderValue(longUtc(t), dayOfRange(t, rangeStart), RANGE_DAYS)}
             onKeyDown={onKey}
             onBlur={() => setTip(null)}
           >
@@ -276,8 +269,8 @@ export function Timeline() {
                   x2={timeToX(startMs + i * DAY_MS, axis)}
                   y1={LANE_Y[0] - 4}
                   y2={LANE_Y[2] + LANE_H + 4}
-                  stroke="var(--border)"
-                  strokeOpacity={i % 7 === 0 ? 0.7 : 0.25}
+                  stroke="var(--control, var(--border))"
+                  strokeOpacity={i % 7 === 0 ? 0.6 : 0.15}
                   strokeWidth={1}
                 />
               ))}
@@ -291,14 +284,14 @@ export function Timeline() {
                       y={LANE_Y[i]}
                       width={axis.x1 - axis.x0}
                       height={LANE_H}
-                      rx={4}
-                      fill="var(--surface-2)"
+                      rx={3}
+                      fill="var(--track, var(--surface-2))"
                     />
-                    {lane === 'sun' && <SunGlyph x={10} y={y} />}
-                    {lane === 'earth' && <EarthGlyph x={10} y={y} />}
-                    {lane === 'both' && <BothGlyph x={10} y={y} />}
-                    <text x={24} y={y + 4} fill="var(--text)" fontSize={14}>
-                      {lane === 'sun' ? 'Sun' : lane === 'earth' ? 'Earth' : 'Both'}
+                    {lane === 'sun' && <SunGlyph x={8} y={y} />}
+                    {lane === 'earth' && <EarthGlyph x={8} y={y} />}
+                    {lane === 'both' && <BothGlyph x={8} y={y} />}
+                    <text x={20} y={y + 4} className="timeline__lane-label" fill="var(--text-2, var(--text))">
+                      {TL.lanes[lane]}
                     </text>
                   </g>
                 );
@@ -306,12 +299,12 @@ export function Timeline() {
 
               {layers.map((layer) => {
                 const i = layer.lane === 'sun' ? 0 : layer.lane === 'earth' ? 1 : 2;
-                const color = layer.lane === 'sun' ? 'var(--sun)' : layer.lane === 'earth' ? 'var(--earth)' : 'var(--accent)';
+                const color = layer.lane === 'sun' ? 'var(--sun)' : layer.lane === 'earth' ? 'var(--earth)' : 'var(--both, var(--accent))';
                 const hatch = layer.lane === 'sun' ? `url(#${uid}hs)` : `url(#${uid}he)`;
                 return layer.windows.map((w, k) => {
                   const r = windowRect(w, axis);
                   const d = barPath(r.x, LANE_Y[i], r.width, LANE_H, w.clippedStart, w.clippedEnd);
-                  const open = r.width >= 14;
+                  const open = r.width >= 12;
                   return (
                     <g key={`${layer.label}${k}`}>
                       <path
@@ -322,20 +315,20 @@ export function Timeline() {
                       />
                       {open && w.clippedStart && (
                         <polyline
-                          points={`${r.x + 7},${LANE_Y[i] + 4} ${r.x + 3},${LANE_Y[i] + LANE_H / 2} ${r.x + 7},${LANE_Y[i] + LANE_H - 4}`}
+                          points={`${r.x + 6},${LANE_Y[i] + 2} ${r.x + 3},${LANE_Y[i] + LANE_H / 2} ${r.x + 6},${LANE_Y[i] + LANE_H - 2}`}
                           fill="none"
                           stroke="var(--bg)"
-                          strokeWidth={2.5}
+                          strokeWidth={2}
                           strokeLinecap="round"
                           strokeLinejoin="round"
                         />
                       )}
                       {open && w.clippedEnd && (
                         <polyline
-                          points={`${r.x + r.width - 7},${LANE_Y[i] + 4} ${r.x + r.width - 3},${LANE_Y[i] + LANE_H / 2} ${r.x + r.width - 7},${LANE_Y[i] + LANE_H - 4}`}
+                          points={`${r.x + r.width - 6},${LANE_Y[i] + 2} ${r.x + r.width - 3},${LANE_Y[i] + LANE_H / 2} ${r.x + r.width - 6},${LANE_Y[i] + LANE_H - 2}`}
                           fill="none"
                           stroke="var(--bg)"
-                          strokeWidth={2.5}
+                          strokeWidth={2}
                           strokeLinecap="round"
                           strokeLinejoin="round"
                         />
@@ -345,86 +338,58 @@ export function Timeline() {
                 });
               })}
 
-              {/* Axis: +N d and UTC date */}
+              {/* Axis: start date, then +N days */}
               {tickDays.map((n) => {
                 const ms = startMs + n * DAY_MS;
                 const x = timeToX(ms, axis);
-                const anchor = n === 0 ? 'start' : 'middle';
                 return (
-                  <g key={n}>
-                    <text x={x} y={AXIS_Y + 4} textAnchor={anchor} fill="var(--text)" fontSize={12}>
-                      {`+${n} d`}
-                    </text>
-                    <text x={x} y={AXIS_Y + 20} textAnchor={anchor} fill="var(--text-muted)" fontSize={12}>
-                      {dayMonth(new Date(ms))}
-                    </text>
-                  </g>
+                  <text
+                    key={n}
+                    x={x}
+                    y={AXIS_Y + 4}
+                    textAnchor={n === 0 ? 'start' : 'middle'}
+                    className="timeline__tick"
+                    fill="var(--text-3, var(--text-muted))"
+                  >
+                    {n === 0 ? TL.tickStart(dayMonth(new Date(ms))) : TL.tick(n)}
+                  </text>
                 );
               })}
-              <text x={axis.x1} y={AXIS_Y + 36} textAnchor="end" fill="var(--text-muted)" fontSize={12}>
-                UTC
-              </text>
 
               {/* Playhead */}
-              <line x1={tX} x2={tX} y1={10} y2={LANE_Y[2] + LANE_H + 4} stroke="var(--focus)" strokeWidth={2} />
-              <path d={`M${tX - 6} 0 L${tX + 6} 0 L${tX} 10 Z`} fill="var(--focus)" />
+              <line x1={tX} x2={tX} y1={2} y2={LANE_Y[2] + LANE_H + 4} stroke="var(--text)" strokeWidth={2} />
+              <circle cx={tX} cy={3} r={4} fill="var(--text)" />
             </svg>
 
             {tip && !dragging && (
               <div
                 className="timeline__tip"
                 role="tooltip"
-                style={{ left: Math.min(Math.max(tip.x, 90), width - 90), top: tip.y + LANE_H + 6 }}
+                style={{ left: Math.min(Math.max(tip.x, 90), width - 90), top: tip.y + LANE_H + 8 }}
               >
                 {tip.text}
               </div>
             )}
           </div>
 
-          <ul className="timeline__legend" aria-label="Legend">
-            <li>
-              <svg width="16" height="16" aria-hidden="true">
-                <rect width="16" height="16" rx="3" fill="var(--text)" />
-              </svg>
-              solid = Power OK / Comms OK
-            </li>
-            <li>
-              <svg width="16" height="16" aria-hidden="true">
-                <defs>
-                  <pattern id={`${uid}hl`} width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-                    <line x1="0" y1="0" x2="0" y2="5" stroke="var(--text)" strokeWidth="2" />
-                  </pattern>
-                </defs>
-                <rect x="0.75" y="0.75" width="14.5" height="14.5" rx="3" fill={`url(#${uid}hl)`} stroke="var(--text)" strokeWidth="1.5" />
-              </svg>
-              hatched = partly visible
-            </li>
-            <li>
-              <svg width="16" height="16" aria-hidden="true">
-                <polyline points="9,3 5,8 9,13" fill="none" stroke="var(--text)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-              chevron = continues beyond range
-            </li>
-          </ul>
-
-          <p className="timeline__hint">
-            Click or drag to move the playhead. With the playhead focused: Left/Right = 1 h, Shift+Left/Right or
-            Page Up/Down = 1 d, Home/End = range ends.
+          <p className="timeline__legend">{TL.legend}</p>
+          <p id={keysId} className="sr-only">
+            {TL.keys}
           </p>
 
           <div className="sr-only">
-            <h3>Timeline text summary</h3>
+            <h3>{TL.summaryTitle}</h3>
             <p>
-              {heading} (UTC). {summary}
+              {heading} ({TL.utc}). {summary}
             </p>
             {layers.map((layer) => (
               <div key={layer.label}>
                 <h4>
-                  {layer.lane === 'sun' ? 'Sun lane' : layer.lane === 'earth' ? 'Earth lane' : 'Both lane'}:{' '}
+                  {TL.laneSr[layer.lane]}:{' '}
                   {layer.label}
                 </h4>
                 {layer.windows.length === 0 ? (
-                  <p>None in range.</p>
+                  <p>{TL.none}</p>
                 ) : (
                   <ul>
                     {layer.windows.map((w, k) => (

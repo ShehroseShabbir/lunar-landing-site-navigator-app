@@ -3,6 +3,7 @@ import { filterSites, groupSites, SITES } from '../../data/sites';
 import { useAppState } from '../../state/AppState';
 import { formatCoords, parseLat, parseLon } from '../../state/coords';
 import { WhyTerrain } from '../Explain/tour';
+import { COPY } from '../Panel/copy';
 import './SitePicker.css';
 
 const CUSTOM = '__custom__';
@@ -61,52 +62,51 @@ export function SitePicker({ hasTerrain = false }: Props) {
     selectSite(value);
   }
 
-  const horizonText = isCustom || !hasTerrain
-    ? 'smooth-Moon horizon, terrain not included'
-    : 'terrain horizon';
+  const W = COPY.where;
+  const horizonText = isCustom || !hasTerrain ? W.smooth : W.terrain;
   const selectId = `${uid}-site`;
   const searchId = `${uid}-search`;
   const latId = `${uid}-lat`;
   const lonId = `${uid}-lon`;
 
   return (
-    <section className="site-picker" aria-label="Site">
-      <div className="site-picker__row">
-        <div className="site-picker__field site-picker__field--grow">
-          <label htmlFor={selectId}>Site</label>
-          <select id={selectId} value={selectValue} onChange={(e) => onSelect(e.target.value)}>
-            {filtered.map((g) => (
-              <optgroup key={g.key} label={g.label}>
-                {g.sites.map((s) => (
-                  <option key={s.id} value={s.id}>
-                    {s.name}
-                  </option>
-                ))}
-              </optgroup>
-            ))}
-            <option value={CUSTOM}>Custom coordinates…</option>
-          </select>
-        </div>
-        <div className="site-picker__field">
-          <label htmlFor={searchId}>Search sites</label>
-          <input
-            id={searchId}
-            type="search"
-            value={query}
-            autoComplete="off"
-            aria-describedby={`${searchId}-status`}
-            onChange={(e) => setQuery(e.target.value)}
-          />
-          <span id={`${searchId}-status`} role="status" className="site-picker__hint">
-            {query.trim() === '' ? '' : matchCount === 0 ? 'No sites match.' : `${matchCount} matching`}
-          </span>
-        </div>
+    <section className="site-picker" aria-label={W.group}>
+      <div className="site-picker__field">
+        <label htmlFor={selectId} className="site-picker__label">
+          {W.label}
+          <span className="sr-only">{W.labelSr}</span>
+        </label>
+        <input
+          id={searchId}
+          type="search"
+          value={query}
+          autoComplete="off"
+          aria-label={W.search}
+          placeholder={W.searchPlaceholder}
+          aria-describedby={`${searchId}-status`}
+          onChange={(e) => setQuery(e.target.value)}
+        />
+        <span id={`${searchId}-status`} role="status" className="site-picker__hint">
+          {query.trim() === '' ? '' : matchCount === 0 ? W.noMatch : W.matching(matchCount)}
+        </span>
+        <select id={selectId} value={selectValue} onChange={(e) => onSelect(e.target.value)}>
+          {filtered.map((g) => (
+            <optgroup key={g.key} label={g.label}>
+              {g.sites.map((s) => (
+                <option key={s.id} value={s.id}>
+                  {s.name}
+                </option>
+              ))}
+            </optgroup>
+          ))}
+          <option value={CUSTOM}>{W.custom}</option>
+        </select>
       </div>
 
       {showCustom && (
         <div className="site-picker__row">
           <div className="site-picker__field">
-            <label htmlFor={latId}>Latitude (°, + north)</label>
+            <label htmlFor={latId}>{W.lat}</label>
             <input
               id={latId}
               type="text"
@@ -118,12 +118,12 @@ export function SitePicker({ hasTerrain = false }: Props) {
               onKeyDown={(e) => e.key === 'Enter' && apply(latDraft, lonDraft, 'both')}
             />
             <span id={`${latId}-hint`} className="site-picker__hint">
-              −90 to 90, not exactly ±90
+              {W.latHint}
             </span>
             {latErr && <ErrorText id={`${latId}-err`} message={latErr} />}
           </div>
           <div className="site-picker__field">
-            <label htmlFor={lonId}>Longitude (°, + east)</label>
+            <label htmlFor={lonId}>{W.lon}</label>
             <input
               id={lonId}
               type="text"
@@ -135,7 +135,7 @@ export function SitePicker({ hasTerrain = false }: Props) {
               onKeyDown={(e) => e.key === 'Enter' && apply(latDraft, lonDraft, 'both')}
             />
             <span id={`${lonId}-hint`} className="site-picker__hint">
-              −180 to 180, east is positive
+              {W.lonHint}
             </span>
             {lonErr && <ErrorText id={`${lonId}-err`} message={lonErr} />}
           </div>
@@ -143,21 +143,28 @@ export function SitePicker({ hasTerrain = false }: Props) {
       )}
 
       <p className="site-picker__summary">
-        <strong>{isCustom ? 'Custom coordinates' : (site?.name ?? '')}</strong>
-        {' · '}
-        {formatCoords(siteGeo.latDeg, siteGeo.lonDeg)} {'· '}
-        {horizonText} <WhyTerrain />
+        <span className="site-picker__meta">
+          {formatCoords(siteGeo.latDeg, siteGeo.lonDeg)}
+          {!isCustom && site?.region ? ` · ${site.region}` : ''}
+        </span>
+        <WhyTerrain />
       </p>
-      {site && (
-        <p className="site-picker__note">
-          {site.note}. {site.mission}{site.agency === '-' ? '' : ` (${site.agency})`}.{' '}
-          <a href={site.sourceUrl} target="_blank" rel="noopener noreferrer">
-            Source<span className="sr-only"> for {site.name} (opens in a new tab)</span>
-          </a>
-        </p>
-      )}
-      {isCustom && (
-        <p className="site-picker__note">Custom site: no terrain profile, so the horizon is a smooth Moon.</p>
+      {(site || isCustom) && (
+        <details className="site-picker__more">
+          <summary>{W.aboutSite}</summary>
+          <p className="site-picker__note">{horizonText}.</p>
+          {site && (
+            <p className="site-picker__note">
+              {site.note}. {site.mission}
+              {site.agency === '-' ? '' : ` (${site.agency})`}.{' '}
+              <a href={site.sourceUrl} target="_blank" rel="noopener noreferrer">
+                {W.source}
+                <span className="sr-only">{W.sourceSr(site.name)}</span>
+              </a>
+            </p>
+          )}
+          {isCustom && <p className="site-picker__note">{W.customNote}</p>}
+        </details>
       )}
     </section>
   );

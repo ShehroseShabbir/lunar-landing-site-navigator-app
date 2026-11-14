@@ -1,33 +1,11 @@
+/* Lanes as the scrubber (visual-spec v5 section 4). Flat, no card: the dock owns the background. */
 .timeline {
-  background: var(--surface);
-  border-radius: var(--radius-card);
-  padding: var(--sp-4);
   min-width: 0;
   max-width: 100%;
-}
-.timeline__title {
-  margin: 0;
-  font-size: var(--fs-lg);
-  line-height: 28px;
-}
-.timeline__sub,
-.timeline__playhead-label,
-.timeline__hint {
-  margin: 0;
-  font-size: var(--fs-sm);
-  line-height: 20px;
-  color: var(--text-muted);
-}
-.timeline__playhead-label {
-  margin-top: var(--sp-3);
-  color: var(--text);
-}
-.timeline__hint {
-  margin-top: var(--sp-2);
+  flex: 1 1 0;
 }
 .timeline__chart {
   position: relative;
-  margin-top: var(--sp-2);
   width: 100%;
   overflow: hidden;
   border-radius: var(--radius-control);
@@ -42,49 +20,50 @@
 .timeline__svg--drag {
   cursor: grabbing;
 }
+.timeline__lane-label {
+  font-size: var(--fs-label);
+  font-weight: var(--fw-medium);
+}
+.timeline__tick {
+  font-size: var(--fs-meta);
+  font-feature-settings: var(--num);
+}
 .timeline__tip {
   position: absolute;
   transform: translateX(-50%);
   max-width: 260px;
-  background: var(--bg);
+  background: rgba(0, 0, 0, 0.8);
   color: var(--text);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-control);
+  border: 1px solid var(--hair-2, var(--border));
+  border-radius: 2px;
   padding: var(--sp-1) var(--sp-2);
-  font-size: var(--fs-sm);
-  line-height: 20px;
+  font-size: var(--fs-meta);
+  line-height: var(--lh-meta);
+  font-weight: var(--fw-medium);
   pointer-events: none;
   z-index: 2;
 }
 .timeline__legend {
-  list-style: none;
-  margin: var(--sp-3) 0 0;
-  padding: 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--sp-2) var(--sp-4);
-  font-size: var(--fs-sm);
-  line-height: 20px;
-}
-.timeline__legend li {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-2);
+  margin: var(--sp-1) 0 0;
+  font-size: var(--fs-meta);
+  line-height: var(--lh-meta);
+  color: var(--text-3, var(--text-muted));
 }
 .timeline__skeleton {
-  margin-top: var(--sp-3);
-  height: 154px;
+  height: 84px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--surface-2);
+  background: var(--track, var(--surface-2));
   border-radius: var(--radius-control);
-  color: var(--text-muted);
+  font-size: var(--fs-sm);
+  color: var(--text-2, var(--text-muted));
 }
 .timeline__error {
-  margin: var(--sp-3) 0 0;
+  margin: 0;
+  font-size: var(--fs-sm);
   color: var(--bad);
-  border: 2px solid var(--bad);
+  border: 1px solid var(--bad);
   border-radius: var(--radius-control);
   padding: var(--sp-2) var(--sp-3);
 }
@@ -94,8 +73,64 @@
 .timeline__chart--stale svg {
   opacity: 0.6;
 }
-.timeline__updating {
-  margin: var(--sp-2) 0 0;
-  font-size: var(--fs-sm);
-  color: var(--text-muted);
+
+/* Dock: left block (play, speed, time) + lanes that fill the rest of the width.
+   Desktop never wraps; the phone sheet stacks them. */
+.time-dock {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: var(--sp-3) var(--sp-5);
+  flex: 1 1 auto;
+  width: 100%;
+  min-width: 0;
+}
+.time-dock__left {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  flex: 0 0 auto;
+  min-width: 0;
+}
+.time-dock__read {
+  display: grid;
+  gap: 2px;
+  min-width: 23ch;
+  white-space: nowrap;
+}
+.time-dock__time {
+  margin: 0;
+  font-family: var(--font-num);
+  font-size: var(--fs-label);
+  line-height: var(--lh-ui);
+  font-weight: var(--fw-medium);
+  font-feature-settings: var(--num);
+  white-space: nowrap;
+  color: var(--text);
+}
+.time-dock__day {
+  margin: 0;
+  font-size: var(--fs-meta);
+  line-height: var(--lh-meta);
+  letter-spacing: var(--ls-small);
+  white-space: nowrap;
+  color: var(--text-3);
+}
+.time-dock .timeline {
+  flex: 1 1 0;
+  min-width: 0;
+}
+@media (max-width: 639px) {
+  .time-dock {
+    flex-wrap: wrap;
+  }
+  .time-dock__left {
+    flex: 1 1 100%;
+  }
+  .time-dock__read {
+    min-width: 0;
+  }
+  .time-dock .timeline {
+    flex: 1 1 100%;
+  }
 }

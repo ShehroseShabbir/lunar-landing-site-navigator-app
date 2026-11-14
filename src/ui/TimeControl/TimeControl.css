@@ -1,69 +1,80 @@
 .time-control {
+  display: grid;
+  gap: var(--sp-1);
+  min-width: 0;
+}
+.time-control__head {
   display: flex;
-  flex-wrap: wrap;
-  gap: var(--sp-4);
-  align-items: flex-end;
-  background: var(--surface);
-  border-radius: var(--radius-card);
-  padding: var(--sp-4);
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-2);
+  min-height: var(--target);
+}
+.time-control__title {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  white-space: nowrap;
+  margin: 0;
+  font-size: var(--fs-label);
+  line-height: var(--lh-ui);
+  font-weight: var(--fw-medium);
+  letter-spacing: var(--ls-small);
+  color: var(--text-2);
+}
+.time-control__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--sp-2);
+  align-items: start;
 }
 .time-control__field {
   display: flex;
   flex-direction: column;
   gap: var(--sp-1);
+  min-width: 0;
 }
 .time-control label {
-  font-size: var(--fs-sm);
-  line-height: 20px;
-  color: var(--text-muted);
+  font-size: var(--fs-label);
+  line-height: var(--lh-ui);
+  font-weight: var(--fw-medium);
+  color: var(--text-2);
 }
 .time-control input {
   box-sizing: border-box;
+  min-width: 0;
+  max-width: 100%;
+  width: 100%;
   min-height: var(--target);
   font: inherit;
+  font-size: var(--fs-input);
+  font-weight: var(--fw-medium);
   color: var(--text);
-  background: var(--surface-2);
-  border: 1px solid var(--border);
+  background: var(--field, var(--surface-2));
+  border: 1px solid var(--control, var(--border));
   border-radius: var(--radius-control);
-  padding: 0 var(--sp-3);
+  padding: 0 var(--sp-2);
 }
-.time-control__utc {
-  align-self: flex-end;
-  min-height: var(--target);
-  display: flex;
-  align-items: center;
-  font-size: var(--fs-sm);
-  color: var(--text-muted);
-}
-.time-control__buttons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--sp-2);
-}
-.time-control button {
+.time-control button,
+.time-steps button {
   min-height: var(--target);
   min-width: var(--target);
   font: inherit;
+  font-size: var(--fs-label);
+  font-weight: var(--fw-medium);
   color: var(--text);
-  background: var(--surface-2);
-  border: 1px solid var(--border);
+  background: var(--field, var(--surface-2));
+  border: 1px solid var(--control, var(--border));
   border-radius: var(--radius-control);
   padding: 0 var(--sp-3);
   cursor: pointer;
 }
-.time-control button:hover {
-  border-color: var(--accent);
+.time-control button:hover,
+.time-steps button:hover {
+  border-color: var(--text-2, var(--accent));
 }
-.time-control button.time-control__now {
-  background: var(--accent);
-  color: var(--on-accent);
-  border-color: var(--accent);
-  font-weight: 600;
-}
-.time-control__playhead {
-  flex: 1 0 100%;
-  margin: 0;
-  font-size: var(--fs-sm);
-  line-height: 20px;
-  color: var(--text-muted);
+.time-steps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
 }

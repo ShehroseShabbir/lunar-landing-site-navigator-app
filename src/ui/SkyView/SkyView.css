@@ -1,35 +1,39 @@
+
 .skyview {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-card);
-  padding: var(--sp-4);
-}
-@media (min-width: 1024px) {
-  .skyview {
-    padding: var(--sp-5);
-  }
+  --sky: #000;
+  background: transparent;
+  color: var(--text);
 }
 .skyview-head {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--sp-2) var(--sp-4);
-  margin-bottom: var(--sp-3);
+  gap: var(--sp-1) var(--sp-3);
+  margin-bottom: var(--sp-2);
 }
-.skyview-head h2 {
+.skyview-head h2,
+.skyview-head h3 {
   margin: 0;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  line-height: var(--lh-ui);
+}
+.skyview--full .skyview-head h2,
+.skyview--full .skyview-head h3 {
   font-size: var(--fs-lg);
   line-height: 28px;
 }
 .skyview-site {
-  color: var(--text-muted);
-  font-size: var(--fs-sm);
+  color: var(--text-2);
+  font-size: var(--fs-xs);
 }
 .skyview-badge {
-  border: 1px solid var(--text);
-  border-radius: 999px;
-  padding: 0 var(--sp-3);
-  font-size: var(--fs-sm);
+  border: 1px solid var(--control);
+  border-radius: 4px;
+  padding: 0 var(--sp-2);
+  font-size: var(--fs-xs);
+  line-height: var(--lh-ui);
+  color: var(--text-2);
 }
 .skyview-jump {
   display: flex;
@@ -39,40 +43,50 @@
 .skyview-jump button {
   min-height: var(--target);
   padding: 0 var(--sp-3);
-  background: var(--surface-2);
+  background: var(--field);
   color: var(--text);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-control);
+  border: 1px solid var(--control);
+  border-radius: 4px;
   font: inherit;
   font-size: var(--fs-sm);
   cursor: pointer;
 }
 .skyview-scroll {
   overflow-x: auto;
-  border-radius: var(--radius-control);
+  border-radius: 4px;
+}
+.skyview-scroll:focus-visible {
+  outline-offset: 0;
 }
 .skyview-svg {
   display: block;
   width: 100%;
-  min-width: 960px;
   height: auto;
+  background: var(--sky);
+}
+.skyview--full .skyview-svg {
+  min-width: 720px;
 }
 .skyview-axis {
-  font-size: 12px;
-  fill: var(--text-muted);
+  font-size: var(--fs-xs);
+  fill: var(--text-2);
 }
 .skyview-cardinal {
-  font-size: 14px;
+  font-size: var(--fs-sm);
   font-weight: 600;
   fill: var(--text);
 }
 .skyview-label,
 .skyview-tip {
-  font-size: 13px;
+  font-size: var(--fs-xs);
   font-weight: 600;
   paint-order: stroke;
-  stroke: var(--bg);
+  stroke: var(--sky);
   stroke-width: 3px;
+}
+.skyview--full .skyview-label,
+.skyview--full .skyview-tip {
+  font-size: var(--fs-sm);
 }
 .skyview-tip {
   stroke: none;
@@ -90,45 +104,62 @@
 }
 .skyview-legend {
   list-style: none;
-  margin: var(--sp-3) 0 0;
+  margin: var(--sp-2) 0 0;
   padding: 0;
   display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+  font-size: var(--fs-xs);
+  line-height: var(--lh-meta);
+  color: var(--text-2);
+}
+.skyview--full .skyview-legend {
+  flex-direction: row;
   flex-wrap: wrap;
   gap: var(--sp-2) var(--sp-5);
   font-size: var(--fs-sm);
+  line-height: var(--lh-ui);
 }
 .skyview-legend li {
   display: flex;
   align-items: center;
   gap: var(--sp-2);
 }
-.skyview-note {
-  color: var(--text-muted);
+.skyview-legend .skyview-note {
+  color: var(--text-3);
   font-size: var(--fs-xs);
 }
 .skyview-insets {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--sp-4);
-  margin-top: var(--sp-4);
+  gap: var(--sp-3);
+  margin-top: var(--sp-3);
 }
 .skyview-inset {
   margin: 0;
-  flex: 1 1 240px;
-  max-width: 360px;
+  width: 180px; /* 120 px high */
+}
+.skyview--full .skyview-inset {
+  width: 300px;
 }
 .skyview-inset svg {
   display: block;
   width: 100%;
   height: auto;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-control);
+  aspect-ratio: 3 / 2;
+  border: 1px solid var(--hair-2);
+  border-radius: 4px;
 }
 .skyview-inset figcaption {
-  font-size: var(--fs-sm);
-  color: var(--text-muted);
+  font-size: var(--fs-xs);
+  line-height: var(--lh-meta);
+  color: var(--text-2);
   margin-top: var(--sp-1);
 }
 .skyview-inset strong {
   color: var(--text);
+}
+.skyview-inset-far {
+  display: block;
+  color: var(--text-3);
 }

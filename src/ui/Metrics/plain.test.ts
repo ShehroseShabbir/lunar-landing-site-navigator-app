@@ -49,28 +49,28 @@ describe('answers: real Malapert Massif 2026-11-20', () => {
   it('power: Not yet, back in 1 day 7 hours', () => {
     const a = answerPower(m, T, scan);
     expect(a.word).toBe('Not yet');
-    expect(a.sentence).toBe('Back in 1 day 7 hours');
-    expect(a.precise).toBe('Power not OK · Power OK in 1 d 7 h');
+    expect(a.sentence).toBe('Starts in 1 day 7 hours');
+    expect(a.precise).toBe('Power not OK · OK in 1 d 7 h');
   });
-  it('comms: Yes, for another 9 days 16 hours', () => {
+  it('comms: Yes, ends in 9 days 16 hours', () => {
     const a = answerComms(m, T, scan);
     expect(a.word).toBe('Yes');
     expect(a.sentence).toBe('For another 9 days 16 hours');
-    expect(a.precise).toBe('Comms OK · for another 9 d 16 h');
+    expect(a.precise).toBe('Comms OK · ends in 9 d 16 h');
   });
 });
 
 describe('answers: state table rows (synthetic)', () => {
   it('OK now', () => {
     const m = fake({ power: true, pEnd: 31, comms: true, cEnd: 0.75 });
-    expect(answerPower(m, T, null)).toEqual({ word: 'Yes', sentence: 'For another 1 day 7 hours', precise: 'Power OK · for another 1 d 7 h' });
-    expect(answerComms(m, T, null)).toEqual({ word: 'Yes', sentence: 'For another 45 minutes', precise: 'Comms OK · for another 45 m' });
+    expect(answerPower(m, T, null)).toEqual({ word: 'Yes', sentence: 'For another 1 day 7 hours', precise: 'Power OK · ends in 1 d 7 h' });
+    expect(answerComms(m, T, null)).toEqual({ word: 'Yes', sentence: 'For another 45 minutes', precise: 'Comms OK · ends in 45 m' });
   });
   it('OK later in range', () => {
     const m = fake({ power: false, comms: false });
     const s = scanOf([win('powerOk', -10, -5), win('powerOk', 31, 40)], [win('commsOk', 2.5, 9)]);
-    expect(answerPower(m, T, s)).toEqual({ word: 'Not yet', sentence: 'Back in 1 day 7 hours', precise: 'Power not OK · Power OK in 1 d 7 h' });
-    expect(answerComms(m, T, s)).toEqual({ word: 'Not now', sentence: 'In view again in 2 hours 30 minutes', precise: 'Comms not OK · Comms OK in 2 h 30 m' });
+    expect(answerPower(m, T, s)).toEqual({ word: 'Not yet', sentence: 'Starts in 1 day 7 hours', precise: 'Power not OK · OK in 1 d 7 h' });
+    expect(answerComms(m, T, s)).toEqual({ word: 'Not yet', sentence: 'Starts in 2 hours 30 minutes', precise: 'Comms not OK · OK in 2 h 30 m' });
   });
   it('not in range (empty list, no scan, or only past windows)', () => {
     const m = fake({ power: false, comms: false });
@@ -82,7 +82,7 @@ describe('answers: state table rows (synthetic)', () => {
   it('OK all range (no end, or end 30 d away)', () => {
     for (const e of [null, 720]) {
       const m = fake({ power: true, pEnd: e, comms: true, cEnd: e });
-      expect(answerPower(m, T, null).sentence).toBe('For the whole next 30 days');
+      expect(answerPower(m, T, null).sentence).toBe('For all of the next 30 days');
       expect(answerComms(m, T, null).word).toBe('Yes');
     }
   });
@@ -90,7 +90,7 @@ describe('answers: state table rows (synthetic)', () => {
     const m = fake({ power: false, comms: false });
     const s = scanOf([{ ...win('powerOk', 0, 5), start: new Date(T.getTime() - 30_000) }], []);
     expect(answerPower(m, T, s).word).toBe('Not yet');
-    expect(answerPower(m, T, s).sentence).toBe('Back in less than a minute');
+    expect(answerPower(m, T, s).sentence).toBe('Starts in less than a minute');
   });
 });
 
@@ -101,11 +101,11 @@ describe('answers: next window beyond the scan range (Apollo 11)', () => {
   const t = new Date('2027-03-28T07:18:00Z');
   const m = siteMetrics(site, null, t, r0);
   const scan = cachedScan(site, null, r0, rangeEnd);
-  it('says Back in about 14.7 days, not No', () => {
+  it('says Starts in about 14.7 days, not No', () => {
     expect(m.sun.powerOk).toBe(false);
     const a = answerPower(m, t, scan, { site, profile: null, rangeEnd });
     expect(a.word).toBe('Not yet');
-    expect(a.sentence).toMatch(/^Back in 1[45] days/);
+    expect(a.sentence).toMatch(/^Starts in 1[45] days/);
     // without the context the old answer is "No"
     expect(answerPower(m, t, scan).word).toBe('No');
   });
@@ -113,7 +113,7 @@ describe('answers: next window beyond the scan range (Apollo 11)', () => {
 
 describe('contextSentence', () => {
   it('uses the feature from the name', () => {
-    expect(contextSentence('Malapert Massif', true, -86)).toBe("Malapert Massif is a mountain near the Moon's south pole. The Sun stays low here, so ridges can hide it for days at a time.");
+    expect(contextSentence('Malapert Massif', true, -86)).toBe("Malapert Massif is a mountain near the Moon's south pole. The Sun stays low here, so ridges can hide it for days.");
     expect(contextSentence('Shackleton Rim', true, -89.7)).toContain('is a crater rim near');
     expect(contextSentence('Connecting Ridge', true, -89.4)).toContain('so ridges can hide it');
     expect(contextSentence('Haworth', true, -87)).toContain('is a site near');
@@ -127,7 +127,7 @@ describe('contextSentence', () => {
 describe('farSideLine', () => {
   const never = { pctEarthVisible: 0 };
   it('needs no Earth in range AND |lon| > 90', () => {
-    expect(farSideLine(never, 177.6, -45.5)).toMatch(/^Far-side site: Earth is never in view/);
+    expect(farSideLine(never, 177.6, -45.5)).toMatch(/^Earth is never in view from the far side/);
     expect(farSideLine(never, -154, -41.6)).not.toBeNull();
     expect(farSideLine(never, 0, -86)).toBeNull(); // polar site with Earth just hidden
     expect(farSideLine(never, -102, -89.03)).toBeNull(); // connecting_ridge_ext: terrain hides Earth, not the far side

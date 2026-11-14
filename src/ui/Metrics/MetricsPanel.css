@@ -1,12 +1,7 @@
 .metrics {
-  background: var(--surface);
-  border-radius: var(--radius-card);
-  padding: var(--sp-4);
-}
-@media (min-width: 1024px) {
-  .metrics {
-    padding: var(--sp-5);
-  }
+  /* Flat: sits inside the docked panel (Planner details tab). */
+  background: transparent;
+  padding: 0;
 }
 .metrics--stale > :not(.metrics__head) {
   opacity: 0.6;
@@ -35,7 +30,7 @@
 .metrics__note {
   color: var(--text-muted);
   font-size: var(--fs-sm);
-  line-height: 20px;
+  line-height: var(--lh-ui);
 }
 .metrics__hint,
 .metrics__note {
@@ -101,7 +96,7 @@
   border-radius: 999px;
   font-size: var(--fs-sm);
   font-weight: 600;
-  line-height: 20px;
+  line-height: var(--lh-ui);
 }
 .chip--ok {
   color: var(--on-accent);

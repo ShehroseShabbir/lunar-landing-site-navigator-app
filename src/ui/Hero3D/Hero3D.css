@@ -1,0 +1,224 @@
+/* 3D hero (visual-spec v5 section 5, v5.1 typography section 12). Sizes only via --fs-* tokens. */
+.h3d {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: #000;
+  font-family: var(--font-ui, inherit);
+}
+
+.h3d-gl,
+.h3d-ov {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.h3d-gl {
+  cursor: grab;
+  touch-action: none;
+}
+.h3d-gl:active {
+  cursor: grabbing;
+}
+.h3d-gl:focus-visible {
+  outline: none;
+}
+/* Focus ring on the visible stage box (inside the panel, top bar and dock). */
+.h3d:has(.h3d-gl:focus-visible)::after {
+  content: '';
+  position: absolute;
+  left: calc(var(--h3d-l, 0px) + 3px);
+  right: calc(var(--h3d-r, 0px) + 3px);
+  top: calc(var(--h3d-t, 0px) + 3px);
+  bottom: calc(var(--h3d-b, 0px) + 3px);
+  border: 3px solid var(--focus, #fff);
+  pointer-events: none;
+  z-index: 5;
+}
+.h3d-ov,
+.h3d-labels {
+  pointer-events: none;
+}
+.h3d--2d .h3d-gl,
+.h3d--2d .h3d-ov,
+.h3d--2d .h3d-labels {
+  visibility: hidden;
+}
+
+/* Leader-line labels: 12/16 500 on 80 % black (contrast measured in visual-spec section 2). */
+.h3d-lbl {
+  position: absolute;
+  left: 0;
+  top: 0;
+  visibility: hidden;
+  white-space: nowrap;
+  padding: 1px 6px;
+  border-radius: 2px;
+  background: rgba(0, 0, 0, 0.8);
+  color: var(--text, #eceef2);
+  font-size: var(--fs-meta, var(--fs-xs));
+  font-weight: var(--fw-medium, 500);
+  line-height: var(--lh-meta, 1.35);
+  letter-spacing: var(--ls-small, 0.006em);
+  will-change: transform;
+}
+.h3d-lbl b {
+  font-weight: var(--fw-semibold, 600);
+}
+.h3d-lbl--sun b {
+  color: var(--sun, #f7be45);
+}
+.h3d-lbl--earth b {
+  color: var(--earth, #5cc0ff);
+}
+.h3d-lbl--path,
+.h3d-lbl--cmp {
+  color: var(--text-2, #a6acb6);
+  font-weight: var(--fw-regular, 400);
+}
+
+.h3d-status {
+  position: absolute;
+  left: calc(var(--h3d-l) + (100% - var(--h3d-l) - var(--h3d-r)) / 2);
+  top: 45%;
+  transform: translateX(-50%);
+  margin: 0;
+  color: var(--text-2, #a6acb6);
+  font-size: var(--fs-label, var(--fs-sm));
+}
+
+.h3d-chips {
+  position: absolute;
+  top: calc(var(--h3d-t) + 8px);
+  left: calc(var(--h3d-l) + 16px);
+  display: flex;
+  gap: 8px;
+  pointer-events: none;
+}
+.h3d-chip {
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.8);
+  border: 1px solid var(--hair-2, rgba(255, 255, 255, 0.14));
+  color: var(--text, #eceef2);
+  font-size: var(--fs-meta, var(--fs-xs));
+  font-weight: var(--fw-medium, 500);
+  line-height: var(--lh-meta, 1.35);
+}
+
+.h3d-pano {
+  position: absolute;
+  top: var(--h3d-t);
+  left: var(--h3d-l);
+  right: var(--h3d-r);
+  bottom: var(--h3d-b);
+  overflow: auto;
+  background: #000;
+}
+
+/* Icon column, bottom-right above the dock. */
+.h3d-icons {
+  position: absolute;
+  right: 14px;
+  bottom: calc(var(--h3d-b) + 16px);
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  background: var(--chrome, rgba(16, 17, 20, 0.92));
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--hair, rgba(255, 255, 255, 0.08));
+  border-radius: 4px;
+}
+.h3d-ibtn {
+  position: relative;
+  width: var(--target, 32px);
+  height: var(--target, 32px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  background: none;
+  border: 0;
+  border-bottom: 1px solid var(--hair, rgba(255, 255, 255, 0.08));
+  color: var(--text-2, #a6acb6);
+  cursor: pointer;
+}
+.h3d-ibtn:last-child {
+  border-bottom: 0;
+}
+.h3d-ibtn:hover:not(:disabled),
+.h3d-ibtn[aria-pressed='true'] {
+  color: var(--text, #eceef2);
+  background: var(--hover, #22252b);
+}
+.h3d-ibtn:disabled {
+  cursor: default;
+  opacity: 0.45;
+}
+.h3d-ibtn[aria-pressed='true'] {
+  box-shadow: inset 2px 0 0 var(--text, #eceef2);
+}
+.h3d-ic {
+  width: 16px;
+  height: 16px;
+  flex: none;
+}
+.h3d-tip {
+  position: absolute;
+  right: calc(100% + 8px);
+  top: 50%;
+  transform: translateY(-50%);
+  display: none;
+  white-space: nowrap;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: var(--chrome-solid, #101114);
+  border: 1px solid var(--hair-2, rgba(255, 255, 255, 0.14));
+  color: var(--text, #eceef2);
+  font-size: var(--fs-meta, var(--fs-xs));
+  font-weight: var(--fw-medium, 500);
+  line-height: var(--lh-meta, 1.35);
+}
+/* Hoverable: a transparent bridge fills the gap between the button and its tip. */
+.h3d-tip::after {
+  content: '';
+  position: absolute;
+  left: 100%;
+  top: 0;
+  bottom: 0;
+  width: 10px;
+}
+.h3d-icons[data-tips-off='true'] .h3d-tip {
+  display: none !important;
+}
+.h3d-ibtn:hover .h3d-tip,
+.h3d-ibtn:focus-visible .h3d-tip {
+  display: block;
+}
+
+@media (max-width: 639px) {
+  /* Phone: a horizontal row so the column never reaches the top bar's Menu button. */
+  .h3d-icons {
+    right: 8px;
+    bottom: calc(var(--h3d-b) + 8px);
+    flex-direction: row;
+  }
+  .h3d-ibtn {
+    width: 44px;
+    height: 44px;
+    border-bottom: 0;
+    border-right: 1px solid var(--hair, rgba(255, 255, 255, 0.08));
+  }
+  .h3d-ibtn:last-child {
+    border-right: 0;
+  }
+  .h3d-ibtn[aria-pressed='true'] {
+    box-shadow: inset 0 2px 0 var(--text, #eceef2);
+  }
+  .h3d-tip {
+    display: none !important;
+  }
+}

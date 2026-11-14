@@ -1,76 +1,38 @@
+/* About the data: content styles inside the Shell Drawer (visual-spec frame D). */
 .about-btn {
   min-height: var(--target);
-  padding: 0 var(--sp-4);
-  background: var(--surface-2);
+  padding: 0 var(--sp-3);
+  background: var(--field);
   color: var(--text);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-control);
+  border: 1px solid var(--control);
+  border-radius: var(--radius);
   font: inherit;
-  font-size: var(--fs-sm);
-  cursor: pointer;
-}
-.about-dialog {
-  position: fixed;
-  inset: 0 0 0 auto;
-  margin: 0;
-  width: 480px;
-  max-width: 100vw;
-  height: 100dvh;
-  max-height: 100dvh;
-  padding: 0;
-  background: var(--surface);
-  color: var(--text);
-  border: 0;
-  border-left: 1px solid var(--border);
-  overflow: hidden;
-}
-.about-dialog[open] {
-  display: flex;
-  flex-direction: column;
-}
-.about-dialog::backdrop {
-  background: rgba(0, 0, 0, 0.6);
-}
-@media (max-width: 640px) {
-  .about-dialog {
-    width: 100vw;
-    border-left: 0;
-  }
-}
-.about-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--sp-3);
-  padding: var(--sp-4) var(--sp-5);
-  border-bottom: 1px solid var(--border);
-}
-.about-head h2 {
-  margin: 0;
-  font-size: var(--fs-lg);
-}
-.about-close {
-  min-height: var(--target);
-  min-width: var(--target);
-  padding: 0 var(--sp-4);
-  background: var(--accent);
-  color: var(--on-accent);
-  border: 0;
-  border-radius: var(--radius-control);
-  font: inherit;
-  font-weight: 600;
+  font-size: var(--fs-ui);
+  font-weight: var(--fw-medium);
   cursor: pointer;
 }
 .about-body {
-  overflow-y: auto;
-  padding: var(--sp-4) var(--sp-5) var(--sp-6);
+  font-size: var(--fs-body);
+  line-height: var(--lh-prose);
+  color: var(--text-2);
+}
+.about-body strong {
+  color: var(--text);
+  font-weight: var(--fw-semibold);
 }
 .about-body h3 {
   margin: var(--sp-5) 0 var(--sp-2);
-  font-size: var(--fs-md);
+  padding-top: var(--sp-4);
+  border-top: 1px solid var(--hair);
+  font-size: var(--fs-ui);
+  line-height: var(--lh-ui);
+  font-weight: var(--fw-semibold);
+  color: var(--text);
 }
 .about-body h3:first-child {
   margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
 }
 .about-body p,
 .about-body ul {
@@ -79,24 +41,34 @@
 .about-body ul {
   padding-left: var(--sp-5);
 }
+.about-body a {
+  color: var(--text);
+  text-underline-offset: 2px;
+}
 .about-body table {
   border-collapse: collapse;
   width: 100%;
-  font-size: var(--fs-sm);
+  font-size: var(--fs-label);
+  line-height: var(--lh-label);
 }
 .about-body th,
 .about-body td {
   text-align: left;
   vertical-align: top;
   padding: var(--sp-2);
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--hair);
   overflow-wrap: anywhere;
+}
+.about-body th {
+  color: var(--text);
+  font-weight: var(--fw-medium);
 }
 .about-body summary {
   cursor: pointer;
   min-height: var(--target);
-  padding: var(--sp-3) 0;
-  font-weight: 600;
+  padding: var(--sp-2) 0;
+  font-weight: var(--fw-medium);
+  color: var(--text);
 }
 .about-sr {
   position: absolute;

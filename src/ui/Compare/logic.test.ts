@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { SiteMetrics } from '../../astro/types';
-import { percentRank, addScenario, bestIndices, buildColumn, clampSlip, effectiveStart, formatSlip, removeScenario, shiftSlip } from './logic';
+import { scenarioName, verdict, type VerdictRow, percentRank, addScenario, bestIndices, buildColumn, clampSlip, effectiveStart, formatSlip, removeScenario, shiftSlip } from './logic';
 import type { Scenario } from '../../state/url';
 
 const sc = (slip = 0): Scenario => ({ site: 'im2', startISO: '2027-03-14T06:00Z', slipDays: slip });
@@ -99,5 +99,34 @@ describe('best per row', () => {
   });
   it('a single column is never marked', () => {
     expect(bestIndices([buildColumn(metrics({}), T).power]).size).toBe(0);
+  });
+});
+
+describe('scenarioName and verdict (plain)', () => {
+  const base: Scenario = { site: 'im2', startISO: '2027-03-14T06:00Z', slipDays: 0 };
+  it('names cards', () => {
+    expect(scenarioName(base, base)).toBe('Original date');
+    expect(scenarioName({ ...base }, base)).toBe('Copy of A');
+    expect(scenarioName({ ...base, slipDays: 3 }, base)).toBe('Delayed 3 days');
+    expect(scenarioName({ ...base, slipDays: 1 }, base)).toBe('Delayed 1 day');
+    expect(scenarioName({ ...base, slipDays: -2 }, base)).toBe('Earlier by 2 days');
+    expect(scenarioName({ ...base, startISO: '2027-03-16T06:00Z', slipDays: -2 }, base)).toBe('Copy of A');
+    expect(scenarioName({ ...base, site: 'im1' }, base)).toBe('Other site');
+    expect(scenarioName({ ...base, site: 'im1', slipDays: 4 }, base)).toBe('Other site, delayed 4 days');
+    expect(scenarioName({ ...base, site: 'im1', slipDays: -1 }, base)).toBe('Other site, earlier by 1 day');
+  });
+  const row = (name: string, sunPct: number, earthPct: number, darkHours: number, darkClipped = false): VerdictRow => ({ name, site: 'IM-2', sunPct, earthPct, darkHours, darkClipped });
+  it('best on all three', () => {
+    expect(verdict([row('Original date', 50, 30, 100), row('Delayed 3 days', 60, 40, 50)])).toBe('Delayed 3 days (IM-2) is best on all three.');
+  });
+  it('best on k of 3, with the full-sunlight sentence', () => {
+    expect(verdict([row('Original date', 100, 30, 100), row('Delayed 3 days', 60, 30, 100)])).toBe('Original date is best on 1 of 3. It has sunlight for the whole 30 days.');
+    expect(verdict([row('A', 50, 30, 10), row('B', 60, 40, 50), row('C', 40, 30, 50)])).toBe('B is best on 2 of 3.');
+  });
+  it('ties and no winner', () => {
+    expect(verdict([row('A', 50, 30, 50), row('B', 60, 20, 50)])).toBe('No clear winner; see below.');
+    expect(verdict([row('A', 50, 30, 10), row('B', 50, 30, 10)])).toBe('No clear winner; see below.');
+    expect(verdict([row('A', 50, 30, 10, true), row('B', 50, 30, 10, true)])).toBe('No clear winner; see below.');
+    expect(verdict([row('A', 50, 30, 10)])).toBe('');
   });
 });

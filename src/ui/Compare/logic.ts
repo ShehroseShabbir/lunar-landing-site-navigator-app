@@ -109,3 +109,62 @@ export function bestIndices(cells: (Cell | null)[]): Set<number> {
   });
   return out;
 }
+
+// ---- Plain naming and verdict (visual-spec v2, "Compare dates or sites") ----
+
+const dayWord = (n: number): string => `${n} day${n === 1 ? '' : 's'}`;
+
+/**
+ * Card name. `scenario === base` (same object) is "Original date". Same site: later start gives "Delayed N days",
+ * earlier gives "Earlier by N days", identical start gives "Copy of A". Different site gives "Other site"
+ * (plus ", delayed N days" / ", earlier by N days" when the start differs).
+ */
+export function scenarioName(scenario: Scenario, base: Scenario): string {
+  if (scenario === base) return 'Original date';
+  const days = Math.round((effectiveStart(scenario).getTime() - effectiveStart(base).getTime()) / DAY_MS);
+  const sameSite = JSON.stringify(scenario.site) === JSON.stringify(base.site);
+  const shift = days > 0 ? `delayed ${dayWord(days)}` : days < 0 ? `earlier by ${dayWord(-days)}` : '';
+  if (sameSite) return shift ? shift.charAt(0).toUpperCase() + shift.slice(1) : 'Copy of A';
+  return shift ? `Other site, ${shift}` : 'Other site';
+}
+
+export interface VerdictRow {
+  name: string;
+  site: string;
+  /** Sunlight % (30 d). */
+  sunPct: number;
+  /** Earth in view % (30 d). */
+  earthPct: number;
+  /** Longest dark period in hours; shorter is better. */
+  darkHours: number;
+  /** Clipped by a range edge: not ranked (as in buildColumn). */
+  darkClipped?: boolean;
+}
+
+/**
+ * One plain sentence. A row only counts when it separates the scenarios (all-equal rows are skipped);
+ * ties tag every tied scenario as best on that row.
+ */
+export function verdict(rows: VerdictRow[]): string {
+  if (rows.length < 2) return '';
+  const ranks: (number | null)[][] = [
+    rows.map((r) => percentRank(r.sunPct)),
+    rows.map((r) => percentRank(r.earthPct)),
+    rows.map((r) => (r.darkClipped ? null : -Math.round(r.darkHours * 60))),
+  ];
+  const counts = rows.map(() => 0);
+  for (const col of ranks) {
+    const vals = col.filter((v): v is number => v !== null);
+    if (vals.length < 2 || vals.every((v) => v === vals[0])) continue;
+    const best = Math.max(...vals);
+    col.forEach((v, i) => {
+      if (v === best) counts[i]++;
+    });
+  }
+  const top = Math.max(...counts);
+  const leaders = counts.flatMap((c, i) => (c === top ? [i] : []));
+  if (top === 0 || leaders.length !== 1) return 'No clear winner; see below.';
+  const w = rows[leaders[0]];
+  const first = top === 3 ? `${w.name} (${w.site}) is best on all three.` : `${w.name} is best on ${top} of 3.`;
+  return percentRank(w.sunPct) === 100 ? `${first} It has sunlight for the whole 30 days.` : first;
+}

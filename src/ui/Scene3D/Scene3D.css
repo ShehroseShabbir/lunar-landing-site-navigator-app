@@ -1,0 +1,56 @@
+.s3d-toggle {
+  min-height: var(--target);
+  padding: 0 var(--sp-4);
+  background: var(--surface-2);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  font: inherit;
+  font-size: var(--fs-sm);
+  cursor: pointer;
+}
+.s3d-toggle[aria-expanded='true'] {
+  border-color: var(--accent);
+}
+.s3d-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: var(--sp-4);
+}
+.s3d-note,
+.s3d-caption {
+  margin: var(--sp-2) 0 0;
+  font-size: var(--fs-sm);
+  color: var(--text-muted);
+}
+.s3d-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-3);
+  align-items: center;
+  font-size: var(--fs-sm);
+}
+.s3d-bar select,
+.s3d-bar button {
+  min-height: var(--target);
+  background: var(--surface-2);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  font: inherit;
+  padding: 0 var(--sp-3);
+}
+.s3d-canvas {
+  display: block;
+  width: 100%;
+  height: 420px;
+  margin-top: var(--sp-2);
+  border-radius: var(--radius-control);
+  touch-action: none;
+}
+@media (max-width: 640px) {
+  .s3d-canvas {
+    height: 300px;
+  }
+}

@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import './ui/tokens.css';
 import './App.css';
 import { AppStateProvider, useAppState } from './state/AppState';
@@ -11,6 +12,7 @@ import { Timeline } from './ui/Timeline/Timeline';
 import { PlaybackControls } from './ui/Playback';
 import { ShareControls } from './ui/Share';
 import { CompareView, CompareButton, useHashRoute } from './ui/Compare';
+import { Scene3DToggle, Scene3DPanel } from './ui/Scene3D/Scene3DPanel';
 
 function Sky() {
   const { siteGeo, siteName, t } = useAppState();
@@ -25,6 +27,7 @@ function Picker() {
 
 function Shell() {
   const route = useHashRoute();
+  const [show3d, setShow3d] = useState(false);
   return (
     <div className="app">
       <header className="app-header">
@@ -34,6 +37,7 @@ function Shell() {
         </div>
         <nav aria-label="Views">
           <CompareButton />
+          {route === 'main' && <Scene3DToggle open={show3d} onToggle={() => setShow3d((v) => !v)} />}
           <AboutButton />
         </nav>
       </header>
@@ -54,6 +58,11 @@ function Shell() {
           <section className="app-sky" aria-label="Sky">
             <Sky />
           </section>
+          {show3d && (
+            <section className="app-sky" aria-label="3D terrain">
+              <Scene3DPanel />
+            </section>
+          )}
           <section className="app-metrics" aria-label="Now at this site">
             <MetricsPanel />
           </section>

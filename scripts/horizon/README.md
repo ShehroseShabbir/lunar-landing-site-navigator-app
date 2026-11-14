@@ -51,3 +51,16 @@ cd ../.. && scripts/horizon/.venv/bin/python -m unittest discover scripts/horizo
 - Each sample stores `z_local` = `U·(P − O)` in Moon-centred Cartesian coordinates, with O = (1737.4 km + site terrain height)·U (the horizon file's `observerHeightM − 2`). The curvature drop (57.6 m at the corners) is included, so the browser draws (x, y, z) as is; the site itself is at z ≈ 0 (within a few metres, because the tile is 80 m-averaged). Each sample is the surface point whose exact east/north offsets equal its (x, y) (fixed-point iteration on the height).
 - Heights: the PGDA 5 m tile area-averaged to 80 m (16 × 16 blocks) wherever it covers, else `LDEM_80S_80M`, else `LDEM_75S_240M` (only IM-1, whose northern third lies beyond the 80 m grid's 80°S edge); bilinear; no gaps. `source` in each JSON lists the share of samples from each grid.
 - `.bin` = Uint16 little-endian, row-major, `z = heightMinM + v·(heightMaxM − heightMinM)/65535` (≤ 0.08 m step at the largest range). All 14 tiles total about 1.9 MB.
+
+## Wide context tiles (S15)
+
+`terrain_tile.py --wide` writes `public/terrain/<siteId>_wide.json` + `.bin` for the same 14 sites: a 120 km × 120 km tile (257 × 257, 468.75 m spacing, ±60 km) so the 3D view shows real ground from the 20 km tile out toward the skyline. Same venv and raw data, from `scripts/horizon`:
+
+```sh
+.venv/bin/python terrain_tile.py --raw-dir ../../data/raw --out ../../public/terrain --wide   # [--sites id1,id2], ~5 s total
+```
+
+- Same format, frame, `z_local` definition and site height as the 20 km tiles (keys, Uint16 LE, row 0 = north, col 0 = west, curvature included: about 2.07 km drop at the corners).
+- Heights: `LDEM_80S_80M` area-averaged 6 × 6 (480 m), else `LDEM_75S_240M` area-averaged 2 × 2 (480 m); bilinear. Only IM-1 uses the 240 m grid (48% of samples, its northern half). Samples beyond 75°S would take the nearest valid height; none of the 14 tiles needs it (IM-1's far corner is about 385 km from the pole, the 240 m grid reaches 457 km). `source` states the shares.
+- Inside ±9.5 km the wide tile matches the near tile averaged over 480 m cells: mean difference ≤ 1.1 m, RMS 3.7–5.5 m on all 14 sites; draw the near tile on top there. Features smaller than about 500 m are smoothed out, so the wide tile is not a substitute for the near tile or the horizon profile.
+- Check against `public/horizons`: where the LOLA horizon is 10–55 km away (C1: 117 azimuths) the wide tile reproduces it within 0.09° (mean −0.04°, peaks slightly flattened by averaging); beyond 2 km no wide tile rises above its site's horizon by more than 0.06°. All 14 wide tiles total about 1.86 MB.

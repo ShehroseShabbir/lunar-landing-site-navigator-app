@@ -107,16 +107,23 @@
 .cmp-card-actions {
   margin-top: auto;
   display: flex;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   gap: var(--sp-1);
+}
+.cmp-card-actions > button {
+  flex: 1 1 0;
+  min-width: 0;
 }
 .cmp-card-actions button {
   white-space: nowrap;
   padding: 0 var(--sp-2);
   font-size: var(--fs-xs);
 }
+.cmp-card-actions > .cmp-change {
+  flex-basis: 100%;
+}
 .cmp-change {
-  margin-left: auto;
+  margin-left: 0;
 }
 .cmp-card-body {
   display: flex;

@@ -1,0 +1,134 @@
+.skyview {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: var(--sp-4);
+}
+@media (min-width: 1024px) {
+  .skyview {
+    padding: var(--sp-5);
+  }
+}
+.skyview-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-2) var(--sp-4);
+  margin-bottom: var(--sp-3);
+}
+.skyview-head h2 {
+  margin: 0;
+  font-size: var(--fs-lg);
+  line-height: 28px;
+}
+.skyview-site {
+  color: var(--text-muted);
+  font-size: var(--fs-sm);
+}
+.skyview-badge {
+  border: 1px solid var(--text);
+  border-radius: 999px;
+  padding: 0 var(--sp-3);
+  font-size: var(--fs-sm);
+}
+.skyview-jump {
+  display: flex;
+  gap: var(--sp-2);
+  margin-left: auto;
+}
+.skyview-jump button {
+  min-height: var(--target);
+  padding: 0 var(--sp-3);
+  background: var(--surface-2);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  font: inherit;
+  font-size: var(--fs-sm);
+  cursor: pointer;
+}
+.skyview-scroll {
+  overflow-x: auto;
+  border-radius: var(--radius-control);
+}
+.skyview-svg {
+  display: block;
+  width: 100%;
+  min-width: 960px;
+  height: auto;
+}
+.skyview-axis {
+  font-size: 12px;
+  fill: var(--text-muted);
+}
+.skyview-cardinal {
+  font-size: 14px;
+  font-weight: 600;
+  fill: var(--text);
+}
+.skyview-label,
+.skyview-tip {
+  font-size: 13px;
+  font-weight: 600;
+  paint-order: stroke;
+  stroke: var(--bg);
+  stroke-width: 3px;
+}
+.skyview-tip {
+  stroke: none;
+}
+.skyview-marker {
+  cursor: default;
+}
+.skyview-marker:focus {
+  outline: none;
+}
+.skyview-marker:focus-visible .skyview-halo,
+.skyview-marker:focus-visible .skyview-pin {
+  stroke: var(--focus);
+  stroke-width: 3;
+}
+.skyview-legend {
+  list-style: none;
+  margin: var(--sp-3) 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2) var(--sp-5);
+  font-size: var(--fs-sm);
+}
+.skyview-legend li {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+.skyview-note {
+  color: var(--text-muted);
+  font-size: var(--fs-xs);
+}
+.skyview-insets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-4);
+  margin-top: var(--sp-4);
+}
+.skyview-inset {
+  margin: 0;
+  flex: 1 1 240px;
+  max-width: 360px;
+}
+.skyview-inset svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+}
+.skyview-inset figcaption {
+  font-size: var(--fs-sm);
+  color: var(--text-muted);
+  margin-top: var(--sp-1);
+}
+.skyview-inset strong {
+  color: var(--text);
+}

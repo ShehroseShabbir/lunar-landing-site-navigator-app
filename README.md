@@ -26,6 +26,7 @@ Near the Moon's south pole the Sun stays close to the horizon, so ridges and cra
 
 **For an educator or student**
 - **Full-screen 3D view.** Real LOLA terrain, a 20 km tile inside a 120 km context tile, with thin lines for the Sun and Earth paths.
+- **View from space.** Zoom out (or press View from space) to see the whole Moon lit by the real Sun at that moment, with the site pinned, then Earth with its real phase as seen from the Moon, and the Sun. Distances are compressed and labelled "not to scale"; a True scale toggle shows the real Earth–Moon distance.
 - **Why? buttons and a guided tour** explain why the Sun stays low.
 - **35 curated sites:** Apollo, Luna, Chang'e, Chandrayaan-3, SLIM, commercial landers, Artemis III candidate regions and reference points. Or enter your own coordinates.
 
@@ -110,6 +111,8 @@ To regenerate horizons and 3D tiles, see [`scripts/horizon/README.md`](scripts/h
 | Mazarico et al. 2011, Icarus 211, 1066 | https://doi.org/10.1016/j.icarus.2010.10.030 | Cited paper |
 | astronomy-engine (Don Cross) | https://github.com/cosinekitty/astronomy | MIT |
 | React, three.js | https://react.dev, https://threejs.org | MIT |
+| Moon globe: CGI Moon Kit (LROC WAC colour mosaic, ASU; LOLA relief), NASA's Scientific Visualization Studio | https://svs.gsfc.nasa.gov/4720 | NASA, public domain (`public/space/`) |
+| Earth globe: Blue Marble Next Generation, NASA Earth Observatory | https://science.nasa.gov/earth/earth-observatory/blue-marble-next-generation/ | NASA, public domain (`public/space/`) |
 | IBM Plex Sans and Mono (self-hosted) | https://github.com/IBM/plex | SIL OFL 1.1 (`public/fonts/OFL.txt`) |
 
 *Terms of use not independently checked.

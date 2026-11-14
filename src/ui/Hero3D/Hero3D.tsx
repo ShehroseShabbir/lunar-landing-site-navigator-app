@@ -7,12 +7,14 @@ import { computeSkyPaths, type SkyPaths } from '../../state/skyPaths';
 import { useAppState } from '../../state/AppState';
 import { useScenarioResult } from '../../state/useScenarioResult';
 import { loadTerrain, type TerrainTile } from '../Scene3D/terrain';
-import { circularMeanDeg, hfovFor, homeYawDeg, type SafeArea } from './camera';
+import type { SiteMetrics } from '../../astro/types';
+import { hfovFor, homeYawDeg, type BodyHeading, type SafeArea } from './camera';
 import { COPY } from './copy';
 import { canvasLabel, describeNow } from './describeNow';
 import { Hero3DControls } from './Hero3DControls';
 import { earthStateText, nowFromMetrics, sunStateText } from './labels';
 import type { HeroScene, SceneBodies } from './scene';
+import { terrainTileIds } from './tiles';
 import './Hero3D.css';
 
 export type Hero3DFallbackReason = 'webgl' | 'no-terrain';
@@ -63,7 +65,7 @@ function useToggle(controlled: boolean | undefined, onChange: ((on: boolean) => 
 
 export function Hero3D(props: Hero3DProps) {
   const { site, isCustom, siteKey, siteName, siteGeo, rangeStart, t } = useAppState();
-  const { profile, metrics, terrain } = useScenarioResult();
+  const { profile, metrics, terrain, status } = useScenarioResult();
   const [skyX3, setSkyX3] = useToggle(props.skyX3, props.onSkyX3Change);
   const [panorama, setPanorama] = useToggle(props.panorama, props.onPanoramaChange);
   const showControls = props.showControls ?? true;
@@ -124,15 +126,17 @@ export function Hero3D(props: Hero3DProps) {
     };
   }, []);
 
-  // Near 20 km tile and wide context tile (null on 404) for catalogue sites.
+  // Near 20 km tile and wide context tile (null on 404) for catalogue sites that have tiles;
+  // sites without tiles request nothing and go straight to the 2D sky view.
   const siteId = isCustom ? null : (site?.id ?? null);
   useEffect(() => {
     let live = true;
-    if (!siteId) {
+    const ids = terrainTileIds(siteId);
+    if (!ids) {
       setTiles({ key: siteKey, near: null, wide: null });
       return;
     }
-    void Promise.all([loadTerrain(siteId), loadTerrain(`${siteId}_wide`)]).then(([near, wide]) => {
+    void Promise.all([loadTerrain(ids.near), loadTerrain(ids.wide)]).then(([near, wide]) => {
       if (live) setTiles({ key: siteKey, near, wide: near ? wide : null });
     });
     return () => {
@@ -150,20 +154,48 @@ export function Hero3D(props: Hero3DProps) {
     [siteKey, rangeMs, profile, profileSettled, tilesNow?.near],
   );
 
+  // Metrics are kept while a new site loads, so they are tagged with the site they arrived for;
+  // the first view waits for this site's own metrics (the values behind the Sun/Earth markers).
+  const [metricsSite, setMetricsSite] = useState<{ key: string; metrics: SiteMetrics } | null>(null);
+  useEffect(() => {
+    if (metrics) setMetricsSite({ key: siteKey, metrics });
+    // Tag with the site current when these metrics arrived, not later site changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [metrics]);
+  const siteMetrics = metricsSite?.key === siteKey ? metrics : null;
+  // On a scan error there are no metrics: frame from the path sample nearest t instead.
+  const bodiesSettled = siteMetrics !== null || status === 'error';
+
   const tRef = useRef(t);
+  const metricsRef = useRef(siteMetrics);
   const zoomOutRef = useRef(props.onZoomOutBeyond);
   zoomOutRef.current = props.onZoomOutBeyond;
   tRef.current = t;
+  metricsRef.current = siteMetrics;
+  /** Home heading for the state now (homeYawDeg): Sun / Earth azimuth and terrain-horizon visibility. */
   const homeYaw = useCallback((): number => {
-    if (!paths) return 0;
-    const earthMean = circularMeanDeg(paths.earth.map((p) => p.azDeg));
-    const tMs = tRef.current.getTime();
-    let best = paths.sun[0];
-    for (const p of paths.sun) if (Math.abs(p.t.getTime() - tMs) < Math.abs(best.t.getTime() - tMs)) best = p;
+    let sun: BodyHeading | null = null;
+    let earth: BodyHeading | null = null;
+    const m = metricsRef.current;
+    if (m) {
+      sun = { azDeg: m.sun.azDeg, up: m.sun.visibleFraction > 0 };
+      earth = { azDeg: m.earth.azDeg, up: m.earth.visible };
+    } else if (paths && paths.sun.length > 0) {
+      const tMs = tRef.current.getTime();
+      let i = 0;
+      for (let k = 1; k < paths.sun.length; k++) {
+        if (Math.abs(paths.sun[k].t.getTime() - tMs) < Math.abs(paths.sun[i].t.getTime() - tMs)) i = k;
+      }
+      sun = { azDeg: paths.sun[i].azDeg, up: paths.sun[i].visible };
+      earth = { azDeg: paths.earth[i].azDeg, up: paths.earth[i].visible };
+    }
     const el = rootRef.current;
     const aspect = el && el.clientHeight > 0 ? el.clientWidth / el.clientHeight : 16 / 9;
-    return homeYawDeg(earthMean, best ? best.azDeg : null, hfovFor(aspect));
+    return homeYawDeg(sun, earth, hfovFor(aspect));
   }, [paths]);
+  // Heading chosen when the site was placed; layout re-frames keep it, so time changes and
+  // playback never turn the camera.
+  const placedYawRef = useRef(0);
 
   // Fallback: no WebGL, or no terrain for this site.
   const fallback: Hero3DFallbackReason | null = webglFailed
@@ -184,11 +216,12 @@ export function Hero3D(props: Hero3DProps) {
 
   useEffect(() => {
     const s = sceneRef.current;
-    if (!sceneReady || !s || !tilesNow?.near || !paths || placed === siteKey) return;
+    if (!sceneReady || !s || !tilesNow?.near || !paths || !bodiesSettled || placed === siteKey) return;
     s.setTerrain(tilesNow.near, tilesNow.wide);
-    s.goHome(homeYaw());
+    placedYawRef.current = homeYaw();
+    s.goHome(placedYawRef.current);
     setPlaced(siteKey);
-  }, [sceneReady, tilesNow, paths, placed, siteKey, homeYaw]);
+  }, [sceneReady, tilesNow, paths, bodiesSettled, placed, siteKey, homeYaw]);
 
   const bodies = useMemo<SceneBodies | null>(
     () =>
@@ -229,7 +262,7 @@ export function Hero3D(props: Hero3DProps) {
     if (!sceneReady || !s) return;
     s.setSafeArea(safe);
     // The free area changed (panel width, collapse): re-frame unless the user has moved the camera.
-    if (s.isPristine()) s.goHome(homeYaw());
+    if (s.isPristine()) s.goHome(placedYawRef.current);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sceneReady, safe]);
 
@@ -251,7 +284,11 @@ export function Hero3D(props: Hero3DProps) {
   }, [caption]);
   const label = now ? canvasLabel(siteName, now) : COPY.loadingLabel(siteName);
 
-  const reset = useCallback(() => sceneRef.current?.goHome(homeYaw()), [homeYaw]);
+  // Reset re-applies the home rule to the state shown now (after playback the Sun has moved).
+  const reset = useCallback(() => {
+    placedYawRef.current = homeYaw();
+    sceneRef.current?.goHome(placedYawRef.current);
+  }, [homeYaw]);
   const zoomIn = useCallback(() => sceneRef.current?.zoom(1), []);
   const zoomOut = useCallback(() => sceneRef.current?.zoom(-1), []);
 

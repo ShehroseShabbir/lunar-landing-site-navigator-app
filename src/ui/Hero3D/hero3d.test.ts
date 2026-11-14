@@ -57,15 +57,48 @@ describe('camera rule', () => {
     expect(circularMeanDeg([0, 180])).toBeNull();
   });
 
-  it('homeYawDeg frames both bodies when they fit, else looks at Earth', () => {
-    // Malapert-like: Earth mean 0, Sun 48 -> 24 (visual-spec v5 home yaw).
-    close(homeYawDeg(0, 48, 84), 24);
-    close(homeYawDeg(350, 30, 84), 10);
-    // Sun 150 deg away: does not fit in 84 deg, keep Earth.
-    close(homeYawDeg(5, 155, 84), 5);
-    close(homeYawDeg(null, 200, 84), 200);
-    close(homeYawDeg(30, null, 84), 30);
-    expect(homeYawDeg(null, null, 84)).toBe(0);
+  describe('homeYawDeg puts the most relevant body in frame (S19a)', () => {
+    const b = (azDeg: number, up: boolean) => ({ azDeg, up });
+
+    it('Sun up, Earth down: centre on the Sun (Connecting Ridge, 14 Nov 2026 08:00 UTC)', () => {
+      // Metrics then: Sun az 259.7 up (visible fraction 1), Earth az 135.4 at -4.7 deg, hidden.
+      close(homeYawDeg(b(259.7, true), b(135.4, false), 84), 259.7);
+    });
+
+    it('Sun up, Earth up: between them when both fit, else the Sun', () => {
+      close(homeYawDeg(b(48, true), b(0, true), 84), 24);
+      // 61 deg apart: fits a landscape view (0.8 x 84 = 67.2), not a portrait one (0.8 x 70 = 56).
+      close(homeYawDeg(b(54, true), b(353, true), 84), 23.5);
+      close(homeYawDeg(b(54, true), b(353, true), 70), 54);
+      close(homeYawDeg(b(200, true), b(10, true), 84), 200);
+    });
+
+    it('Sun down, Earth up: Earth, with the Sun ridge too when it fits (Malapert, 20 Nov 2026 00:00 UTC)', () => {
+      // Metrics then: Sun az 54.0 behind the ridge (el 3.9, horizon 5.0), Earth az 353.0 visible.
+      close(homeYawDeg(b(54, false), b(353, true), 84), 23.5);
+      close(homeYawDeg(b(54, false), b(353, true), 70), 353);
+      close(homeYawDeg(b(150, false), b(5, true), 84), 5);
+    });
+
+    it('both down: aim at the Sun azimuth, where it will rise', () => {
+      close(homeYawDeg(b(120, false), b(300, false), 84), 120);
+      close(homeYawDeg(b(120, false), b(130, false), 84), 120);
+    });
+
+    it('wraps through north and normalises to [0, 360)', () => {
+      close(homeYawDeg(b(350, true), b(30, true), 84), 10);
+      close(homeYawDeg(b(10, true), b(330, true), 84), 350);
+      close(homeYawDeg(b(-90, true), b(0, false), 84), 270);
+      close(homeYawDeg(b(725, false), b(0, false), 84), 5);
+      // Exactly opposite, both up: does not fit, keep the Sun.
+      close(homeYawDeg(b(0, true), b(180, true), 84), 0);
+    });
+
+    it('unknown bodies', () => {
+      close(homeYawDeg(null, b(30, false), 84), 30);
+      close(homeYawDeg(b(200, false), null, 84), 200);
+      expect(homeYawDeg(null, null, 84)).toBe(0);
+    });
   });
 
   it('homePose puts the eye 8 km behind the site, 2.3 km up, pitched -7 deg at a target above the site', () => {

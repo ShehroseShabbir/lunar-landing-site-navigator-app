@@ -52,16 +52,31 @@ export function circularMeanDeg(azs: readonly number[]): number | null {
   return normDeg((Math.atan2(s, c) * 180) / Math.PI);
 }
 
+/** A body's azimuth now and whether any part of its disc is above the terrain horizon (metrics). */
+export interface BodyHeading {
+  azDeg: number;
+  up: boolean;
+}
+
+/** Halfway between a and b along the shorter arc when they fit in the view, else null. */
+function framePair(a: number, b: number, hfovDeg: number): number | null {
+  const d = angDiffDeg(a, b);
+  return Math.abs(d) <= HOME.frameShare * hfovDeg ? normDeg(a + d / 2) : null;
+}
+
 /**
- * Home yaw: the mean of Earth's 30-day mean azimuth and the Sun's azimuth now, when both fit
- * in the view; otherwise Earth's mean azimuth (Earth barely moves at the pole, the Sun circles).
+ * Home yaw (S19a): the heading that puts the most relevant body in frame now.
+ * - Sun up: halfway between Sun and Earth when Earth is up too and both fit, else the Sun.
+ * - Sun down, Earth up: halfway between Earth and the Sun's azimuth when both fit (the ridge
+ *   hiding the Sun stays in view), else Earth.
+ * - Both down: the Sun's azimuth (where it will come back), so the ridge that blocks it is in view.
+ * "Fit" = at most HOME.frameShare of the horizontal FOV apart. Null bodies are treated as unknown.
  */
-export function homeYawDeg(earthMeanAz: number | null, sunAz: number | null, hfovDeg: number): number {
-  if (earthMeanAz === null && sunAz === null) return 0;
-  if (earthMeanAz === null) return normDeg(sunAz as number);
-  if (sunAz === null) return normDeg(earthMeanAz);
-  const d = angDiffDeg(earthMeanAz, sunAz);
-  return Math.abs(d) <= HOME.frameShare * hfovDeg ? normDeg(earthMeanAz + d / 2) : normDeg(earthMeanAz);
+export function homeYawDeg(sun: BodyHeading | null, earth: BodyHeading | null, hfovDeg: number): number {
+  if (sun === null && earth === null) return 0;
+  if (sun === null) return normDeg((earth as BodyHeading).azDeg);
+  if (earth === null || !earth.up) return normDeg(sun.azDeg);
+  return framePair(sun.azDeg, earth.azDeg, hfovDeg) ?? normDeg(sun.up ? sun.azDeg : earth.azDeg);
 }
 
 /**

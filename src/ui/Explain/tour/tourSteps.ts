@@ -29,7 +29,7 @@ export const TOUR_STEPS: readonly TourStep[] = [
     startIso: TOUR_START_ISO,
     tIso: '2027-03-14T00:00:00Z',
     title: 'A polar ridge: the Sun stays low',
-    body: 'At Connecting Ridge, near the south pole, the Sun stays low. On 14 Mar 2027 at 00:00 UTC it is 0.2° above the terrain, with 90% of its disk showing. Check the Sun close-up.',
+    body: 'At Connecting Ridge, near the south pole, the Sun stays low. On 14 Mar 2027 at 00:00 UTC it is 0.2° above the terrain, with 90% of its disk showing. Its 30-day path runs along the skyline.',
     targets: ['sky-sun', 'sky'],
   },
   {

@@ -11,3 +11,20 @@
   align-items: center;
   margin-top: var(--sp-3);
 }
+
+/* Guided-tour anchors (data-tour targets) that don't change layout. */
+.tour-anchor--stage {
+  position: absolute;
+  inset: 0;
+}
+.tour-anchor--dock {
+  display: flex;
+  align-items: center;
+  flex: 1 1 auto;
+  align-self: stretch;
+  min-width: 0;
+}
+.tour-anchor--dock > * {
+  flex: 1 1 auto;
+  min-width: 0;
+}

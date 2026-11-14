@@ -28,7 +28,11 @@ function Stage({ onCaption }: { onCaption: (c: string | null) => void }) {
   const safeArea = isPhone
     ? { top: 48, bottom: snap === 'full' ? 0 : 12 }
     : { left: panelWidth, top: 48, bottom: 132 };
-  return <Hero3D safeArea={safeArea} onCaption={onCaption} renderPanorama={() => <FullSky />} />;
+  return (
+    <div data-tour="sky" className="tour-anchor tour-anchor--stage">
+      <Hero3D safeArea={safeArea} onCaption={onCaption} renderPanorama={() => <FullSky />} />
+    </div>
+  );
 }
 
 function Panel({ caption, onCompare }: { caption: string | null; onCompare: () => void }) {

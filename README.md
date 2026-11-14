@@ -21,6 +21,7 @@ Near the Moon's south pole the Sun stays close to the horizon, so ridges and cra
 - **Compare.** Up to four options, each with a site, start date and delay (-60 to +60 days). Shows sunlight share, longest dark period and a verdict.
 - **Events tab.** Lists every sunrise, sunset, Earth rise and Earth set in the 30 days, plus the start and end of each power window, radio window and both-at-once window. Select one to jump there. A "Coming up" list under the answers shows the next changes.
 - **Triggers.** Define conditions that must hold together: sunlight for power, Earth in view for radio, or both, for at least N hours. You can also set a minimum Sun or Earth height above the terrain. Matches are outlined on the time dock. Triggers are saved in the share link, and matches export to a calendar (.ics).
+- **Rank sites for these dates.** Ranks the 14 sites with LOLA terrain over the same 30 days by sunlight, Earth in view, both at once and longest dark period. The verdict warns when the top site has a long dark period and names the best site with none. Show switches to a site; Add to Compare adds it.
 - **Find a landing window.** Pick a trigger and search up to a year ahead (30, 90, 180 or 365 days) for the first windows that meet it. Each result shows when it opens and how long it lasts. Show jumps to it. Compare adds it as an option.
 - **Share link and CSV.** The URL stores the site, dates, options and triggers. A CSV export lists the windows.
 
@@ -33,7 +34,7 @@ Near the Moon's south pole the Sun stays close to the horizon, so ridges and cra
 **For the public**
 - No login or install. Open the link.
 
-**How to use it:** pick a site and a UTC date, read the two answers, drag the time dock or press Play. Use the Events tab to jump to a sunrise or Earth set. Add a trigger and see its matches on the dock, or use Find a landing window. Open Compare to test a delay or another site, then Share.
+**How to use it:** pick a site and a UTC date, read the two answers, drag the time dock or press Play. Use the Events tab to jump to a sunrise or Earth set. Add a trigger and see its matches on the dock, or use Find a landing window. Open Compare to test a delay or another site, or Rank sites to see which terrain site does best for your dates, then Share.
 
 For the 14 curated south-pole sites (at or south of 80°S) the horizon is real terrain. Every other site, custom coordinates included, uses a flat 0° horizon, and the app shows a "Smooth-Moon horizon, terrain not included" badge.
 

@@ -20,7 +20,7 @@ The idea was the team's: a planning tool that compares landing sites and dates a
 - **Tests and checking:** AI wrote the automated tests and compared Sun and Earth positions with JPL Horizons at 162 points: the largest difference was 0.0063°. It also checked rise and set times against Horizons, and the share of time in sunlight against a published NASA study (Gläser et al. 2018). A separate AI reviewer recomputed the terrain horizons independently, and they agreed within 0.001°.
 - **Review:** every feature was reviewed by a separate AI code reviewer, and every screen by a design and accessibility reviewer, before it was merged. Nothing merged unless the typecheck, tests and build passed.
 - **Design:** AI made screen mockups, and the team chose the visual direction over several rounds of changes.
-- **Features the team asked for:** compare, playback, the events list, triggers, the landing-window finder and the zoom out to the whole Moon, Earth and Sun. AI built and tested each one.
+- **Features the team asked for:** compare, playback, the events list, triggers, the landing-window finder, ranking the terrain sites for a date range, and the zoom out to the whole Moon, Earth and Sun. AI built and tested each one.
 - **Hosting:** AI set up the Vercel deployment in the team's browser, with the team's approval. The team approved every update to the live site.
 - **Documents:** AI drafted the README, the project description and the video script, and the team edited and approved them.
 - **Demo video:** AI recorded the screen of the real, live app and added text captions. The voiceover is a team member's own.

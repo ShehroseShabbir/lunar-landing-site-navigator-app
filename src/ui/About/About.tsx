@@ -26,6 +26,42 @@ interface ValidationFile {
   maxElErrDeg?: number;
   maxAzCosElErrDeg?: number;
   fixturesFetchedAt?: string;
+  timing?: {
+    maxAbsErrMin?: Record<string, { sun?: number; earth?: number }>;
+    perState?: { site: string; body: string; state: string; events: number; maxAbsErrMin: number; worstRateDegPerHr: number }[];
+  };
+  illumination?: {
+    span?: { startUtc?: string; endUtc?: string };
+    ourPct?: Record<string, { sunUp?: number; meanVisibleFraction?: number }>;
+    glaserPct?: Record<string, { solarVisibility?: number; averageIllumination?: number }>;
+  };
+}
+
+/** Measured rise/set timing and illumination cross-check lines, or null when a figure is missing (never invented). */
+export function extraValidationLines(v: ValidationFile | undefined = validation): { timing: string | null; illumination: string | null } {
+  const num = (x: unknown): x is number => typeof x === 'number' && Number.isFinite(x);
+  let timing: string | null = null;
+  const mid = v?.timing?.maxAbsErrMin?.chandrayaan3?.sun;
+  const polarSun = v?.timing?.perState?.find((r) => r.site === 'connecting_ridge' && r.state === 'sunUp' && r.events > 0);
+  const polarEarth = v?.timing?.maxAbsErrMin?.connecting_ridge?.earth;
+  if (num(mid) && num(polarEarth) && polarSun && num(polarSun.maxAbsErrMin) && num(polarSun.worstRateDegPerHr)) {
+    timing =
+      `Rise and set times, checked against a 10-minute JPL Horizons table for March 2027 (smooth-Moon horizon): ` +
+      `within ${Math.max(1, Math.ceil(mid))} minute${Math.ceil(mid) > 1 ? 's' : ''} for the Sun at Chandrayaan-3 Vikram, and within ${Math.ceil(polarEarth)} minutes for Earth at Connecting Ridge. ` +
+      `One slow polar sunrise (the Sun climbing ${polarSun.worstRateDegPerHr.toFixed(3)}° per hour) differed by ${Math.round(polarSun.maxAbsErrMin)} minutes, which is why polar times are sensitive.`;
+  }
+  let illumination: string | null = null;
+  const o = v?.illumination?.ourPct?.connecting_ridge;
+  const g = v?.illumination?.glaserPct?.connecting_ridge;
+  const o2 = v?.illumination?.ourPct?.shackleton_rim;
+  const g2 = v?.illumination?.glaserPct?.shackleton_rim;
+  if (o && g && o2 && g2 && num(o.sunUp) && num(g.solarVisibility) && num(o2.sunUp) && num(g2.solarVisibility)) {
+    illumination =
+      `Sunlight cross-check, hourly 2017–2037 (the same period as Gläser et al. 2018, whose values are at 2 m height): ` +
+      `any part of the Sun visible ${o.sunUp.toFixed(1)}% of the time at Connecting Ridge (published ${g.solarVisibility.toFixed(1)}%) ` +
+      `and ${o2.sunUp.toFixed(1)}% at the Shackleton rim (published ${g2.solarVisibility.toFixed(1)}%).`;
+  }
+  return { timing, illumination };
 }
 
 const found = import.meta.glob('../../data/validation.json', { eager: true }) as Record<
@@ -129,6 +165,7 @@ export interface AboutDialogProps {
 export function AboutDialog({ open, onClose, returnFocusTo }: AboutDialogProps) {
   const T = ABOUT_TERRAIN;
   const tokens = validationTokens();
+  const extra = extraValidationLines();
 
   return (
     <Drawer open={open} onClose={onClose} title={SHELL_COPY.aboutTitle} width={440} returnFocusTo={returnFocusTo} className="about-drawer">
@@ -164,6 +201,8 @@ export function AboutDialog({ open, onClose, returnFocusTo }: AboutDialogProps) 
         ) : (
           <p>Computed in your browser with astronomy-engine, no refraction. Positions use the Moon&apos;s mean-Earth (ME) frame on a 1737.4 km sphere, with north, east and up taken at the site. Validation results pending.</p>
         )}
+        {extra.timing && <p>{extra.timing}</p>}
+        {extra.illumination && <p>{extra.illumination}</p>}
         <p>
           Near the poles the Sun and Earth move slowly in elevation, so a tiny angular error can shift a rise or set
           time by an hour or more.

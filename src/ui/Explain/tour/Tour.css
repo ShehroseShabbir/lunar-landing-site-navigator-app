@@ -1,0 +1,130 @@
+.tour__btn {
+  min-height: var(--target);
+  min-width: 44px;
+  padding: 0 var(--sp-3);
+  background: none;
+  color: var(--accent);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  font: inherit;
+  font-size: var(--fs-sm);
+  cursor: pointer;
+}
+.tour__sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+[data-tour-active='true'] {
+  outline: 2px solid var(--focus);
+  outline-offset: 4px;
+}
+.tour__dialog {
+  position: fixed;
+  z-index: 30;
+  right: 16px;
+  bottom: 16px;
+  box-sizing: border-box;
+  width: min(360px, calc(100vw - 32px));
+  max-height: calc(100vh - 32px);
+  overflow-y: auto;
+  padding: var(--sp-4);
+  background: var(--surface-2);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  font-size: var(--fs-sm);
+  line-height: 20px;
+  animation: tour-in 150ms ease-out;
+}
+.tour__dialog > p,
+.tour__dialog > h2 {
+  margin: 0;
+}
+.tour__step {
+  color: var(--text-muted);
+  font-size: var(--fs-xs);
+}
+.tour__dialog > .tour__title {
+  margin: var(--sp-1) 0 var(--sp-2);
+  font-size: var(--fs-md);
+  line-height: 24px;
+}
+.tour__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-2);
+  margin-top: var(--sp-4);
+}
+.tour__action {
+  min-height: var(--target);
+  min-width: 44px;
+  padding: 0 var(--sp-4);
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  font: inherit;
+  cursor: pointer;
+}
+.tour__action:disabled {
+  color: var(--text-muted);
+  cursor: not-allowed;
+}
+.tour__action--primary {
+  background: var(--accent);
+  color: var(--on-accent);
+  border-color: var(--accent);
+}
+.tour__action--text {
+  margin-left: auto;
+  background: none;
+  border-color: transparent;
+  color: var(--accent);
+  text-decoration: underline;
+}
+@keyframes tour-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tour__dialog {
+    animation: none;
+    transition: none;
+  }
+}
+@media (max-width: 640px) {
+  .tour__dialog {
+    left: 16px;
+    right: 16px;
+    bottom: 16px;
+    width: auto;
+  }
+  .tour__actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .tour__action {
+    min-height: 44px;
+  }
+  .tour__action--next {
+    order: 1;
+  }
+  .tour__action--back {
+    order: 2;
+  }
+  .tour__action--skip {
+    order: 3;
+    margin-left: 0;
+  }
+}

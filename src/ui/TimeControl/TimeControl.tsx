@@ -1,6 +1,7 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import { useAppState } from '../../state/AppState';
 import { DAY_MS, HOUR_MS, formatUtc, fromInputs, toDateInput, toTimeInput } from '../../state/time';
+import { WhyUtc } from '../Explain/tour';
 import './TimeControl.css';
 
 const STEPS: { label: string; aria: string; ms: number }[] = [
@@ -51,7 +52,7 @@ export function TimeControl() {
         />
       </div>
       <div className="time-control__field">
-        <label htmlFor={`${uid}-time`}>Time (UTC)</label>
+        <label htmlFor={`${uid}-time`}>Time (UTC)</label> <WhyUtc />
         <input
           id={`${uid}-time`}
           type="time"

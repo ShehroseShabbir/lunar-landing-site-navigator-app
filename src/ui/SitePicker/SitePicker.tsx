@@ -2,6 +2,7 @@ import { useId, useMemo, useState } from 'react';
 import { filterSites, groupSites, SITES } from '../../data/sites';
 import { useAppState } from '../../state/AppState';
 import { formatCoords, parseLat, parseLon } from '../../state/coords';
+import { WhyTerrain } from '../Explain/tour';
 import './SitePicker.css';
 
 const CUSTOM = '__custom__';
@@ -145,7 +146,7 @@ export function SitePicker({ hasTerrain = false }: Props) {
         <strong>{isCustom ? 'Custom coordinates' : (site?.name ?? '')}</strong>
         {' · '}
         {formatCoords(siteGeo.latDeg, siteGeo.lonDeg)} {'· '}
-        {horizonText}
+        {horizonText} <WhyTerrain />
       </p>
       {site && (
         <p className="site-picker__note">

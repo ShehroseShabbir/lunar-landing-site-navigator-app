@@ -13,6 +13,7 @@ import { PlaybackControls } from './ui/Playback';
 import { ShareControls } from './ui/Share';
 import { CompareView, CompareButton, useHashRoute } from './ui/Compare';
 import { Scene3DToggle, Scene3DPanel } from './ui/Scene3D/Scene3DPanel';
+import { TourButton } from './ui/Explain/tour';
 
 function Sky() {
   const { siteGeo, siteName, t } = useAppState();
@@ -39,6 +40,7 @@ function Shell() {
           <CompareButton />
           {route === 'main' && <Scene3DToggle open={show3d} onToggle={() => setShow3d((v) => !v)} />}
           <AboutButton />
+          {route === 'main' && <TourButton />}
         </nav>
       </header>
       {route === 'compare' ? (
@@ -55,7 +57,7 @@ function Shell() {
               <ShareControls />
             </div>
           </section>
-          <section className="app-sky" aria-label="Sky">
+          <section className="app-sky" data-tour="sky" aria-label="Sky">
             <Sky />
           </section>
           {show3d && (
@@ -63,7 +65,7 @@ function Shell() {
               <Scene3DPanel />
             </section>
           )}
-          <section className="app-metrics" aria-label="Now at this site">
+          <section className="app-metrics" data-tour="metrics" aria-label="Now at this site">
             <MetricsPanel />
           </section>
           <section className="app-timeline" aria-label="Next 30 days">

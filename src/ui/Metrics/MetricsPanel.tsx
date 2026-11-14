@@ -4,6 +4,7 @@ import { useScenarioResult } from '../../state/useScenarioResult';
 import { Explain } from '../Explain/Explain';
 import { buildView, commsChip, formatUtc, powerChip } from './format';
 import type { Chip, Row } from './format';
+import { WhySunLow, WhyEarthBobs, WhySunsetSudden } from '../Explain/tour';
 import './MetricsPanel.css';
 
 function BoltIcon({ slash }: { slash: boolean }) {
@@ -147,7 +148,12 @@ export function MetricsPanel() {
         rows={view.sun.map((r) =>
           r.label === 'Elevation above terrain' ? { ...r, label: `Elevation above ${horizonWord}` } : r,
         )}
-        extra={{ 'Visible disk': <Explain topic="W7" /> }}
+        extra={{
+          'Visible disk': <Explain topic="W7" />,
+          [`Elevation above ${horizonWord}`]: <WhySunLow />,
+          'Sets in': <WhySunsetSudden />,
+          'Rises in': <WhySunsetSudden />,
+        }}
       />
 
       <h3 className="metrics__body">
@@ -157,15 +163,18 @@ export function MetricsPanel() {
         rows={view.earth.map((r) =>
           r.label === 'Elevation above terrain' ? { ...r, label: `Elevation above ${horizonWord}` } : r,
         )}
+        extra={{ [`Elevation above ${horizonWord}`]: <WhyEarthBobs /> }}
       />
       {view.note && <p className="metrics__note">{view.note}</p>}
 
+      <div data-tour="metrics-window">
       <h3 className="metrics__body">30-day window from {formatUtc(rangeStart)}</h3>
       <p className="metrics__hint">
         Operational thresholds: Power OK = Sun at least half visible; Comms OK = Earth centre at least 0.5° above the{' '}
         {horizonWord}. Geometry indices, not watts or link budgets.
       </p>
       <Rows rows={view.tiles} />
+      </div>
     </section>
   );
 }

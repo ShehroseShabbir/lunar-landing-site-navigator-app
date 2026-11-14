@@ -26,6 +26,31 @@ export const EXPLAIN_COPY = {
     label: 'Why? What is visible disk?',
     body: 'The Sun is about 0.53° wide, so near the horizon part of it can be hidden by terrain. This is the share of the disk still showing.',
   },
+  W1: {
+    title: 'Why does the Sun stay low near the poles?',
+    label: 'Why? Why does the Sun stay low near the poles?',
+    body: "The Moon's axis is tilted only about 1.5° from the flat plane of its orbit around the Sun. So near a pole the Sun never climbs high. It circles the sky just above or just below the horizon during one lunar day.",
+  },
+  W2: {
+    title: 'Why does Earth bob in and out of view?',
+    label: 'Why? Why does Earth bob in and out of view?',
+    body: 'From the south pole, Earth stays close to the horizon. The Moon rocks slightly as it orbits (this is called libration). That moves Earth up and down by several degrees, so it can sink below the horizon and then come back.',
+  },
+  W3: {
+    title: 'Why does terrain matter?',
+    label: 'Why? Why does terrain matter?',
+    body: 'Hills and crater rims can hide the Sun or Earth while they are still above the flat 0° line. Where we have lunar elevation data, we use the real horizon. Elsewhere we assume a smooth Moon, and say so.',
+  },
+  W4: {
+    title: 'Why is sunset so sudden here?',
+    label: 'Why? Why is sunset so sudden here?',
+    body: 'The Moon has no air. Light is not bent or scattered, so there is no twilight and no glow after the Sun drops. We apply no refraction correction.',
+  },
+  W8: {
+    title: 'Why is time in UTC?',
+    label: 'Why? Why is time in UTC?',
+    body: 'UTC (Coordinated Universal Time) is one shared world clock. Using it means everyone sees the same moment, whatever their time zone. Every time in this app is UTC.',
+  },
 } as const satisfies Record<string, ExplainCopy>;
 
 export type ExplainId = keyof typeof EXPLAIN_COPY;

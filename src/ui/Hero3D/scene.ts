@@ -665,6 +665,7 @@ export function createHeroScene(init: HeroSceneInit): HeroScene {
       requestRender();
     },
     zoom(dir) {
+      pristine = false;
       if (dir < 0 && camera.position.distanceTo(controls.target) >= controls.maxDistance - 1) {
         init.onZoomOutBeyond?.();
         return;
@@ -674,6 +675,7 @@ export function createHeroScene(init: HeroSceneInit): HeroScene {
       controls.update();
     },
     orbit(dAz, dEl) {
+      pristine = false;
       controls.rotateLeft(dAz * DEG);
       controls.rotateUp(dEl * DEG);
       controls.update();

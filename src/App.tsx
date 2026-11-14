@@ -9,11 +9,17 @@ import { SkyView } from './ui/SkyView/SkyView';
 import { MetricsPanel } from './ui/Metrics/MetricsPanel';
 import { Timeline } from './ui/Timeline/Timeline';
 import { PlaybackControls } from './ui/Playback';
+import { ShareControls } from './ui/Share';
 
 function Sky() {
   const { siteGeo, siteName, t } = useAppState();
   const { profile } = useScenarioResult();
   return <SkyView site={siteGeo} siteName={siteName} profile={profile} t={t} />;
+}
+
+function Picker() {
+  const { terrain } = useScenarioResult();
+  return <SitePicker hasTerrain={terrain === 'loaded'} />;
 }
 
 export default function App() {
@@ -31,10 +37,11 @@ export default function App() {
         </header>
         <main className="app-main" style={{ display: 'contents' }}>
           <section className="app-controls" aria-label="Site and time">
-            <SitePicker />
+            <Picker />
             <TimeControl />
             <div className="app-toolbar">
               <PlaybackControls />
+              <ShareControls />
             </div>
           </section>
           <section className="app-sky" aria-label="Sky">

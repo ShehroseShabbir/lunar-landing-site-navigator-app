@@ -29,14 +29,20 @@ export interface SpaceTexture {
   height: number;
   /** Equirectangular: longitude (east-positive, degrees) at the image's left edge; latitude +90 at the top row. */
   lonAtLeftEdgeDeg: number;
-  kind: 'color' | 'normal';
+  kind: 'color' | 'normal' | 'height';
+  /** Height maps only: metres above the 1737.4 km sphere at grey 0 and grey 255 (8-bit linear). */
+  heightMinM?: number;
+  heightMaxM?: number;
+  /** Height maps only: human-readable encoding note. */
+  encoding?: string;
   credit: string;
   sourceUrl: string;
 }
 
 export interface SpaceManifest {
   moonColor: SpaceTexture;
-  moonNormal: SpaceTexture;
+  /** Relief for the Moon: an 8-bit height map (kind 'height'), used as a bump map. */
+  moonRelief: SpaceTexture;
   earthColor: SpaceTexture;
   radiiKm: { moon: number; earth: number; sun: number };
 }

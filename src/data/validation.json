@@ -1,0 +1,59 @@
+{
+  "source": "JPL Horizons API",
+  "toleranceDeg": 0.05,
+  "pointCount": 162,
+  "sites": [
+    "apollo11",
+    "chandrayaan3",
+    "connecting_ridge"
+  ],
+  "maxElErrDeg": 0.00633415246463187,
+  "maxAzCosElErrDeg": 0.006343914848906689,
+  "maxErrArcmin": 0.38063489093440134,
+  "perSite": [
+    {
+      "site": "apollo11",
+      "body": "sun",
+      "points": 27,
+      "maxElErrDeg": 0.00633415246463187,
+      "maxAzCosElErrDeg": 0.001842699397609766
+    },
+    {
+      "site": "apollo11",
+      "body": "earth",
+      "points": 27,
+      "maxElErrDeg": 0.0012355401153598677,
+      "maxAzCosElErrDeg": 0.001739030023309402
+    },
+    {
+      "site": "chandrayaan3",
+      "body": "sun",
+      "points": 27,
+      "maxElErrDeg": 0.0030901133399865444,
+      "maxAzCosElErrDeg": 0.006334528535862104
+    },
+    {
+      "site": "chandrayaan3",
+      "body": "earth",
+      "points": 27,
+      "maxElErrDeg": 0.0017496874540547935,
+      "maxAzCosElErrDeg": 0.0009772130730299363
+    },
+    {
+      "site": "connecting_ridge",
+      "body": "sun",
+      "points": 27,
+      "maxElErrDeg": 0.0016858218194755192,
+      "maxAzCosElErrDeg": 0.006343914848906689
+    },
+    {
+      "site": "connecting_ridge",
+      "body": "earth",
+      "points": 27,
+      "maxElErrDeg": 0.0016189316423922406,
+      "maxAzCosElErrDeg": 0.0011068227340016751
+    }
+  ],
+  "fixturesFetchedAt": "2026-11-14T00:06:14.681Z",
+  "generatedAt": "2026-11-14T00:19:12.853Z"
+}

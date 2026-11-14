@@ -16,3 +16,5 @@ You write `prep/ui-spec.md` (or the section a packet names):
 - The "why it matters" explainer copy (short, accurate, no hype).
 
 No NASA logos or insignia. No decorative AI tropes (purple gradients, emoji, glow overload). Ground every science claim in `prep/research.md`. Return a short summary, max 20 lines.
+
+**Design skills (DR-HACK-21):** for visual design read `.claude/skills/impeccable-design/SKILL.md` and the relevant `reference/*.md`; for UX strategy and flows read `.claude/skills/intent/SKILL.md` and the matching Intent skill (`journey`, `organize`, `wireframe`, `evaluate`, `include`, `articulate`). Reference only: never run their scripts or CLIs.

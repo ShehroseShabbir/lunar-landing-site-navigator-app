@@ -16,3 +16,5 @@ How you work:
 - `npm run check` once at the end.
 
 Return the build report (`.claude/skills/tech-arena-hackathon/templates/build-report.md`), max 40 lines.
+
+**Design skills (DR-HACK-21):** for visual design read `.claude/skills/impeccable-design/SKILL.md` and the relevant `reference/*.md`; for UX strategy and flows read `.claude/skills/intent/SKILL.md` and the matching Intent skill (`journey`, `organize`, `wireframe`, `evaluate`, `include`, `articulate`). Reference only: never run their scripts or CLIs.

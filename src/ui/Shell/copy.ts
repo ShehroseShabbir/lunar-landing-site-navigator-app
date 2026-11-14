@@ -1,8 +1,8 @@
 /** Every user-facing string the Shell adds. Chloe's copy table lands here. */
 export const SHELL_COPY = {
-  appName: 'Lunar Landing Site Navigator',
+  appName: 'Ridgelight',
   skipToPanel: 'Skip to the answers panel',
-  mainLabel: 'Lunar landing site navigator',
+  mainLabel: 'Ridgelight, a lunar landing site navigator',
   stageLabel: '3D view of the landing site',
   panelLabel: 'Site and answers',
   collapsePanel: 'Hide panel',

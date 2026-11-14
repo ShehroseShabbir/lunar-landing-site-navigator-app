@@ -1,4 +1,6 @@
-# Lunar Landing Site Navigator
+# Ridgelight
+
+A lunar landing site navigator, built for the NASA Space Apps Challenge 2026 challenge "Lunar Landing Site Navigator". Near the Moon's south pole, ridges decide when a lander gets light; Ridgelight shows when.
 
 Pick a lunar site and a date. See the real terrain around the site in 3D, with the Sun and Earth over its horizon, and get plain answers: is there sunlight, is Earth in view, and when does that change? A time dock shows the next 30 days. A compare drawer sets up to four site and date options side by side, such as a two-week launch slip.
 

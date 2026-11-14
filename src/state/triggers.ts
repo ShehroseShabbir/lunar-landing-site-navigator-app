@@ -341,7 +341,7 @@ export function toICS(matches: readonly TriggerMatch[], rule: TriggerRule, siteN
   const lines = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
-    'PRODID:-//Lunar Landing Site Navigator//Events//EN',
+    'PRODID:-//Ridgelight//Events//EN',
     'CALSCALE:GREGORIAN',
     'METHOD:PUBLISH',
   ];

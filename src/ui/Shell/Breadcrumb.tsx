@@ -1,6 +1,6 @@
 import { SHELL_COPY } from './copy';
 
-/** Top-left breadcrumb. It is the page's one h1: "Lunar Landing Site Navigator: Malapert Massif". */
+/** Top-left breadcrumb. It is the page's one h1: "Ridgelight: Malapert Massif". */
 export function Breadcrumb({ siteName }: { siteName: string }) {
   return (
     <h1 className="crumb">

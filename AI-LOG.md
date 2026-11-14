@@ -1,4 +1,4 @@
-# AI use log: Lunar Landing Site Navigator
+# AI use log: Ridgelight
 
 Team Tech Arena, NASA Space Apps Challenge 2026. AI tool used: Claude Code (Anthropic), run as several AI agents. Each agent had a job: research, writing code, testing, reviewing, or writing documents. A person on the team set the direction, made the decisions and approved every deployment.
 

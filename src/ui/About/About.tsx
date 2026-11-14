@@ -174,7 +174,7 @@ export function AboutDialog({ open, onClose, returnFocusTo }: AboutDialogProps) 
       <div className="about-body">
         <h3>What this is</h3>
         <p>
-          A planning aid for where the Sun and Earth sit at a lunar site. Not flight software. Built for the NASA Space
+          Ridgelight is a planning aid for where the Sun and Earth sit at a lunar site. Not flight software. Built for the NASA Space
           Apps Challenge 2026. Uses NASA data.
         </p>
 

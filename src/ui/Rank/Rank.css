@@ -118,7 +118,7 @@
   color: var(--text-2);
 }
 .rk-table .rk-name {
-  min-width: 11em;
+  min-width: 8em;
   font-weight: var(--fw-medium);
   color: var(--text);
 }
@@ -166,7 +166,7 @@
 }
 .rk .rk-actions button {
   white-space: nowrap;
-  padding: 0 var(--sp-2);
+  padding: 0 var(--sp-1);
   font-size: var(--fs-meta);
 }
 

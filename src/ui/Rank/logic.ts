@@ -3,7 +3,10 @@ import type { SiteMetrics } from '../../astro/types';
 import { hasHorizonProfile } from '../../data/horizons';
 import type { Site } from '../../data/sites';
 import { percentRank } from '../Compare/logic';
-import { formatLongestDark, formatPercent } from '../Metrics/format';
+import { formatLongestDark as fmtDark, formatPercent } from '../Metrics/format';
+
+/** Rank only: keep a duration such as "≥ 13 d 20 m" on one line. */
+const formatLongestDark = (h: number, clipped: boolean): string => fmtDark(h, clipped).replace(/ /g, '\u00a0');
 
 export interface RankRow {
   siteId: string;

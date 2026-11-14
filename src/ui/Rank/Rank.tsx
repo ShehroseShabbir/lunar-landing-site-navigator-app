@@ -268,7 +268,7 @@ export function RankView({ onClose }: { onClose: () => void }) {
                       <td className="rk-num">{formatPercent(r.sunPct)}</td>
                       <td className="rk-num">{formatPercent(r.earthPct)}</td>
                       <td className="rk-num">{formatPercent(r.bothPct)}</td>
-                      <td className="rk-num">{formatLongestDark(r.darkHours, r.darkClipped)}</td>
+                      <td className="rk-num">{formatLongestDark(r.darkHours, r.darkClipped).replace(/ /g, '\u00a0')}</td>
                       <td>
                         <div className="rk-actions">{actions(r, s, dup)}</div>
                       </td>
@@ -301,7 +301,7 @@ export function RankView({ onClose }: { onClose: () => void }) {
                       {C.labels.both} {formatPercent(r.bothPct)}
                     </span>
                     <span>
-                      {C.labels.dark} {formatLongestDark(r.darkHours, r.darkClipped)}
+                      {C.labels.dark} {formatLongestDark(r.darkHours, r.darkClipped).replace(/ /g, '\u00a0')}
                     </span>
                   </p>
                   <div className="rk-actions">{actions(r, s, dup)}</div>

@@ -59,12 +59,12 @@ describe('rankVerdict', () => {
       row('c', 60, 10, { name: 'Gamma' }),
     ]);
     expect(v).toBe(
-      'Gamma has the most time with both sunlight and Earth in view: 60%. But it has a dark period of 10 h. The best site with no dark period is Ridge: 44% both at once.',
+      'Gamma has the most time with both sunlight and Earth in view: 60%. But it has a dark period of 10\u00a0h. The best site with no dark period is Ridge: 44% both at once.',
     );
   });
   it('falls back to the shortest dark period when every site has one', () => {
     const v = rankVerdict([row('a', 60, 100, { name: 'A' }), row('b', 40, 20, { name: 'B' }), row('c', 30, 50, { name: 'C' })]);
-    expect(v).toContain('The site with the shortest dark period is B (20 h): 40% both at once.');
+    expect(v).toContain('The site with the shortest dark period is B (20\u00a0h): 40% both at once.');
   });
   it('gives the dark reason only when it broke the tie', () => {
     const broke = rankVerdict([row('a', 50, 5, { name: 'A' }), row('b', 50, 9, { name: 'B' })]);

@@ -8,7 +8,7 @@ import { DEFAULT_STEP_MIN, REFINE_MS, nextCrossing, scanWindows, stateIsOn, stat
 
 const MS_PER_DAY = 86_400_000;
 const MS_PER_HOUR = 3_600_000;
-const CACHE_SIZE = 8;
+const CACHE_SIZE = 16; // main scenario + up to 4 compare scenarios, with headroom (S2b review M2)
 
 interface CacheEntry {
   key: string;

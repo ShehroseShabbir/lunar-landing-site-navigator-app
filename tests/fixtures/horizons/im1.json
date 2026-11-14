@@ -1,0 +1,38 @@
+{
+ "site": {
+  "id": "im1",
+  "latDeg": -80.13,
+  "lonDeg": 1.44,
+  "heightM": 0
+ },
+ "source": "JPL Horizons API",
+ "fetchedAt": "2026-11-14T00:06:14.681Z",
+ "requests": [
+  {
+   "body": "sun",
+   "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND=%2710%27&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%271.44%2C-80.13%2C0%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&START_TIME=%272024-02-22+00%3A00%27&STOP_TIME=%272024-02-22+00%3A01%27&STEP_SIZE=%271+m%27&QUANTITIES=%274%27&APPARENT=%27AIRLESS%27&ANG_FORMAT=%27DEG%27&CSV_FORMAT=%27YES%27&TIME_TYPE=%27UT%27"
+  }
+ ],
+ "researchMdExpected": {
+  "azDeg": 30.6,
+  "elDeg": 9.65,
+  "utc": "2024-02-22T00:00:00.000Z"
+ },
+ "azimuthConvention": {
+  "quote": "'Azi_(a-app), Elev_(a-app),' =\n  Airless apparent azimuth and elevation of target center. Compensated\nfor light-time, the gravitational deflection of light, stellar aberration,\nprecession and nutation. Azimuth is measured clockwise from north:\n\n  North(0) -> East(90) -> South(180) -> West(270) -> North (360)\n\nElevation angle is with respect to a plane perpendicular to the reference\nsurface local zenith direction. TOPOCENTRIC ONLY.  Units: DEGREES",
+  "headerLines": [
+   "Center geodetic : 1.44, -80.13, 0.0               {E-lon(deg),Lat(deg),Alt(km)}",
+   "Center pole/equ : MEAN_ME (high precision)        {East-longitude positive}",
+   "Center radii    : 1737.4, 1737.4, 1737.4 km       {Equator_a, b, pole_c}",
+   "Atmos refraction: NO (AIRLESS)"
+  ]
+ },
+ "points": [
+  {
+   "utc": "2024-02-22T00:00:00.000Z",
+   "body": "sun",
+   "azDeg": 30.59668,
+   "elDeg": 9.645688
+  }
+ ]
+}

@@ -1,0 +1,385 @@
+{
+ "site": {
+  "id": "connecting_ridge",
+  "latDeg": -89.4398,
+  "lonDeg": -137.17,
+  "heightM": 0
+ },
+ "source": "JPL Horizons API",
+ "fetchedAt": "2026-11-14T00:06:14.681Z",
+ "settings": {
+  "center": "coord@301 (Moon, geodetic, east-positive longitude)",
+  "quantities": 4,
+  "apparent": "AIRLESS (no refraction)",
+  "timeType": "UT",
+  "stepSize": "6 h",
+  "frame": "Moon MEAN_ME (high precision)"
+ },
+ "azimuthConvention": {
+  "quote": "'Azi_(a-app), Elev_(a-app),' =\n  Airless apparent azimuth and elevation of target center. Compensated\nfor light-time, the gravitational deflection of light, stellar aberration,\nprecession and nutation. Azimuth is measured clockwise from north:\n\n  North(0) -> East(90) -> South(180) -> West(270) -> North (360)\n\nElevation angle is with respect to a plane perpendicular to the reference\nsurface local zenith direction. TOPOCENTRIC ONLY.  Units: DEGREES",
+  "headerLines": [
+   "Center geodetic : 222.83, -89.4398, 0.0           {E-lon(deg),Lat(deg),Alt(km)}",
+   "Center pole/equ : MEAN_ME (high precision)        {East-longitude positive}",
+   "Center radii    : 1737.4, 1737.4, 1737.4 km       {Equator_a, b, pole_c}",
+   "Atmos refraction: NO (AIRLESS)"
+  ]
+ },
+ "requests": [
+  {
+   "epoch": "2027-01-15",
+   "body": "sun",
+   "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND=%2710%27&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%27-137.17%2C-89.4398%2C0%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&START_TIME=%272027-01-15+00%3A00%27&STOP_TIME=%272027-01-17+00%3A00%27&STEP_SIZE=%276+h%27&QUANTITIES=%274%27&APPARENT=%27AIRLESS%27&ANG_FORMAT=%27DEG%27&CSV_FORMAT=%27YES%27&TIME_TYPE=%27UT%27"
+  },
+  {
+   "epoch": "2027-01-15",
+   "body": "earth",
+   "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND=%27399%27&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%27-137.17%2C-89.4398%2C0%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&START_TIME=%272027-01-15+00%3A00%27&STOP_TIME=%272027-01-17+00%3A00%27&STEP_SIZE=%276+h%27&QUANTITIES=%274%27&APPARENT=%27AIRLESS%27&ANG_FORMAT=%27DEG%27&CSV_FORMAT=%27YES%27&TIME_TYPE=%27UT%27"
+  },
+  {
+   "epoch": "2027-05-15",
+   "body": "sun",
+   "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND=%2710%27&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%27-137.17%2C-89.4398%2C0%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&START_TIME=%272027-05-15+00%3A00%27&STOP_TIME=%272027-05-17+00%3A00%27&STEP_SIZE=%276+h%27&QUANTITIES=%274%27&APPARENT=%27AIRLESS%27&ANG_FORMAT=%27DEG%27&CSV_FORMAT=%27YES%27&TIME_TYPE=%27UT%27"
+  },
+  {
+   "epoch": "2027-05-15",
+   "body": "earth",
+   "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND=%27399%27&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%27-137.17%2C-89.4398%2C0%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&START_TIME=%272027-05-15+00%3A00%27&STOP_TIME=%272027-05-17+00%3A00%27&STEP_SIZE=%276+h%27&QUANTITIES=%274%27&APPARENT=%27AIRLESS%27&ANG_FORMAT=%27DEG%27&CSV_FORMAT=%27YES%27&TIME_TYPE=%27UT%27"
+  },
+  {
+   "epoch": "2027-09-15",
+   "body": "sun",
+   "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND=%2710%27&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%27-137.17%2C-89.4398%2C0%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&START_TIME=%272027-09-15+00%3A00%27&STOP_TIME=%272027-09-17+00%3A00%27&STEP_SIZE=%276+h%27&QUANTITIES=%274%27&APPARENT=%27AIRLESS%27&ANG_FORMAT=%27DEG%27&CSV_FORMAT=%27YES%27&TIME_TYPE=%27UT%27"
+  },
+  {
+   "epoch": "2027-09-15",
+   "body": "earth",
+   "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND=%27399%27&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%27-137.17%2C-89.4398%2C0%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&START_TIME=%272027-09-15+00%3A00%27&STOP_TIME=%272027-09-17+00%3A00%27&STEP_SIZE=%276+h%27&QUANTITIES=%274%27&APPARENT=%27AIRLESS%27&ANG_FORMAT=%27DEG%27&CSV_FORMAT=%27YES%27&TIME_TYPE=%27UT%27"
+  }
+ ],
+ "points": [
+  {
+   "utc": "2027-01-15T00:00:00.000Z",
+   "body": "sun",
+   "azDeg": 229.767087,
+   "elDeg": 0.384787
+  },
+  {
+   "utc": "2027-01-15T06:00:00.000Z",
+   "body": "sun",
+   "azDeg": 226.727135,
+   "elDeg": 0.355838
+  },
+  {
+   "utc": "2027-01-15T12:00:00.000Z",
+   "body": "sun",
+   "azDeg": 223.687601,
+   "elDeg": 0.327884
+  },
+  {
+   "utc": "2027-01-15T18:00:00.000Z",
+   "body": "sun",
+   "azDeg": 220.648487,
+   "elDeg": 0.300982
+  },
+  {
+   "utc": "2027-01-16T00:00:00.000Z",
+   "body": "sun",
+   "azDeg": 217.609796,
+   "elDeg": 0.275185
+  },
+  {
+   "utc": "2027-01-16T06:00:00.000Z",
+   "body": "sun",
+   "azDeg": 214.571532,
+   "elDeg": 0.250544
+  },
+  {
+   "utc": "2027-01-16T12:00:00.000Z",
+   "body": "sun",
+   "azDeg": 211.533694,
+   "elDeg": 0.227105
+  },
+  {
+   "utc": "2027-01-16T18:00:00.000Z",
+   "body": "sun",
+   "azDeg": 208.496283,
+   "elDeg": 0.204911
+  },
+  {
+   "utc": "2027-01-17T00:00:00.000Z",
+   "body": "sun",
+   "azDeg": 205.459297,
+   "elDeg": 0.184002
+  },
+  {
+   "utc": "2027-01-15T00:00:00.000Z",
+   "body": "earth",
+   "azDeg": 129.504463,
+   "elDeg": 4.803195
+  },
+  {
+   "utc": "2027-01-15T06:00:00.000Z",
+   "body": "earth",
+   "azDeg": 129.462448,
+   "elDeg": 5.024864
+  },
+  {
+   "utc": "2027-01-15T12:00:00.000Z",
+   "body": "earth",
+   "azDeg": 129.445048,
+   "elDeg": 5.229533
+  },
+  {
+   "utc": "2027-01-15T18:00:00.000Z",
+   "body": "earth",
+   "azDeg": 129.453075,
+   "elDeg": 5.416168
+  },
+  {
+   "utc": "2027-01-16T00:00:00.000Z",
+   "body": "earth",
+   "azDeg": 129.487263,
+   "elDeg": 5.583748
+  },
+  {
+   "utc": "2027-01-16T06:00:00.000Z",
+   "body": "earth",
+   "azDeg": 129.548251,
+   "elDeg": 5.731266
+  },
+  {
+   "utc": "2027-01-16T12:00:00.000Z",
+   "body": "earth",
+   "azDeg": 129.636575,
+   "elDeg": 5.857738
+  },
+  {
+   "utc": "2027-01-16T18:00:00.000Z",
+   "body": "earth",
+   "azDeg": 129.752655,
+   "elDeg": 5.962211
+  },
+  {
+   "utc": "2027-01-17T00:00:00.000Z",
+   "body": "earth",
+   "azDeg": 129.896778,
+   "elDeg": 6.043771
+  },
+  {
+   "utc": "2027-05-15T00:00:00.000Z",
+   "body": "sun",
+   "azDeg": 207.997633,
+   "elDeg": -2.01297
+  },
+  {
+   "utc": "2027-05-15T06:00:00.000Z",
+   "body": "sun",
+   "azDeg": 204.947288,
+   "elDeg": -2.027073
+  },
+  {
+   "utc": "2027-05-15T12:00:00.000Z",
+   "body": "sun",
+   "azDeg": 201.897257,
+   "elDeg": -2.039739
+  },
+  {
+   "utc": "2027-05-15T18:00:00.000Z",
+   "body": "sun",
+   "azDeg": 198.847529,
+   "elDeg": -2.050925
+  },
+  {
+   "utc": "2027-05-16T00:00:00.000Z",
+   "body": "sun",
+   "azDeg": 195.798093,
+   "elDeg": -2.060596
+  },
+  {
+   "utc": "2027-05-16T06:00:00.000Z",
+   "body": "sun",
+   "azDeg": 192.748939,
+   "elDeg": -2.068716
+  },
+  {
+   "utc": "2027-05-16T12:00:00.000Z",
+   "body": "sun",
+   "azDeg": 189.700052,
+   "elDeg": -2.075257
+  },
+  {
+   "utc": "2027-05-16T18:00:00.000Z",
+   "body": "sun",
+   "azDeg": 186.651421,
+   "elDeg": -2.080195
+  },
+  {
+   "utc": "2027-05-17T00:00:00.000Z",
+   "body": "sun",
+   "azDeg": 183.603033,
+   "elDeg": -2.08351
+  },
+  {
+   "utc": "2027-05-15T00:00:00.000Z",
+   "body": "earth",
+   "azDeg": 141.259027,
+   "elDeg": -4.176669
+  },
+  {
+   "utc": "2027-05-15T06:00:00.000Z",
+   "body": "earth",
+   "azDeg": 141.378384,
+   "elDeg": -4.504878
+  },
+  {
+   "utc": "2027-05-15T12:00:00.000Z",
+   "body": "earth",
+   "azDeg": 141.488169,
+   "elDeg": -4.818331
+  },
+  {
+   "utc": "2027-05-15T18:00:00.000Z",
+   "body": "earth",
+   "azDeg": 141.588403,
+   "elDeg": -5.116047
+  },
+  {
+   "utc": "2027-05-16T00:00:00.000Z",
+   "body": "earth",
+   "azDeg": 141.67907,
+   "elDeg": -5.397113
+  },
+  {
+   "utc": "2027-05-16T06:00:00.000Z",
+   "body": "earth",
+   "azDeg": 141.76011,
+   "elDeg": -5.660693
+  },
+  {
+   "utc": "2027-05-16T12:00:00.000Z",
+   "body": "earth",
+   "azDeg": 141.831422,
+   "elDeg": -5.906028
+  },
+  {
+   "utc": "2027-05-16T18:00:00.000Z",
+   "body": "earth",
+   "azDeg": 141.892861,
+   "elDeg": -6.132434
+  },
+  {
+   "utc": "2027-05-17T00:00:00.000Z",
+   "body": "earth",
+   "azDeg": 141.944241,
+   "elDeg": -6.339309
+  },
+  {
+   "utc": "2027-09-15T00:00:00.000Z",
+   "body": "sun",
+   "azDeg": 145.401506,
+   "elDeg": 0.595651
+  },
+  {
+   "utc": "2027-09-15T06:00:00.000Z",
+   "body": "sun",
+   "azDeg": 142.358413,
+   "elDeg": 0.618172
+  },
+  {
+   "utc": "2027-09-15T12:00:00.000Z",
+   "body": "sun",
+   "azDeg": 139.315415,
+   "elDeg": 0.641875
+  },
+  {
+   "utc": "2027-09-15T18:00:00.000Z",
+   "body": "sun",
+   "azDeg": 136.272495,
+   "elDeg": 0.666703
+  },
+  {
+   "utc": "2027-09-16T00:00:00.000Z",
+   "body": "sun",
+   "azDeg": 133.229633,
+   "elDeg": 0.692599
+  },
+  {
+   "utc": "2027-09-16T06:00:00.000Z",
+   "body": "sun",
+   "azDeg": 130.18681,
+   "elDeg": 0.719501
+  },
+  {
+   "utc": "2027-09-16T12:00:00.000Z",
+   "body": "sun",
+   "azDeg": 127.144008,
+   "elDeg": 0.747346
+  },
+  {
+   "utc": "2027-09-16T18:00:00.000Z",
+   "body": "sun",
+   "azDeg": 124.101205,
+   "elDeg": 0.776066
+  },
+  {
+   "utc": "2027-09-17T00:00:00.000Z",
+   "body": "sun",
+   "azDeg": 121.058382,
+   "elDeg": 0.805593
+  },
+  {
+   "utc": "2027-09-15T00:00:00.000Z",
+   "body": "earth",
+   "azDeg": 134.633498,
+   "elDeg": 2.778459
+  },
+  {
+   "utc": "2027-09-15T06:00:00.000Z",
+   "body": "earth",
+   "azDeg": 134.364706,
+   "elDeg": 3.080579
+  },
+  {
+   "utc": "2027-09-15T12:00:00.000Z",
+   "body": "earth",
+   "azDeg": 134.10713,
+   "elDeg": 3.372954
+  },
+  {
+   "utc": "2027-09-15T18:00:00.000Z",
+   "body": "earth",
+   "azDeg": 133.861178,
+   "elDeg": 3.654682
+  },
+  {
+   "utc": "2027-09-16T00:00:00.000Z",
+   "body": "earth",
+   "azDeg": 133.627213,
+   "elDeg": 3.924871
+  },
+  {
+   "utc": "2027-09-16T06:00:00.000Z",
+   "body": "earth",
+   "azDeg": 133.405546,
+   "elDeg": 4.18264
+  },
+  {
+   "utc": "2027-09-16T12:00:00.000Z",
+   "body": "earth",
+   "azDeg": 133.196444,
+   "elDeg": 4.427122
+  },
+  {
+   "utc": "2027-09-16T18:00:00.000Z",
+   "body": "earth",
+   "azDeg": 133.000131,
+   "elDeg": 4.657472
+  },
+  {
+   "utc": "2027-09-17T00:00:00.000Z",
+   "body": "earth",
+   "azDeg": 132.816789,
+   "elDeg": 4.872863
+  }
+ ]
+}

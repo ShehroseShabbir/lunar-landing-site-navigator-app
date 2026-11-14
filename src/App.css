@@ -43,6 +43,13 @@
 .app-timeline {
   grid-column: span 7;
 }
+.app-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+  align-items: center;
+  margin-top: 12px;
+}
 .app-footer {
   font-size: 0.875rem;
   color: var(--text-muted, inherit);

@@ -8,6 +8,7 @@ import { AboutButton } from './ui/About/About';
 import { SkyView } from './ui/SkyView/SkyView';
 import { MetricsPanel } from './ui/Metrics/MetricsPanel';
 import { Timeline } from './ui/Timeline/Timeline';
+import { PlaybackControls } from './ui/Playback';
 
 function Sky() {
   const { siteGeo, siteName, t } = useAppState();
@@ -32,6 +33,9 @@ export default function App() {
           <section className="app-controls" aria-label="Site and time">
             <SitePicker />
             <TimeControl />
+            <div className="app-toolbar">
+              <PlaybackControls />
+            </div>
           </section>
           <section className="app-sky" aria-label="Sky">
             <Sky />

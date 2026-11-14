@@ -156,5 +156,69 @@
     ],
     "fixturesFetchedAt": "2026-11-14T03:27:29.065Z",
     "generatedAt": "2026-11-14T03:28:34.160Z"
+  },
+  "illumination": {
+    "sites": [
+      "connecting_ridge",
+      "shackleton_rim"
+    ],
+    "span": {
+      "startUtc": "2017-01-01T00:00:00Z",
+      "endUtc": "2037-01-01T00:00:00Z",
+      "stepHours": 1,
+      "samples": 175320
+    },
+    "definition": {
+      "sunUp": "percent of hourly samples with any part of the Sun above the terrain horizon (upper limb, horizon at the Sun centre azimuth); compare with Glaser \"solar visibility\"",
+      "meanVisibleFraction": "time-mean of the visible solar-disc fraction (horizontal cut at the horizon); compare with Glaser \"average illumination\"",
+      "powerOk": "percent of hourly samples with visible fraction >= 0.5 (Sun centre at or above the terrain horizon); no Glaser counterpart",
+      "observer": "terrain + 2 m (committed public/horizons profiles: 720 great-circle rays at 0.5 deg to 300 km; LOLA 5 m site DEM to 5 km, then LDEM_80S_80M and LDEM_75S_240M)"
+    },
+    "ourPct": {
+      "connecting_ridge": {
+        "sunUp": 90.9,
+        "meanVisibleFraction": 86,
+        "powerOk": 86
+      },
+      "shackleton_rim": {
+        "sunUp": 88.8,
+        "meanVisibleFraction": 84,
+        "powerOk": 84.1
+      }
+    },
+    "ourPctYear2027": {
+      "startUtc": "2027-01-01T00:00:00Z",
+      "endUtc": "2028-01-01T00:00:00Z",
+      "samples": 8760,
+      "connecting_ridge": {
+        "sunUp": 91.5,
+        "meanVisibleFraction": 86.7,
+        "powerOk": 86.4
+      },
+      "shackleton_rim": {
+        "sunUp": 89.1,
+        "meanVisibleFraction": 84.4,
+        "powerOk": 84.6
+      }
+    },
+    "glaserPct": {
+      "connecting_ridge": {
+        "label": "Connecting Ridge C1",
+        "solarVisibility": 92.1,
+        "averageIllumination": 88
+      },
+      "shackleton_rim": {
+        "label": "Shackleton S0",
+        "solarVisibility": 89.4,
+        "averageIllumination": 85.5
+      }
+    },
+    "glaserSource": "Glaser et al. 2018, Table 2: 2 m above ground, hourly 2017-01-01 to 2037-01-01, 20 m LOLA DTM. https://ntrs.nasa.gov/api/citations/20170007365/downloads/20170007365.pdf",
+    "notes": [
+      "Sanity check only, not a calibration: nothing was tuned to match.",
+      "Same coordinates and same averaging period as Glaser Table 2. Expected differences: different DEMs (our 5 m site DEM near field plus 80 m / 240 m to 300 km vs their 20 m DTM over 400 x 400 km); our horizon is one 720-ray profile at a point, theirs a per-pixel horizon map; their coordinate is the best pixel of a cluster on their DTM, so small position or DEM shifts tend to lower our value there; ephemeris and lunar orientation models differ.",
+      "The 2027 one-year values differ from the 20-year means because polar Sun geometry varies from year to year (18.6-year lunar precession cycle)."
+    ],
+    "generatedAt": "2026-11-14T03:30:25.442Z"
   }
 }

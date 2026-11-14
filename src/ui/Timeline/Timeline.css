@@ -1,0 +1,101 @@
+.timeline {
+  background: var(--surface);
+  border-radius: var(--radius-card);
+  padding: var(--sp-4);
+  min-width: 0;
+  max-width: 100%;
+}
+.timeline__title {
+  margin: 0;
+  font-size: var(--fs-lg);
+  line-height: 28px;
+}
+.timeline__sub,
+.timeline__playhead-label,
+.timeline__hint {
+  margin: 0;
+  font-size: var(--fs-sm);
+  line-height: 20px;
+  color: var(--text-muted);
+}
+.timeline__playhead-label {
+  margin-top: var(--sp-3);
+  color: var(--text);
+}
+.timeline__hint {
+  margin-top: var(--sp-2);
+}
+.timeline__chart {
+  position: relative;
+  margin-top: var(--sp-2);
+  width: 100%;
+  overflow: hidden;
+  border-radius: var(--radius-control);
+}
+.timeline__svg {
+  display: block;
+  max-width: 100%;
+  touch-action: pan-y;
+  cursor: ew-resize;
+  user-select: none;
+}
+.timeline__svg--drag {
+  cursor: grabbing;
+}
+.timeline__tip {
+  position: absolute;
+  transform: translateX(-50%);
+  max-width: 260px;
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  padding: var(--sp-1) var(--sp-2);
+  font-size: var(--fs-sm);
+  line-height: 20px;
+  pointer-events: none;
+  z-index: 2;
+}
+.timeline__legend {
+  list-style: none;
+  margin: var(--sp-3) 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2) var(--sp-4);
+  font-size: var(--fs-sm);
+  line-height: 20px;
+}
+.timeline__legend li {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+.timeline__skeleton {
+  margin-top: var(--sp-3);
+  height: 154px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface-2);
+  border-radius: var(--radius-control);
+  color: var(--text-muted);
+}
+.timeline__error {
+  margin: var(--sp-3) 0 0;
+  color: var(--bad);
+  border: 2px solid var(--bad);
+  border-radius: var(--radius-control);
+  padding: var(--sp-2) var(--sp-3);
+}
+.timeline__chart:focus-visible {
+  outline-offset: -3px;
+}
+.timeline__chart--stale svg {
+  opacity: 0.6;
+}
+.timeline__updating {
+  margin: var(--sp-2) 0 0;
+  font-size: var(--fs-sm);
+  color: var(--text-muted);
+}

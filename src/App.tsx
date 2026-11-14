@@ -11,6 +11,7 @@ import { TimeSteps } from './ui/TimeControl';
 import { TimeDock } from './ui/Timeline';
 import { SkyView } from './ui/SkyView/SkyView';
 import { CompareView, useCompareDrawer } from './ui/Compare';
+import { RankView, useRankDrawer } from './ui/Rank';
 import { ShareControls } from './ui/Share';
 import { TourButton } from './ui/Explain/tour';
 import { EventsTab } from './ui/Events';
@@ -49,7 +50,7 @@ function Stage({ onCaption }: { onCaption: (c: string | null) => void }) {
   );
 }
 
-function Panel({ caption, onCompare }: { caption: string | null; onCompare: () => void }) {
+function Panel({ caption, onCompare, onRank }: { caption: string | null; onCompare: () => void; onRank: () => void }) {
   const [tab, setTab] = usePanelTab();
   const { isPhone, setCollapsed } = useShell();
   return (
@@ -57,7 +58,7 @@ function Panel({ caption, onCompare }: { caption: string | null; onCompare: () =
       tab={tab === 'planner' ? 'details' : tab}
       onTabChange={(next) => setTab(next === 'details' ? 'planner' : next)}
       onCollapse={isPhone ? undefined : () => setCollapsed(true)}
-      site={<SitePanel caption={caption ?? undefined} onCompare={onCompare} />}
+      site={<SitePanel caption={caption ?? undefined} onCompare={onCompare} onRank={onRank} />}
       details={<PlannerDetails plannerRows={<PlannerRows />} timeSteps={<TimeSteps />} />}
       events={<EventsTab onOpenCompare={onCompare} />}
     />
@@ -79,18 +80,29 @@ function Layout() {
   const [tab] = usePanelTab();
   const [caption, setCaption] = useState<string | null>(null);
   const compare = useCompareDrawer();
+  const rank = useRankDrawer();
+  // Remember the button that opened the rank drawer so focus returns to it on Esc, Close and Show.
+  const [rankOpener, setRankOpener] = useState<HTMLElement | null>(null);
   return (
     <Shell
       wide={tab !== 'site'}
       stage={<Stage onCaption={setCaption} />}
       breadcrumb={<Breadcrumb siteName={siteName} />}
       actions={<TopActions tour={<TourButton />} share={<ShareControls />} />}
-      panel={<Panel caption={caption} onCompare={() => compare.setOpen(true)} />}
+      panel={<Panel caption={caption} onCompare={() => compare.setOpen(true)} onRank={() => {
+        setRankOpener(document.activeElement as HTMLElement | null);
+        rank.setOpen(true);
+      }} />}
       dock={<DockWithAnswers />}
       drawers={
-        <Drawer open={compare.open} onClose={() => compare.setOpen(false)} title="Compare dates or sites" width={600}>
-          <CompareView />
-        </Drawer>
+        <>
+          <Drawer open={compare.open} onClose={() => compare.setOpen(false)} title="Compare dates or sites" width={600}>
+            <CompareView />
+          </Drawer>
+          <Drawer open={rank.open} onClose={() => rank.setOpen(false)} title="Rank sites for these dates" width={720} returnFocusTo={rankOpener}>
+            <RankView onClose={() => rank.setOpen(false)} />
+          </Drawer>
+        </>
       }
     />
   );

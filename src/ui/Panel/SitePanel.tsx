@@ -15,6 +15,8 @@ export interface SitePanelProps {
   caption?: string;
   /** Opens the Compare drawer. */
   onCompare: () => void;
+  /** Opens the rank drawer. */
+  onRank: () => void;
 }
 
 function BoltIcon() {
@@ -47,7 +49,7 @@ function AnswerRow({ icon, question, a }: { icon: ReactNode; question: string; a
   );
 }
 
-export function SitePanel({ caption, onCompare }: SitePanelProps) {
+export function SitePanel({ caption, onCompare, onRank }: SitePanelProps) {
   const { t, rangeStart, siteGeo, siteName, site } = useAppState();
   const res = useScenarioResult();
   const { metrics, scan, profile } = res;
@@ -142,6 +144,9 @@ export function SitePanel({ caption, onCompare }: SitePanelProps) {
       </p>
       <button type="button" className="panel-btn panel-btn--wide" onClick={onCompare}>
         {COPY.answers.compare}
+      </button>
+      <button type="button" className="panel-btn panel-btn--wide" onClick={onRank}>
+        {COPY.answers.rank}
       </button>
     </div>
   );

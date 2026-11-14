@@ -1,0 +1,248 @@
+/* Rank drawer content. Flat, neutral, same tokens as the Compare drawer. */
+.rk {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  min-width: 0;
+  color: var(--text);
+  font-size: var(--fs-label);
+  line-height: var(--lh-ui);
+}
+.rk p {
+  margin: 0;
+}
+.rk-scope {
+  font-size: var(--fs-body);
+}
+.rk-note {
+  color: var(--text-3);
+  font-size: var(--fs-meta);
+  line-height: var(--lh-meta);
+}
+.rk-progress {
+  color: var(--text-2);
+}
+.rk-verdict {
+  font-size: var(--fs-body);
+  line-height: var(--lh-prose);
+  padding-left: var(--sp-3);
+  border-left: 2px solid var(--both);
+}
+.rk-error {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-3);
+  color: var(--bad);
+}
+.rk-added {
+  min-height: 1.2em;
+  color: var(--text-2);
+  font-size: var(--fs-meta);
+}
+.rk button {
+  min-height: var(--target);
+  padding: 0 var(--sp-3);
+  background: var(--field);
+  color: var(--text);
+  border: 1px solid var(--control);
+  border-radius: var(--radius);
+  font: inherit;
+  font-size: var(--fs-label);
+  cursor: pointer;
+}
+.rk button:hover:not(:disabled) {
+  border-color: var(--text-2);
+}
+.rk button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.rk button:focus-visible,
+.rk-scroll:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.rk-scroll {
+  overflow-x: auto;
+  border: 1px solid var(--hair-2);
+  border-radius: var(--radius);
+}
+.rk-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-feature-settings: var(--num);
+}
+.rk-table th,
+.rk-table td {
+  padding: var(--sp-2) var(--sp-1);
+  text-align: left;
+  vertical-align: middle;
+  border-bottom: 1px solid var(--hair);
+  font-weight: var(--fw-regular);
+}
+.rk-table thead th {
+  vertical-align: bottom;
+  color: var(--text-2);
+  font-size: var(--fs-meta);
+}
+.rk-table tbody tr:last-child > * {
+  border-bottom: 0;
+}
+.rk-table .rk-num {
+  width: 1%;
+  text-align: right;
+  font-family: var(--font-num);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.rk-table thead .rk-num .rk-sort {
+  margin-left: auto;
+  justify-content: flex-end;
+  text-align: right;
+  max-width: 6.5em;
+}
+.rk-table thead .rk-sort span {
+  white-space: normal;
+}
+.rk-table td.rk-num {
+  padding-left: var(--sp-3);
+}
+.rk-table td:last-child {
+  width: 1%;
+}
+.rk-rank {
+  width: 2em;
+  color: var(--text-2);
+}
+.rk-table .rk-name {
+  min-width: 11em;
+  font-weight: var(--fw-medium);
+  color: var(--text);
+}
+.rk-table thead .rk-name {
+  font-weight: var(--fw-regular);
+}
+/* If the table ever scrolls sideways, the site name stays in view. */
+.rk-table tbody th.rk-name {
+  position: sticky;
+  left: 0;
+  background: var(--chrome-solid);
+}
+.rk-current,
+.rk-current th.rk-name {
+  background-color: #1d1f25 !important;
+}
+.rk-badge {
+  display: block;
+  margin-top: 2px;
+  color: var(--text-2);
+  font-size: var(--fs-meta);
+  font-weight: var(--fw-regular);
+}
+.rk-badge::before {
+  content: '▸ ';
+}
+.rk .rk-sort {
+  height: auto;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-1);
+  padding: 0 var(--sp-1);
+  min-height: var(--target);
+  border-color: transparent;
+  background: transparent;
+  color: var(--text);
+  font-size: var(--fs-meta);
+  font-weight: var(--fw-semibold);
+  text-align: left;
+}
+.rk-actions {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: var(--sp-1);
+}
+.rk .rk-actions button {
+  white-space: nowrap;
+  padding: 0 var(--sp-2);
+  font-size: var(--fs-meta);
+}
+
+/* Stacked list and sort select: phone and narrow drawers only. */
+.rk-list,
+.rk-sortsel {
+  display: none;
+}
+.rk-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.rk-sortsel {
+  align-items: center;
+  gap: var(--sp-2);
+}
+.rk-sortsel select {
+  min-height: var(--target);
+  background: var(--field);
+  color: var(--text);
+  border: 1px solid var(--control);
+  border-radius: var(--radius);
+  font: inherit;
+  font-size: var(--fs-label);
+  padding: 0 var(--sp-2);
+}
+.rk-sortsel select:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: 2px;
+}
+.rk-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  padding: var(--sp-3);
+  border-bottom: 1px solid var(--hair-2);
+}
+.rk-item-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--sp-2);
+  font-weight: var(--fw-medium);
+}
+.rk-item-head .rk-rank {
+  width: auto;
+  min-width: 1.5em;
+}
+.rk-item-vals {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-1) var(--sp-3);
+  color: var(--text-2);
+  font-variant-numeric: tabular-nums;
+}
+@media (max-width: 719px) {
+  .rk-wide {
+    display: none;
+  }
+  .rk-list {
+    display: block;
+    border: 1px solid var(--hair-2);
+    border-radius: var(--radius);
+  }
+  .rk-sortsel {
+    display: flex;
+  }
+  .rk-item-head .rk-badge {
+    margin: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rk * {
+    transition: none !important;
+    animation: none !important;
+  }
+}

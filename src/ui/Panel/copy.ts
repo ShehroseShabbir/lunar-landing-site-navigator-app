@@ -45,6 +45,7 @@ export const COPY = {
     stripLabel: 'Answers at the selected time',
     view: 'In the 3D view:',
     compare: 'Compare dates or sites',
+    rank: 'Rank sites for these dates',
   },
   state: {
     calculating: 'Calculating the next 30 days…',

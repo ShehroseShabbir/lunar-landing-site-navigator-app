@@ -1,0 +1,82 @@
+/* Design tokens from prep/ui-spec.md section 4 (dark theme). */
+:root {
+  color-scheme: dark;
+  --bg: #0b0f17;
+  --surface: #131a26;
+  --surface-2: #1b2433;
+  --text: #e8edf5;
+  --text-muted: #a9b4c6;
+  --border: #6b7a94;
+  --accent: #7fb2ff;
+  --on-accent: #0b0f17;
+  --sun: #ffc247;
+  --earth: #5cc8ff;
+  --bad: #ff8a80;
+  --focus: #ffffff;
+  --terrain: #1f2736;
+  --terrain-edge: #a9b4c6;
+  --best: #7fb2ff;
+
+  --fs-xs: 12px;
+  --fs-sm: 14px;
+  --fs-md: 16px;
+  --fs-lg: 20px;
+  --fs-xl: 28px;
+
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 24px;
+  --sp-6: 32px;
+  --sp-7: 48px;
+
+  --radius-control: 6px;
+  --radius-card: 10px;
+  --target: 32px;
+}
+
+@media (max-width: 640px) {
+  :root {
+    --target: 44px;
+  }
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  font-size: var(--fs-md);
+  line-height: 24px;
+  font-variant-numeric: tabular-nums;
+}
+
+a {
+  color: var(--accent);
+}
+
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0ms !important;
+    animation-duration: 0ms !important;
+  }
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}

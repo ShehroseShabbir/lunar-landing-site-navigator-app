@@ -37,10 +37,49 @@ export function relativeTime(from: Date, to: Date): string {
   return diff > 0 ? `in ${d}` : `${d} ago`;
 }
 
-/** "Sunset in 2 days 4 hours". */
-export function eventSentence(ev: SiteEvent, t: Date): string {
+/** "Earth in view for radio starts" + both -> "Earth in view for radio and both at once start". */
+function kindText(kind: EventKind, alsoBoth: boolean): string {
+  const base = EV.kinds[kind];
+  if (!alsoBoth) return base;
+  const m = /^(.*) (starts|ends)$/.exec(base);
+  return m ? `${m[1]} and both at once ${m[2] === 'starts' ? 'start' : 'end'}` : base;
+}
+
+/** "Sunset in 2 days 4 hours". With `alsoBoth`, a coinciding "both at once" event is named in the same sentence. */
+export function eventSentence(ev: SiteEvent, t: Date, alsoBoth = false): string {
   const rel = relativeTime(t, ev.t);
-  return rel === 'now' ? `${EV.kinds[ev.kind]} now` : `${EV.kinds[ev.kind]} ${rel}`;
+  const text = kindText(ev.kind, alsoBoth);
+  return rel === 'now' ? `${text} now` : `${text} ${rel}`;
+}
+
+export interface MergedEvent {
+  ev: SiteEvent;
+  alsoBoth: boolean;
+}
+
+const MIN_MS = 60_000;
+/**
+ * Fold a "Both at once starts/ends" row into a power or comms start/end row at the same minute,
+ * so one moment is not listed twice. Order is kept.
+ */
+export function mergeCoinciding(events: SiteEvent[]): MergedEvent[] {
+  const minute = (e: SiteEvent) => Math.floor(e.t.getTime() / MIN_MS);
+  const partner = (e: SiteEvent): SiteEvent | undefined => {
+    const pair: EventKind[] = e.kind === 'bothStart' ? ['commsStart', 'powerStart'] : ['commsEnd', 'powerEnd'];
+    return events.find((o) => pair.includes(o.kind) && minute(o) === minute(e));
+  };
+  const out: MergedEvent[] = [];
+  for (const e of events) {
+    if ((e.kind === 'bothStart' || e.kind === 'bothEnd') && partner(e)) continue;
+    const hasBoth =
+      e.kind === 'commsStart' || e.kind === 'powerStart'
+        ? events.some((o) => o.kind === 'bothStart' && minute(o) === minute(e))
+        : e.kind === 'commsEnd' || e.kind === 'powerEnd'
+          ? events.some((o) => o.kind === 'bothEnd' && minute(o) === minute(e))
+          : false;
+    out.push({ ev: e, alsoBoth: hasBoth });
+  }
+  return out;
 }
 
 const lowerFirst = (s: string) => s.charAt(0).toLowerCase() + s.slice(1);
@@ -53,8 +92,8 @@ export function utcWords(d: Date): string {
 }
 
 /** "Go to sunset on 22 Nov 2026 at 06:12 UTC" */
-export function eventActionLabel(ev: SiteEvent): string {
-  return EV.go(lowerFirst(EV.kinds[ev.kind]), utcWords(ev.t));
+export function eventActionLabel(ev: SiteEvent, alsoBoth = false): string {
+  return EV.go(lowerFirst(kindText(ev.kind, alsoBoth)), utcWords(ev.t));
 }
 
 /** "22 Nov, 06:12 UTC" short stamp for list rows. */

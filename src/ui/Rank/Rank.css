@@ -102,7 +102,6 @@
   margin-left: auto;
   justify-content: flex-end;
   text-align: right;
-  max-width: 6.5em;
 }
 .rk-table thead .rk-sort span {
   white-space: normal;

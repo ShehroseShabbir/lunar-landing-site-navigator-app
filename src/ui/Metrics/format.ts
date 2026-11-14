@@ -8,19 +8,19 @@ const REFINE_MS = 60_000;
 export const RANGE_LIMIT_DAYS = 30;
 const MINUS = '−';
 
-/** "3 d 4 h", "9 h 20 m", "45 m", "2 d", "< 1 m", "≥ 30 d". Largest two units, zero units dropped. */
+/** "3 d 4 h", "2 d", "9 h 20 min", "45 min", "< 1 min", "≥ 30 d". Days drop minutes; otherwise largest two units. */
 export function formatDuration(ms: number): string {
   if (ms >= RANGE_LIMIT_DAYS * DAY_MS) return '≥ 30 d';
   const total = Math.floor(Math.max(0, ms) / MIN_MS);
-  if (total < 1) return '< 1 m';
+  if (total < 1) return '< 1 min';
   const d = Math.floor(total / 1440);
   const h = Math.floor((total % 1440) / 60);
   const m = total % 60;
+  if (d) return h ? `${d} d ${h} h` : `${d} d`;
   const parts: string[] = [];
-  if (d) parts.push(`${d} d`);
   if (h) parts.push(`${h} h`);
-  if (m) parts.push(`${m} m`);
-  return parts.slice(0, 2).join(' ');
+  if (m) parts.push(`${m} min`);
+  return parts.join(' ');
 }
 
 /** Duration from t to a crossing, or null when there is no crossing. */

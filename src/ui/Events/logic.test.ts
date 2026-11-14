@@ -6,6 +6,7 @@ import {
   eventSentence,
   filterEvents,
   icsFileName,
+  mergeCoinciding,
   nextRuleId,
   openingStamp,
   parseOptionalNumber,
@@ -105,5 +106,21 @@ describe('flags-0 rule with a threshold survives the URL', () => {
     const r: TriggerRule = { id: 'r1', name: 'High Sun', requirePower: false, requireComms: false, sunMinAboveTerrainDeg: 2, minDurationH: 4 };
     expect(rulesFromSearch(`?${searchWithRules('', [r])}`)).toEqual([r]);
     expect(sanitizeRule({ id: 'a', name: 'n', requirePower: false, requireComms: false })).toBeNull();
+  });
+});
+
+describe('coinciding events', () => {
+  it('folds "Both at once" into the start or end at the same minute', () => {
+    const list = [
+      ev('commsStart', '2026-11-22T06:12:10Z'),
+      ev('bothStart', '2026-11-22T06:12:40Z'),
+      ev('sunset', '2026-11-23T01:00:00Z'),
+      ev('bothEnd', '2026-11-24T01:00:00Z'),
+    ];
+    const m = mergeCoinciding(list);
+    expect(m.map((x) => x.ev.kind)).toEqual(['commsStart', 'sunset', 'bothEnd']);
+    expect(m[0].alsoBoth).toBe(true);
+    expect(m[2].alsoBoth).toBe(false);
+    expect(eventSentence(m[0].ev, t0, true)).toBe('Earth in view for radio and both at once start in 2 days 4 hours');
   });
 });

@@ -55,7 +55,7 @@
   border-radius: var(--radius-control);
   padding: 0 var(--sp-2);
 }
-.time-control button,
+.time-control__now,
 .time-steps button {
   min-height: var(--target);
   min-width: var(--target);
@@ -69,7 +69,7 @@
   padding: 0 var(--sp-3);
   cursor: pointer;
 }
-.time-control button:hover,
+.time-control__now:hover,
 .time-steps button:hover {
   border-color: var(--text-2, var(--accent));
 }

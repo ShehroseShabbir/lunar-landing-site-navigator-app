@@ -25,20 +25,22 @@ export function EventRow({
   onGo,
   showGroup = false,
   past = false,
+  alsoBoth = false,
 }: {
   ev: SiteEvent;
   t: Date;
   onGo: (d: Date) => void;
   showGroup?: boolean;
   past?: boolean;
+  alsoBoth?: boolean;
 }) {
   const group = eventGroup(ev.kind);
   return (
     <li className={past ? 'ev-item ev-item--past' : 'ev-item'}>
-      <button type="button" className="ev-row" title={formatUtc(ev.t)} aria-label={`${eventSentence(ev, t)}. ${eventActionLabel(ev)}`} onClick={() => onGo(ev.t)}>
+      <button type="button" className="ev-row" title={formatUtc(ev.t)} aria-label={`${eventSentence(ev, t, alsoBoth)}. ${eventActionLabel(ev, alsoBoth)}`} onClick={() => onGo(ev.t)}>
         <Glyph group={group} />
         <span className="ev-row__text">
-          <span className="ev-row__main">{eventSentence(ev, t)}</span>
+          <span className="ev-row__main">{eventSentence(ev, t, alsoBoth)}</span>
           <span className="ev-row__meta">
             {showGroup && <>{EV.group[group]} · </>}
             {shortStamp(ev.t)}

@@ -49,12 +49,12 @@ const Runner = memo(function Runner({
   return null;
 });
 
-const COLS: { key: SortKey; label: string; num: boolean }[] = [
+const COLS: { key: SortKey; label: string; short?: string; num: boolean }[] = [
   { key: 'name', label: C.cols.name, num: false },
-  { key: 'sun', label: C.cols.sun, num: true },
-  { key: 'earth', label: C.cols.earth, num: true },
-  { key: 'both', label: C.cols.both, num: true },
-  { key: 'dark', label: C.cols.dark, num: true },
+  { key: 'sun', label: C.cols.sun, short: 'Sun', num: true },
+  { key: 'earth', label: C.cols.earth, short: 'Earth', num: true },
+  { key: 'both', label: C.cols.both, short: 'Both', num: true },
+  { key: 'dark', label: C.cols.dark, short: 'Longest dark', num: true },
 ];
 
 function Arrow({ dir }: { dir: SortDir | null }) {
@@ -242,7 +242,14 @@ export function RankView({ onClose }: { onClose: () => void }) {
                         aria-sort={active ? (sort.dir === 'asc' ? 'ascending' : 'descending') : 'none'}
                       >
                         <button type="button" className="rk-sort" onClick={() => toggleSort(c.key)}>
-                          <span>{c.label}</span>
+                          {c.short ? (
+                            <span>
+                              <span aria-hidden="true">{c.short}</span>
+                              <span className="sr-only">{c.label}</span>
+                            </span>
+                          ) : (
+                            <span>{c.label}</span>
+                          )}
                           <Arrow dir={active ? sort.dir : null} />
                         </button>
                       </th>
@@ -301,7 +308,8 @@ export function RankView({ onClose }: { onClose: () => void }) {
                       {C.labels.both} {formatPercent(r.bothPct)}
                     </span>
                     <span>
-                      {C.labels.dark} {formatLongestDark(r.darkHours, r.darkClipped).replace(/ /g, '\u00a0')}
+                      {r.darkHours > 0 && `${C.labels.dark} `}
+                      {formatLongestDark(r.darkHours, r.darkClipped).replace(/ /g, '\u00a0')}
                     </span>
                   </p>
                   <div className="rk-actions">{actions(r, s, dup)}</div>

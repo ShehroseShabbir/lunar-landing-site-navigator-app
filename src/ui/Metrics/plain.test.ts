@@ -50,27 +50,27 @@ describe('answers: real Malapert Massif 2026-11-20', () => {
     const a = answerPower(m, T, scan);
     expect(a.word).toBe('Not yet');
     expect(a.sentence).toBe('Starts in 1 day 7 hours');
-    expect(a.precise).toBe('Power not OK · OK in 1 d 7 h');
+    expect(a.precise).toBe('Power not OK');
   });
   it('comms: Yes, ends in 9 days 16 hours', () => {
     const a = answerComms(m, T, scan);
     expect(a.word).toBe('Yes');
     expect(a.sentence).toBe('For another 9 days 16 hours');
-    expect(a.precise).toBe('Comms OK · ends in 9 d 16 h');
+    expect(a.precise).toBe('Comms OK');
   });
 });
 
 describe('answers: state table rows (synthetic)', () => {
   it('OK now', () => {
     const m = fake({ power: true, pEnd: 31, comms: true, cEnd: 0.75 });
-    expect(answerPower(m, T, null)).toEqual({ word: 'Yes', sentence: 'For another 1 day 7 hours', precise: 'Power OK · ends in 1 d 7 h' });
-    expect(answerComms(m, T, null)).toEqual({ word: 'Yes', sentence: 'For another 45 minutes', precise: 'Comms OK · ends in 45 m' });
+    expect(answerPower(m, T, null)).toEqual({ word: 'Yes', sentence: 'For another 1 day 7 hours', precise: 'Power OK' });
+    expect(answerComms(m, T, null)).toEqual({ word: 'Yes', sentence: 'For another 45 minutes', precise: 'Comms OK' });
   });
   it('OK later in range', () => {
     const m = fake({ power: false, comms: false });
     const s = scanOf([win('powerOk', -10, -5), win('powerOk', 31, 40)], [win('commsOk', 2.5, 9)]);
-    expect(answerPower(m, T, s)).toEqual({ word: 'Not yet', sentence: 'Starts in 1 day 7 hours', precise: 'Power not OK · OK in 1 d 7 h' });
-    expect(answerComms(m, T, s)).toEqual({ word: 'Not yet', sentence: 'Starts in 2 hours 30 minutes', precise: 'Comms not OK · OK in 2 h 30 m' });
+    expect(answerPower(m, T, s)).toEqual({ word: 'Not yet', sentence: 'Starts in 1 day 7 hours', precise: 'Power not OK' });
+    expect(answerComms(m, T, s)).toEqual({ word: 'Not yet', sentence: 'Starts in 2 hours 30 minutes', precise: 'Comms not OK' });
   });
   it('not in range (empty list, no scan, or only past windows)', () => {
     const m = fake({ power: false, comms: false });

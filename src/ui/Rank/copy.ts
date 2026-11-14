@@ -18,7 +18,7 @@ export const RANK_COPY = {
     both: 'Both at once',
     dark: 'Longest dark period',
   },
-  legend: 'Sunlight = Power OK, Earth in view = Comms OK, as a share of the 30 days.',
+  legend: 'Sun = Power OK, Earth = Comms OK, as a share of the 30 days.',
   sortLabel: 'Sort by',
   sortOption: { both: 'Both at once', sun: 'Sunlight', earth: 'Earth in view', dark: 'Longest dark period', name: 'Site name' },
   labels: { sun: 'Sun', earth: 'Earth', both: 'Both', dark: 'Dark' },

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './ui/tokens.css';
 import './App.css';
 import { AppStateProvider, useAppState } from './state/AppState';
@@ -33,6 +33,10 @@ function Stage({ onCaption }: { onCaption: (c: string | null) => void }) {
     : { left: panelWidth, top: 48, bottom: 132 };
   const { siteGeo, siteName, t } = useAppState();
   const { stage, showSpace, showSurface, returnedFromSpace } = useSpaceStage();
+  // The "In the 3D view" caption must not show over the space view; Hero3D re-sends it on return.
+  useEffect(() => {
+    if (stage === 'space') onCaption(null);
+  }, [stage, onCaption]);
   return (
     <div data-tour="sky" className="tour-anchor tour-anchor--stage">
       {stage === 'space' ? (

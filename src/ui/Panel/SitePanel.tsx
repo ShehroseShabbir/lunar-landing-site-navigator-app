@@ -65,7 +65,8 @@ export function SitePanel({ caption, onCompare, onRank }: SitePanelProps) {
   const hasTerrain = res.terrain === 'loaded';
   const context = contextSentence(siteName, hasTerrain && site !== null, siteGeo.latDeg);
   const farSide = metrics ? farSideLine(metrics, siteGeo.lonDeg, siteGeo.latDeg) : null;
-  const cap = viewCaption(caption);
+  // The caption describes the 3D terrain scene: show it only for terrain sites (App clears it in the space view).
+  const cap = hasTerrain ? viewCaption(caption) : null;
   const S = COPY.state;
 
   // One quiet status: speaks when the Sunlight or Earth word changes, or on a commit (site, When? set).
@@ -133,6 +134,12 @@ export function SitePanel({ caption, onCompare, onRank }: SitePanelProps) {
         {res.terrain === 'loading' && <p className="answers__updating">{S.loadingTerrain}</p>}
         {body}
       </section>
+      <button type="button" className="panel-btn panel-btn--wide" onClick={onCompare}>
+        {COPY.answers.compare}
+      </button>
+      <button type="button" className="panel-btn panel-btn--wide" onClick={onRank}>
+        {COPY.answers.rank}
+      </button>
       {cap && (
         <p className="site-panel__caption">
           <strong>{COPY.answers.view}</strong> {cap}
@@ -142,12 +149,6 @@ export function SitePanel({ caption, onCompare, onRank }: SitePanelProps) {
       <p className="sr-only" role="status">
         {spoken}
       </p>
-      <button type="button" className="panel-btn panel-btn--wide" onClick={onCompare}>
-        {COPY.answers.compare}
-      </button>
-      <button type="button" className="panel-btn panel-btn--wide" onClick={onRank}>
-        {COPY.answers.rank}
-      </button>
     </div>
   );
 }

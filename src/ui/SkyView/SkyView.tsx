@@ -278,7 +278,7 @@ function Inset({ b, profile }: { b: BodyState; profile: HorizonProfile | null })
         <strong>{b.body} close-up</strong>
         <span>
           {' '}
-          · ±3° · {pct(b.fraction)} visible
+          · 6° wide · {pct(b.fraction)} visible
         </span>
         {farOff && <span className="skyview-inset-far">{hz}</span>}
       </figcaption>
@@ -337,9 +337,9 @@ export function SkyView({ site, siteName, profile, t, mode = 'panel', headingLev
   const ticks = useMemo(() => {
     const step = topDeg <= 20 ? 5 : topDeg <= 45 ? 10 : 30;
     const list: number[] = [];
-    for (let e = AXIS_BOTTOM_DEG; e <= topDeg; e += step) list.push(e);
-    if (!list.includes(0)) list.push(0);
+    for (let e = 0; e <= topDeg; e += step) list.push(e);
     if (!list.includes(topDeg)) list.push(topDeg);
+    list.unshift(AXIS_BOTTOM_DEG);
     return list;
   }, [topDeg]);
 
@@ -458,7 +458,7 @@ export function SkyView({ site, siteName, profile, t, mode = 'panel', headingLev
             textAnchor="middle"
             className="skyview-axis"
           >
-            Elevation (vertical scale ×{vScaleText})
+            {Math.abs(vScale - 1) < 0.05 ? 'Elevation (°)' : `Elevation (vertical scale ×${vScaleText})`}
           </text>
 
           <defs>
@@ -521,7 +521,7 @@ export function SkyView({ site, siteName, profile, t, mode = 'panel', headingLev
           </li>
         ))}
         <li className="skyview-note">
-          {SKY_COPY.note(vScaleText)}
+          {SKY_COPY.note(vScaleText, profile !== null && profile !== undefined)}
         </li>
       </ul>
 

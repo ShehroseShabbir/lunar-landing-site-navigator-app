@@ -4,6 +4,7 @@ import { nextEvents } from '../../state/events';
 import { useScenarioResult } from '../../state/useScenarioResult';
 import { EV } from './copy';
 import { EventRow } from './EventRow';
+import { mergeCoinciding } from './logic';
 import './Events.css';
 
 /** The next four events from the playhead, for the Site tab under the answers. */
@@ -11,7 +12,7 @@ export function NextEvents() {
   const { t, setT } = useAppState();
   const { scan } = useScenarioResult();
   const id = useId();
-  const events = useMemo(() => (scan ? nextEvents(scan, t, 4) : null), [scan, t]);
+  const events = useMemo(() => (scan ? mergeCoinciding(nextEvents(scan, t, 6)).slice(0, 4) : null), [scan, t]);
   return (
     <section className="ev-next" aria-labelledby={id}>
       <h3 id={id} className="ev-h">
@@ -23,8 +24,8 @@ export function NextEvents() {
         <p className="ev-note">{EV.next.none}</p>
       ) : (
         <ul className="ev-list" aria-label={EV.next.listLabel}>
-          {events.map((ev) => (
-            <EventRow key={`${ev.kind}-${ev.t.getTime()}`} ev={ev} t={t} onGo={setT} />
+          {events.map(({ ev, alsoBoth }) => (
+            <EventRow key={`${ev.kind}-${ev.t.getTime()}`} ev={ev} alsoBoth={alsoBoth} t={t} onGo={setT} />
           ))}
         </ul>
       )}

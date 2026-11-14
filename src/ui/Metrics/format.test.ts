@@ -12,11 +12,11 @@ const at = (h: number) => new Date(t.getTime() + h * H);
 describe('formatDuration', () => {
   it('uses two largest units and drops zeros', () => {
     expect(formatDuration(100 * H)).toBe('4 d 4 h');
-    expect(formatDuration(9 * H + 20 * 60_000)).toBe('9 h 20 m');
-    expect(formatDuration(45 * 60_000)).toBe('45 m');
+    expect(formatDuration(9 * H + 20 * 60_000)).toBe('9 h 20 min');
+    expect(formatDuration(45 * 60_000)).toBe('45 min');
     expect(formatDuration(48 * H)).toBe('2 d');
     expect(formatDuration(49 * H + 5 * 60_000)).toBe('2 d 1 h');
-    expect(formatDuration(30_000)).toBe('< 1 m');
+    expect(formatDuration(30_000)).toBe('< 1 min');
     expect(formatDuration(30 * 24 * H)).toBe('≥ 30 d');
   });
 });

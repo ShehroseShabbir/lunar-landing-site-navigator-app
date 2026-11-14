@@ -1,7 +1,7 @@
 // Plain-language answers for the answer card (visual-spec v2, "Answer card" state table). No astronomy here.
 import { nextCrossing } from '../../astro';
 import type { HorizonProfile, ScanResult, SiteGeo, SiteMetrics } from '../../astro/types';
-import { countdown, formatDuration, RANGE_LIMIT_DAYS } from './format';
+import { RANGE_LIMIT_DAYS } from './format';
 
 const MIN_MS = 60_000;
 const DAY_MS = 86_400_000;
@@ -57,7 +57,7 @@ function answer(spec: Spec, ok: boolean, t: Date, ends: Date | null, windows: Wi
     return {
       word: 'Yes',
       sentence: `For another ${spellDuration(left)}`,
-      precise: `${kind} OK · ends in ${countdown(t, ends)}`,
+      precise: `${kind} OK`,
     };
   }
   let nextStartMs: number | null = windows?.find((w) => w.start.getTime() > tMs - REFINE_MS)?.start.getTime() ?? null;
@@ -73,7 +73,7 @@ function answer(spec: Spec, ok: boolean, t: Date, ends: Date | null, windows: Wi
     return {
       word: spec.laterWord,
       sentence: `${spec.laterPhrase} ${spellDuration(wait)}`,
-      precise: `${kind} not OK · OK in ${formatDuration(wait)}`,
+      precise: `${kind} not OK`,
     };
   }
   return { word: 'No', sentence: `Not in the next ${RANGE_LIMIT_DAYS} days`, precise: `${kind} not OK in range` };

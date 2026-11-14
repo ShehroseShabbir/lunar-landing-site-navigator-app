@@ -38,3 +38,16 @@ cd ../.. && scripts/horizon/.venv/bin/python -m unittest discover scripts/horizo
 - LOLA polar gridded data records `LDEM_80S_80M` and `LDEM_75S_240M`, LRO LOLA team (D. E. Smith, GSFC), NASA PDS Geosciences Node: https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/lola_gdr/polar/img/ . Public NASA PDS data.
 - High-resolution LOLA topography for south pole sites (5 m/px), M. K. Barker et al., NASA GSFC PGDA product 78: https://pgda.gsfc.nasa.gov/products/78 . Cite Barker et al. 2021, Planetary & Space Science 203, 105119, https://doi.org/10.1016/j.pss.2020.105119 . Public NASA data.
 - Method after Mazarico et al. 2011, Icarus 211, 1066–1081, https://doi.org/10.1016/j.icarus.2010.10.030 .
+
+## 3D terrain tiles (S8)
+
+`terrain_tile.py` writes `public/terrain/<siteId>.json` + `.bin` for the same 14 sites: a 20 km × 20 km heightmap (257 × 257, 78.125 m spacing, ±10 km) for the 3D scene. Same venv and raw data as above, from `scripts/horizon`:
+
+```sh
+.venv/bin/python terrain_tile.py --raw-dir ../../data/raw --out ../../public/terrain   # [--sites id1,id2], ~5 s total
+```
+
+- Grid: the site's local ENU tangent plane (same basis as the horizons and `src/astro`); x = east, y = north; row 0 = north edge, col 0 = west edge.
+- Each sample stores `z_local` = `U·(P − O)` in Moon-centred Cartesian coordinates, with O = (1737.4 km + site terrain height)·U (the horizon file's `observerHeightM − 2`). The curvature drop (57.6 m at the corners) is included, so the browser draws (x, y, z) as is; the site itself is at z ≈ 0 (within a few metres, because the tile is 80 m-averaged). Each sample is the surface point whose exact east/north offsets equal its (x, y) (fixed-point iteration on the height).
+- Heights: the PGDA 5 m tile area-averaged to 80 m (16 × 16 blocks) wherever it covers, else `LDEM_80S_80M`, else `LDEM_75S_240M` (only IM-1, whose northern third lies beyond the 80 m grid's 80°S edge); bilinear; no gaps. `source` in each JSON lists the share of samples from each grid.
+- `.bin` = Uint16 little-endian, row-major, `z = heightMinM + v·(heightMaxM − heightMinM)/65535` (≤ 0.08 m step at the largest range). All 14 tiles total about 1.9 MB.

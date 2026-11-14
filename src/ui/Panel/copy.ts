@@ -1,6 +1,6 @@
 // All user-facing strings for the left panel, Where?/When? controls (visual-spec v5 section 8).
 export const COPY = {
-  tabs: { label: 'Panel', site: 'Site', details: 'Planner details', collapse: 'Hide panel', expand: 'Show panel' },
+  tabs: { label: 'Panel', site: 'Site', details: 'Planner details', events: 'Events', collapse: 'Hide panel', expand: 'Show panel' },
   where: {
     group: 'Site',
     label: 'Where?',

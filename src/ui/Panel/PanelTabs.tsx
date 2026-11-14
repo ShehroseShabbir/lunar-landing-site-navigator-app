@@ -3,13 +3,15 @@ import type { KeyboardEvent, ReactNode } from 'react';
 import { COPY } from './copy';
 import './Panel.css';
 
-export type PanelTab = 'site' | 'details';
+export type PanelTab = 'site' | 'details' | 'events';
 
 export interface PanelTabsProps {
   /** Content of the Site tab (normally <SitePanel/>). */
   site: ReactNode;
   /** Content of the Planner details tab (B4's PlannerDetails). Mounted only while its tab is active. */
   details: ReactNode;
+  /** Content of the Events tab (S16 EventsTab). */
+  events?: ReactNode;
   /** Controlled tab; omit for uncontrolled. */
   tab?: PanelTab;
   defaultTab?: PanelTab;
@@ -21,13 +23,14 @@ export interface PanelTabsProps {
 const TABS: { id: PanelTab; label: string }[] = [
   { id: 'site', label: COPY.tabs.site },
   { id: 'details', label: COPY.tabs.details },
+  { id: 'events', label: COPY.tabs.events },
 ];
 
-export function PanelTabs({ site, details, tab, defaultTab = 'site', onTabChange, onCollapse }: PanelTabsProps) {
+export function PanelTabs({ site, details, events, tab, defaultTab = 'site', onTabChange, onCollapse }: PanelTabsProps) {
   const [inner, setInner] = useState<PanelTab>(defaultTab);
   const active = tab ?? inner;
   const uid = useId();
-  const refs = useRef<Record<PanelTab, HTMLButtonElement | null>>({ site: null, details: null });
+  const refs = useRef<Record<PanelTab, HTMLButtonElement | null>>({ site: null, details: null, events: null });
 
   const select = (id: PanelTab, focus = false) => {
     setInner(id);
@@ -61,7 +64,7 @@ export function PanelTabs({ site, details, tab, defaultTab = 'site', onTabChange
               type="button"
               role="tab"
               aria-selected={active === x.id}
-              aria-controls={`${uid}-panel-${x.id}`}
+              aria-controls={active === x.id ? `${uid}-panel-${x.id}` : undefined}
               tabIndex={active === x.id ? 0 : -1}
               className="panel-tabs__tab"
               onClick={() => select(x.id)}
@@ -90,7 +93,7 @@ export function PanelTabs({ site, details, tab, defaultTab = 'site', onTabChange
         className="panel-tabs__panel"
         tabIndex={-1}
       >
-        {active === 'site' ? site : details}
+        {active === 'site' ? site : active === 'events' ? events : details}
       </div>
     </div>
   );

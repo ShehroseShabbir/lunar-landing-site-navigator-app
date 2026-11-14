@@ -7,6 +7,7 @@ import { useScenarioResult } from '../../state/useScenarioResult';
 import { formatDuration, subtractWindows, timeToX, windowAtX, windowRect, xToTime, type Axis } from './geometry';
 import { TL } from './copy';
 import { dayMonth, dayOfRange, longUtc } from './dock';
+import { TriggerOverlay, useTriggerHighlights } from '../Events';
 import './Timeline.css';
 
 const dayMonthTime = (d: Date) => `${dayMonth(d)} ${toTimeInput(d)}`;
@@ -69,6 +70,7 @@ function BothGlyph({ x, y }: { x: number; y: number }) {
 }
 
 export function Timeline() {
+  const hl = useTriggerHighlights();
   const { rangeStart, t, setT } = useAppState();
   const { status, error, scan } = useScenarioResult();
   const uid = useId().replace(/[^a-zA-Z0-9]/g, '');
@@ -356,10 +358,12 @@ export function Timeline() {
                 );
               })}
 
+              <TriggerOverlay highlights={hl} axis={axis} />
               {/* Playhead */}
               <line x1={tX} x2={tX} y1={2} y2={LANE_Y[2] + LANE_H + 4} stroke="var(--text)" strokeWidth={2} />
               <circle cx={tX} cy={3} r={4} fill="var(--text)" />
             </svg>
+            {hl.summary && <span className="sr-only">{hl.summary}</span>}
 
             {tip && !dragging && (
               <div

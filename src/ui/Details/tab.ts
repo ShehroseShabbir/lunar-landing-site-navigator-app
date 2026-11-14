@@ -3,18 +3,18 @@
 import { useCallback, useEffect, useState } from 'react';
 import { joinHash, splitHash } from '../Compare/route';
 
-export type PanelTab = 'site' | 'planner';
+export type PanelTab = 'site' | 'planner' | 'events';
 
 /** `tab=planner` in the hash, or in the query as a fallback. Anything else is the Site tab. */
 export function tabFromLocation(hash: string, search = ''): PanelTab {
   const v = splitHash(hash).params.get('tab') ?? new URLSearchParams(search).get('tab');
-  return v === 'planner' ? 'planner' : 'site';
+  return v === 'planner' || v === 'events' ? v : 'site';
 }
 
 /** The hash with the tab set. The Site tab removes the param; an empty result is `''` (no stray `#/`). */
 export function hashWithTab(hash: string, tab: PanelTab): string {
   const { path, params } = splitHash(hash);
-  if (tab === 'planner') params.set('tab', 'planner');
+  if (tab === 'planner' || tab === 'events') params.set('tab', tab);
   else params.delete('tab');
   return path === '' && params.toString() === '' ? '' : joinHash(path, params);
 }

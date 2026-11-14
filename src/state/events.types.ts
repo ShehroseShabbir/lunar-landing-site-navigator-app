@@ -42,6 +42,8 @@ export interface TriggerMatch {
   start: Date;
   end: Date;
   durationH: number;
+  /** The match was already open at the start of the searched span, so it may have opened earlier. */
+  clippedStart: boolean;
   /** The match touches the end of the searched span, so it may last longer. */
   clippedEnd: boolean;
 }

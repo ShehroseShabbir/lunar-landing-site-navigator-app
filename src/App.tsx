@@ -13,6 +13,7 @@ import { SkyView } from './ui/SkyView/SkyView';
 import { CompareView, useCompareDrawer } from './ui/Compare';
 import { ShareControls } from './ui/Share';
 import { TourButton } from './ui/Explain/tour';
+import { EventsTab } from './ui/Events';
 import { useScenarioResult } from './state/useScenarioResult';
 
 function FullSky() {
@@ -40,11 +41,12 @@ function Panel({ caption, onCompare }: { caption: string | null; onCompare: () =
   const { isPhone, setCollapsed } = useShell();
   return (
     <PanelTabs
-      tab={tab === 'planner' ? 'details' : 'site'}
-      onTabChange={(next) => setTab(next === 'details' ? 'planner' : 'site')}
+      tab={tab === 'planner' ? 'details' : tab}
+      onTabChange={(next) => setTab(next === 'details' ? 'planner' : next)}
       onCollapse={isPhone ? undefined : () => setCollapsed(true)}
       site={<SitePanel caption={caption ?? undefined} onCompare={onCompare} />}
       details={<PlannerDetails plannerRows={<PlannerRows />} timeSteps={<TimeSteps />} />}
+      events={<EventsTab onOpenCompare={onCompare} />}
     />
   );
 }
@@ -66,7 +68,7 @@ function Layout() {
   const compare = useCompareDrawer();
   return (
     <Shell
-      wide={tab === 'planner'}
+      wide={tab !== 'site'}
       stage={<Stage onCaption={setCaption} />}
       breadcrumb={<Breadcrumb siteName={siteName} />}
       actions={<TopActions tour={<TourButton />} share={<ShareControls />} />}

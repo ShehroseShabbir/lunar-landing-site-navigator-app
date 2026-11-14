@@ -31,13 +31,22 @@ export interface AppState {
 
 const Ctx = createContext<AppState | null>(null);
 
+/** Query params written by other features that the app-state URL sync must keep. */
+const PASSTHROUGH_PARAMS = new Set(['rules']);
+
 export function AppStateProvider({ children }: { children: ReactNode }) {
   const [view, setView] = useState<ViewState>(() => decodeState(window.location.search, new Date()));
 
   // Keep the URL in step with the state. Debounced: Safari limits history.replaceState calls.
   useEffect(() => {
     const id = window.setTimeout(() => {
-      const url = `${window.location.pathname}?${encodeState(view)}${window.location.hash}`;
+      // Keep query params owned by other features (e.g. &rules= from Events) when rewriting the URL.
+      const ours = new URLSearchParams(encodeState(view));
+      const prev = new URLSearchParams(window.location.search);
+      prev.forEach((v, k) => {
+        if (!ours.has(k) && PASSTHROUGH_PARAMS.has(k)) ours.set(k, v);
+      });
+      const url = `${window.location.pathname}?${ours.toString()}${window.location.hash}`;
       window.history.replaceState(null, '', url);
     }, 250);
     return () => window.clearTimeout(id);

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { useAppState } from '../../state/AppState';
 import { rangeEnd as rangeEndOf } from '../../state/time';
 import { useScenarioResult } from '../../state/useScenarioResult';
+import { NextEvents } from '../Events';
 import { answerComms, answerPower, contextSentence, farSideLine, type Answer, type AnswerCtx } from '../Metrics/plain';
 import { SitePicker } from '../SitePicker/SitePicker';
 import { TimeControl } from '../TimeControl/TimeControl';
@@ -135,6 +136,7 @@ export function SitePanel({ caption, onCompare }: SitePanelProps) {
           <strong>{COPY.answers.view}</strong> {cap}
         </p>
       )}
+      <NextEvents />
       <p className="sr-only" role="status">
         {spoken}
       </p>

@@ -10,6 +10,7 @@ import { MetricsPanel } from './ui/Metrics/MetricsPanel';
 import { Timeline } from './ui/Timeline/Timeline';
 import { PlaybackControls } from './ui/Playback';
 import { ShareControls } from './ui/Share';
+import { CompareView, CompareButton, useHashRoute } from './ui/Compare';
 
 function Sky() {
   const { siteGeo, siteName, t } = useAppState();
@@ -22,20 +23,26 @@ function Picker() {
   return <SitePicker hasTerrain={terrain === 'loaded'} />;
 }
 
-export default function App() {
+function Shell() {
+  const route = useHashRoute();
   return (
-    <AppStateProvider>
-      <div className="app">
-        <header className="app-header">
-          <div>
-            <h1>Lunar Landing Site Navigator</h1>
-            <p>Sun and Earth against the real horizon at a lunar landing site.</p>
-          </div>
-          <nav aria-label="Views">
-            <AboutButton />
-          </nav>
-        </header>
-        <main className="app-main" style={{ display: 'contents' }}>
+    <div className="app">
+      <header className="app-header">
+        <div>
+          <h1>Lunar Landing Site Navigator</h1>
+          <p>Sun and Earth against the real horizon at a lunar landing site.</p>
+        </div>
+        <nav aria-label="Views">
+          <CompareButton />
+          <AboutButton />
+        </nav>
+      </header>
+      {route === 'compare' ? (
+        <main className="app-main app-compare">
+          <CompareView />
+        </main>
+      ) : (
+        <main className="app-main">
           <section className="app-controls" aria-label="Site and time">
             <Picker />
             <TimeControl />
@@ -54,10 +61,18 @@ export default function App() {
             <Timeline />
           </section>
         </main>
-        <footer className="app-footer">
-          <p>Times are UTC. Not affiliated with or endorsed by NASA. Data credits and limits: About the data.</p>
-        </footer>
-      </div>
+      )}
+      <footer className="app-footer">
+        <p>Times are UTC. Not affiliated with or endorsed by NASA. Data credits and limits: About the data.</p>
+      </footer>
+    </div>
+  );
+}
+
+export default function App() {
+  return (
+    <AppStateProvider>
+      <Shell />
     </AppStateProvider>
   );
 }

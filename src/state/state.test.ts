@@ -91,7 +91,10 @@ describe('URL state', () => {
       custom: null,
       rangeStart: new Date('2027-03-14T06:00:00Z'),
       t: new Date('2027-03-20T12:00:00Z'),
-      scenarios: [{ slipDays: 7 }, { slipDays: -3 }],
+      scenarios: [
+        { site: 'im2', startISO: '2027-03-14T06:00Z', slipDays: 7 },
+        { site: { latDeg: -88.5, lonDeg: 12.25 }, startISO: '2027-03-20T12:00Z', slipDays: -3 },
+      ],
     };
     const q = encodeState(s);
     expect(q).toContain('start=2027-03-14T06%3A00Z');
@@ -105,12 +108,16 @@ describe('URL state', () => {
     expect(decodeState(encodeState(s), NOW).custom).toEqual({ latDeg: -88.5, lonDeg: 123.25 });
   });
   it('falls back on bad values', () => {
-    const d = decodeState('?site=nope&lat=95&lon=0&start=garbage&t=2027-01-01T00:00Z&slip=x,1.5,400,9', NOW);
+    const d = decodeState('?site=nope&lat=95&lon=0&start=garbage&t=2027-01-01T00:00Z&sc=x@2027-01-01T00:00Z@1,im2@bad@1,im2@2027-01-01T00:00Z@1.5,im2@2027-01-01T00:00Z@61,im2@2027-01-01T00:00Z@9', NOW);
     expect(d.siteId).toBe('connecting_ridge');
     expect(d.custom).toBeNull();
     expect(d.rangeStart.toISOString()).toBe('2026-11-14T03:00:00.000Z');
     expect(d.t).toEqual(d.rangeStart); // t outside the range is reset
-    expect(d.scenarios).toEqual([{ slipDays: 9 }]);
+    expect(d.scenarios).toEqual([{ site: 'im2', startISO: '2027-01-01T00:00Z', slipDays: 9 }]);
+  });
+  it('keeps at most 4 scenarios', () => {
+    const one = 'im2@2027-01-01T00:00Z@0';
+    expect(decodeState(`?sc=${[one, one, one, one, one, one].join(',')}`, NOW).scenarios).toHaveLength(4);
   });
   it('formatIso drops zero seconds', () => {
     expect(formatIso(new Date('2027-03-14T06:00:00Z'))).toBe('2027-03-14T06:00Z');

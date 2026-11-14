@@ -3,14 +3,18 @@ import { DEFAULT_SITE_ID, getSite } from '../data/sites';
 import { parseLat, parseLon } from './coords';
 import { RANGE_DAYS, DAY_MS, roundToHour } from './time';
 
-export interface Scenario {
-  /** Compare slip in days applied to rangeStart (S7). */
-  slipDays: number;
-}
-
 export interface CustomCoords {
   latDeg: number;
   lonDeg: number;
+}
+
+/** One compare scenario (S7): a catalogue site id or custom coordinates, a base start, and a slip. */
+export interface Scenario {
+  site: string | CustomCoords;
+  /** Base start, `formatIso` form. The effective start is this plus slipDays. */
+  startISO: string;
+  /** Integer days, -60..60. */
+  slipDays: number;
 }
 
 export interface ViewState {
@@ -22,8 +26,8 @@ export interface ViewState {
   scenarios: Scenario[];
 }
 
-export const MAX_SCENARIOS = 8;
-const MAX_SLIP_DAYS = 365;
+export const MAX_SCENARIOS = 4;
+export const MAX_SLIP_DAYS = 60;
 
 /** `2027-03-14T06:00Z`, or with seconds when non-zero. */
 export function formatIso(d: Date): string {
@@ -44,11 +48,45 @@ export function defaultState(now: Date): ViewState {
   return { siteId: DEFAULT_SITE_ID, custom: null, rangeStart: start, t: start, scenarios: [] };
 }
 
-function num(s: string): ParsedNum {
-  if (s.trim() === '') return { ok: false, message: 'empty' };
-  return { ok: true, value: Number(s) };
+/** `site@startISO@slip`, scenarios joined by `,`. Custom sites are written `lat/lon`. */
+export function encodeScenarios(list: Scenario[]): string {
+  return list
+    .slice(0, MAX_SCENARIOS)
+    .map((x) => {
+      const site = typeof x.site === 'string' ? x.site : `${x.site.latDeg}/${x.site.lonDeg}`;
+      return `${site}@${x.startISO}@${x.slipDays}`;
+    })
+    .join(',');
 }
-type ParsedNum = { ok: true; value: number } | { ok: false; message: string };
+
+/** Bad entries are dropped; at most MAX_SCENARIOS are kept. */
+export function decodeScenarios(raw: string | null): Scenario[] {
+  const out: Scenario[] = [];
+  if (!raw) return out;
+  for (const part of raw.split(',')) {
+    if (out.length >= MAX_SCENARIOS) break;
+    const f = part.split('@');
+    if (f.length !== 3) continue;
+    const [siteTok, iso, slipTok] = f;
+    const start = parseIso(iso);
+    if (!start) continue;
+    if (!/^-?\d+$/.test(slipTok)) continue;
+    const slip = Number(slipTok);
+    if (Math.abs(slip) > MAX_SLIP_DAYS) continue;
+    let site: string | CustomCoords;
+    if (siteTok.includes('/')) {
+      const [la, lo] = siteTok.split('/');
+      const lat = parseLat(la);
+      const lon = parseLon(lo);
+      if (!lat.ok || !lon.ok) continue;
+      site = { latDeg: lat.value, lonDeg: lon.value };
+    } else if (getSite(siteTok)) {
+      site = siteTok;
+    } else continue;
+    out.push({ site, startISO: formatIso(start), slipDays: slip === 0 ? 0 : slip });
+  }
+  return out;
+}
 
 export function encodeState(s: ViewState): string {
   const p = new URLSearchParams();
@@ -60,7 +98,7 @@ export function encodeState(s: ViewState): string {
   }
   p.set('start', formatIso(s.rangeStart));
   p.set('t', formatIso(s.t));
-  if (s.scenarios.length > 0) p.set('slip', s.scenarios.map((x) => x.slipDays).join(','));
+  if (s.scenarios.length > 0) p.set('sc', encodeScenarios(s.scenarios));
   return p.toString();
 }
 
@@ -86,16 +124,7 @@ export function decodeState(search: string, now: Date): ViewState {
   const ms = t.getTime();
   if (ms < rangeStart.getTime() || ms > rangeStart.getTime() + RANGE_DAYS * DAY_MS) t = rangeStart;
 
-  const scenarios: Scenario[] = [];
-  const slip = p.get('slip');
-  if (slip) {
-    for (const part of slip.split(',').slice(0, MAX_SCENARIOS)) {
-      const n = num(part);
-      if (n.ok && Number.isInteger(n.value) && Math.abs(n.value) <= MAX_SLIP_DAYS) {
-        scenarios.push({ slipDays: n.value });
-      }
-    }
-  }
+  const scenarios = decodeScenarios(p.get('sc'));
 
   return { siteId, custom, rangeStart, t, scenarios };
 }

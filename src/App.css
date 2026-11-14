@@ -10,6 +10,12 @@
 .app > * {
   min-width: 0;
 }
+.app-main {
+  display: contents;
+}
+.app-compare > * {
+  grid-column: 1 / -1;
+}
 .app-header {
   grid-column: 1 / -1;
   display: flex;

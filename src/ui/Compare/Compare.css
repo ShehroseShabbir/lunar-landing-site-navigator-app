@@ -1,0 +1,367 @@
+/* Compare view (ui-spec section 2). */
+.cmp {
+  box-sizing: border-box;
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 0 40px 24px;
+}
+.cmp-head {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+  flex-wrap: wrap;
+  min-height: 56px;
+}
+.cmp-head h1 {
+  margin: 0;
+  font-size: var(--fs-lg);
+  flex: 1;
+  text-align: center;
+}
+.cmp-head h1:focus {
+  outline: none;
+}
+.cmp-back,
+.cmp-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--target);
+}
+.cmp-link {
+  padding: 0 var(--sp-4);
+  text-decoration: none;
+}
+.cmp button,
+.cmp select,
+.cmp input {
+  min-height: var(--target);
+  background: var(--surface-2);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  font: inherit;
+  font-size: var(--fs-md);
+  padding: 0 var(--sp-3);
+  box-sizing: border-box;
+  max-width: 100%;
+}
+.cmp button {
+  cursor: pointer;
+}
+.cmp button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.cmp-live {
+  min-width: 8ch;
+  font-size: var(--fs-sm);
+  color: var(--text-muted);
+}
+.cmp section {
+  margin-top: var(--sp-5);
+}
+.cmp h2 {
+  font-size: var(--fs-md);
+  margin: 0 0 var(--sp-2);
+}
+.cmp-note,
+.cmp-foot {
+  color: var(--text-muted);
+  font-size: var(--fs-sm);
+  margin: 0 0 var(--sp-2);
+}
+
+.cmp-cards {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--sp-4);
+}
+.cmp-card,
+.cmp-add {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: var(--sp-4);
+  min-width: 0;
+}
+.cmp-add {
+  border-style: dashed;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  align-items: flex-start;
+  justify-content: center;
+}
+.cmp-add p {
+  margin: 0;
+  font-size: var(--fs-sm);
+  color: var(--text-muted);
+}
+.cmp-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--sp-2);
+}
+.cmp-card h3 {
+  margin: 0;
+  font-size: var(--fs-md);
+  display: flex;
+  gap: var(--sp-2);
+  align-items: center;
+  min-width: 0;
+}
+.cmp-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+  border: 2px solid var(--accent);
+  border-radius: 4px;
+  font-weight: 700;
+  font-size: var(--fs-sm);
+  margin-right: var(--sp-1);
+}
+.cmp-oneline {
+  display: none;
+  margin: var(--sp-2) 0 0;
+  font-size: var(--fs-sm);
+}
+.cmp-edit {
+  display: none;
+}
+.cmp-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  margin-top: var(--sp-3);
+}
+.cmp-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+  font-size: var(--fs-sm);
+}
+.cmp-field select,
+.cmp-field input {
+  width: 100%;
+}
+.cmp-slip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-1);
+}
+.cmp-slip-label {
+  width: 100%;
+  font-size: var(--fs-sm);
+}
+.cmp-slip input {
+  width: 64px;
+  text-align: center;
+}
+.cmp-slip button {
+  min-width: var(--target);
+}
+.cmp-start {
+  margin: 0;
+  font-size: var(--fs-sm);
+  color: var(--text-muted);
+}
+.cmp-remove {
+  align-self: flex-start;
+}
+
+.cmp-scroll {
+  position: relative;
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+}
+.cmp-table {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+  font-size: var(--fs-sm);
+}
+.cmp-table th,
+.cmp-table td {
+  padding: var(--sp-2) var(--sp-3);
+  text-align: left;
+  border-bottom: 1px solid var(--surface-2);
+  border-left: 2px solid transparent;
+  vertical-align: middle;
+}
+.cmp-table thead th {
+  font-weight: 600;
+  vertical-align: top;
+}
+.cmp-table tbody th {
+  font-weight: 500;
+  white-space: nowrap;
+}
+.cmp-table th:first-child {
+  position: sticky;
+  left: 0;
+  background: var(--surface);
+  z-index: 1;
+  border-left: 0;
+}
+.cmp-colstart {
+  display: block;
+  font-weight: 400;
+  color: var(--text-muted);
+  font-size: var(--fs-xs);
+}
+.cmp-best {
+  border-left-color: var(--best);
+}
+.cmp-val {
+  white-space: nowrap;
+}
+.cmp-val-best {
+  font-weight: 700;
+}
+.cmp-tag {
+  margin-left: var(--sp-2);
+  padding: 0 6px;
+  border: 1px solid var(--best);
+  border-radius: 4px;
+  font-size: var(--fs-xs);
+  color: var(--best);
+  white-space: nowrap;
+}
+.cmp-pending {
+  color: var(--text-muted);
+}
+
+.cmp-tl {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.cmp-tl-row {
+  display: grid;
+  grid-template-columns: 104px minmax(0, 1fr);
+  align-items: center;
+  height: 44px;
+}
+.cmp-tl-axis {
+  height: 28px;
+}
+.cmp-tl-svg {
+  width: 100%;
+  height: 44px;
+  display: block;
+}
+.cmp-axis {
+  position: relative;
+  height: 24px;
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+}
+.cmp-axis span {
+  position: absolute;
+  transform: translateX(-50%);
+}
+.cmp-axis .first {
+  transform: none;
+}
+.cmp-axis .last {
+  transform: translateX(-100%);
+}
+.cmp-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2) var(--sp-5);
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+  margin: var(--sp-2) 0 0;
+}
+.cmp-sw {
+  display: inline-block;
+  width: 16px;
+  height: 10px;
+  vertical-align: middle;
+  margin-right: 4px;
+}
+.cmp-sw-sun {
+  --c: var(--sun);
+}
+.cmp-sw-earth {
+  --c: var(--earth);
+}
+.cmp-sw-solid {
+  background: var(--c);
+}
+.cmp-sw-hatch {
+  background: repeating-linear-gradient(45deg, var(--c) 0 2px, transparent 2px 5px);
+  border: 1px solid var(--c);
+}
+
+@media (max-width: 1100px) {
+  .cmp-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 640px) {
+  .cmp {
+    padding: 0 16px 24px;
+  }
+  .cmp-head h1 {
+    text-align: left;
+    flex-basis: 100%;
+    order: 3;
+  }
+  .cmp-cards {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--sp-3);
+  }
+  .cmp-oneline,
+  .cmp-edit {
+    display: block;
+  }
+  .cmp-card .cmp-card-body {
+    display: none;
+  }
+  .cmp-card[data-open='true'] .cmp-card-body {
+    display: flex;
+  }
+  .cmp-card h3 {
+    display: none;
+  }
+  .cmp-card-head {
+    justify-content: flex-end;
+  }
+  .cmp-oneline {
+    margin-top: 0;
+  }
+}
+
+.cmp-lanes {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-left: var(--sp-2);
+  font-size: var(--fs-xs);
+  line-height: 14px;
+}
+.cmp-lane-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.cmp-tl-label {
+  display: flex;
+  align-items: center;
+}
+.cmp-colerr {
+  display: block;
+  color: var(--bad);
+  font-weight: 400;
+}

@@ -99,7 +99,8 @@ const CREDITS: { item: string; href: string; licence: string }[] = [
   },
   { item: 'NSSDC lunar landing sites', href: 'https://nssdc.gsfc.nasa.gov/planetary/lunar/lunar_sites.html', licence: 'NASA data, publicly available' },
   { item: 'USGS Gazetteer of Planetary Nomenclature', href: 'https://planetarynames.wr.usgs.gov', licence: 'USGS data, publicly available' },
-  { item: 'LROC images', href: 'https://lroc.im-ldi.com', licence: 'Credit: NASA/GSFC/Arizona State University' },
+  { item: 'LROC positions', href: 'https://lroc.im-ldi.com', licence: 'Credit: NASA/GSFC/Arizona State University' },
+  { item: 'IBM Plex Sans and Mono (self-hosted)', href: 'https://github.com/IBM/plex', licence: 'SIL Open Font License 1.1' },
   { item: 'Wikipedia (cited for some site coordinates)', href: 'https://en.wikipedia.org', licence: 'CC BY-SA 4.0' },
   {
     item: 'Gläser et al. 2018 (illumination at the south pole)',
@@ -109,6 +110,11 @@ const CREDITS: { item: string; href: string; licence: string }[] = [
   {
     item: 'Barker et al. 2021 (method)',
     href: 'https://ntrs.nasa.gov/api/citations/20205009660/downloads/Mike%20Barker_%20Paper_%20Improved%20Lola.pdf',
+    licence: 'Cited paper, not redistributed',
+  },
+  {
+    item: 'Mazarico et al. 2011 (illumination method)',
+    href: 'https://doi.org/10.1016/j.icarus.2010.10.030',
     licence: 'Cited paper, not redistributed',
   },
 ];

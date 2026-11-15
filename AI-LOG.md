@@ -10,7 +10,7 @@ The idea was the team's: a planning tool that compares landing sites and dates a
 - **Automatic gate:** a feature merged only when the typecheck, all tests and the build passed.
 - **Human control:** a guard script stopped the AI from updating the live site, force-pushing over published history or making the code public. Only the team member could do those things, and they also approved every file download and every new tool.
 
-## Before the event (11 Nov 2026)
+## Before the event
 - **Research:** AI read the challenge page and rules and collected landing-site coordinates and options for the data. It gave a source link for every fact, and the team reviewed the findings.
 - **Planning:** AI drafted the build plan, task list and screen design from the team's chosen idea and tools.
 - **Technical recommendations:** an AI reviewer suggested the method details: when the Sun counts as giving power, when Earth counts as in view, how the horizon is computed and how accurate the positions must be. The team accepted them and could change any of them.

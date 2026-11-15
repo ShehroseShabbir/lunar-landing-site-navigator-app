@@ -15,7 +15,7 @@ The idea was the team's: a planning tool that compares landing sites and dates a
 - **Planning:** AI drafted the build plan, task list and screen design from the team's chosen idea and tools.
 - **Technical recommendations:** an AI reviewer suggested the method details: when the Sun counts as giving power, when Earth counts as in view, how the horizon is computed and how accurate the positions must be. The team accepted them and could change any of them.
 
-## During the event (14 Nov 2026)
+## During the event (14–15 Nov 2026)
 - **Code:** AI agents wrote the TypeScript app and the Python terrain step. That step turns NASA LOLA height data into horizon profiles.
 - **Tests and checking:** AI wrote the automated tests and compared Sun and Earth positions with JPL Horizons at 162 points: the largest difference was 0.0063°. It also checked rise and set times against Horizons, and the share of time in sunlight against a published NASA study (Gläser et al. 2018). A separate AI reviewer recomputed the terrain horizons independently, and they agreed within 0.001°.
 - **Review:** every feature was reviewed by a separate AI code reviewer, and every screen by a design and accessibility reviewer, before it was merged. Nothing merged unless the typecheck, tests and build passed.
@@ -23,9 +23,9 @@ The idea was the team's: a planning tool that compares landing sites and dates a
 - **Features the team asked for:** compare, playback, the events list, triggers, the landing-window finder, ranking the terrain sites for a date range, and the zoom out to the whole Moon, Earth and Sun. AI built and tested each one.
 - **Hosting:** AI set up the Vercel deployment in the team's browser, with the team's approval. The team approved every update to the live site.
 - **Documents:** AI drafted the README, the project description and the video script, and the team edited and approved them.
-- **Demo video:** AI recorded the screen of the real, live app and added text captions. The voiceover is a team member's own.
+- **Demo video:** AI recorded the screen of the real app and added text captions. Images and video: the demo video shows real screen recordings of the app; the voiceover is AI-generated (Higgsfield text-to-speech). No AI-generated images or video footage are used. No NASA logos or branding appear in any generated content.
 
 ## What AI did not do
 - Pick the challenge idea or the solution approach.
-- Make any images or video with generative AI. The Moon and Earth images are NASA's (SVS CGI Moon Kit and Blue Marble), with credit.
+- Make any images or video footage with generative AI. The only generated media is the demo video's voiceover. The Moon and Earth images are NASA's (SVS CGI Moon Kit and Blue Marble), with credit.
 - Use or change NASA logos or branding.
